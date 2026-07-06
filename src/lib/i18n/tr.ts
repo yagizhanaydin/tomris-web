@@ -320,9 +320,9 @@ export const tr: TranslationDictionary = {
     },
   },
   verification: {
-    bannerTitle: "Kadınların güvenliği için kısa bir adım",
+    bannerTitle: "Kadınların güvenliği için güvenli bir adım",
     bannerBody:
-      "Tomris boş bir uygulama değil — gerçek bir kadın dayanışma alanı. Seni burada rahat ve konforlu hissettirmek istiyoruz. Şimdilik siteyi gezebilirsin; kadın temsilcilerimiz seni doğruladıktan sonra paylaşım, yorum ve mesajlaşma açılır.",
+      "Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığın zorlukları ve yorgunluğu biliyoruz — seni anlıyoruz. Tomris boş bir uygulama değil — gerçek bir kadın dayanışma alanı. Seni burada rahat ve konforlu hissettirmek istiyoruz. Şimdilik siteyi gezebilirsin; kadın temsilcilerimiz seni doğruladıktan sonra paylaşım, yorum ve mesajlaşma açılır.",
     bannerCta: "Doğrulamayı Başlat",
     pageTitle: "Topluluğa Katıl",
     pageSubtitle: "Seni rahat ve konforlu hissettirmek için — kısa, gönüllü bir adım",
