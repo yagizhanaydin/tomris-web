@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { AtaturkQuote } from "./AtaturkQuote";
 import { TomrisLogo } from "./TomrisLogo";
 import { LanguageSwitcher } from "./LanguageSwitcher";
@@ -44,9 +45,19 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
         </div>
       </div>
 
-      <footer className="py-4 text-center text-xs text-[var(--muted)] px-4">
-        <span className="text-tomris font-semibold">{t.brand.name}</span> &copy;{" "}
-        {new Date().getFullYear()} — {t.brand.footer}
+      <footer className="py-4 text-center text-xs text-[var(--muted)] px-4 space-y-2">
+        <div className="flex flex-wrap justify-center gap-x-4 gap-y-1">
+          <Link href="/kullanim-kosullari" className="link-tomris">
+            {t.legal.footerTerms}
+          </Link>
+          <Link href="/gizlilik-politikasi" className="link-tomris">
+            {t.legal.footerPrivacy}
+          </Link>
+        </div>
+        <p>
+          <span className="text-tomris font-semibold">{t.brand.name}</span> &copy;{" "}
+          {new Date().getFullYear()} — {t.brand.footer}
+        </p>
       </footer>
     </div>
   );

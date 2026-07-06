@@ -203,6 +203,32 @@ export interface TranslationDictionary {
     chatFriendsDesc: string;
     chatEveryone: string;
     chatEveryoneDesc: string;
+    legalTitle: string;
+    deleteTitle: string;
+    deleteHint: string;
+    deletePrompt: string;
+    deleteButton: string;
+    deleteConfirmError: string;
+    deleteError: string;
+  };
+  legal: {
+    termsLink: string;
+    privacyLink: string;
+    backLogin: string;
+    footerTerms: string;
+    footerPrivacy: string;
+    registerAccept: string;
+    registerAcceptRequired: string;
+    terms: {
+      title: string;
+      updated: string;
+      sections: { title: string; body: string[] }[];
+    };
+    privacy: {
+      title: string;
+      updated: string;
+      sections: { title: string; body: string[] }[];
+    };
   };
   ban: {
     pageTitle: string;

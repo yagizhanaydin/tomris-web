@@ -2,15 +2,20 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isAdminConfigured } from "@/lib/firebase-admin";
 import { isEmailBanned } from "@/lib/ban/service";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 export async function GET(request: NextRequest) {
+  const ip = getClientIp(request);
+  const limit = checkRateLimit(`check-ban:${ip}`, 20, 60 * 1000);
+  if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
+
   if (!isAdminConfigured()) {
     return NextResponse.json({ banned: false });
   }
 
   const email = request.nextUrl.searchParams.get("email");
-  if (!email) {
-    return NextResponse.json({ error: "E-posta gerekli." }, { status: 400 });
+  if (!email || email.length > 254) {
+    return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
   }
 
   const banned = await isEmailBanned(email);

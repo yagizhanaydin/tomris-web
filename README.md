@@ -91,6 +91,19 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] Ayarlar (`/ayarlar`) — sohbet gizliliği: arkadaşlar / herkes
 - [x] Yasaklı kelime filtresi mesajlarda da aktif
 
+### Yasal & Hesap
+- [x] Kullanım Koşulları (`/kullanim-kosullari`) TR/EN
+- [x] Gizlilik Politikası (`/gizlilik-politikasi`) KVKK uyumlu özet
+- [x] Kayıtta sözleşme onay checkbox'ı
+- [x] **Hesap silme** — Ayarlar → DELETE onayı → `/api/account/delete`
+
+### Güvenlik
+- [x] Firestore: kullanıcı `verificationStatus` self-approve **engellendi**
+- [x] İmzalı admin/temsilci oturum çerezleri (`SESSION_SECRET`)
+- [x] API rate limiting (login, upload, check-ban, genel API)
+- [x] Middleware güvenlik başlıkları + temsilci API koruması
+- [x] `signals` koleksiyonu client erişime kapalı
+
 ### UI / UX
 - [x] Mobil uyumlu Tailwind tasarım
 - [x] Mor Tomris teması + Tomris logosu/isim
@@ -137,6 +150,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `/mesajlar` | DM + gruplar (canlı sohbet) |
 | `/mesajlar/[id]` | Sohbet ekranı |
 | `/ayarlar` | Sohbet gizliliği (arkadaş / herkes) |
+| `/kullanim-kosullari` | Kullanım koşulları |
+| `/gizlilik-politikasi` | Gizlilik politikası (KVKK) |
 | `/temsilci/giris` | **Kadın temsilci** girişi |
 | `/temsilci` | Kadın temsilci paneli (onay / red / yasak) |
 | `/admin/giris` | Admin girişi (fotoğraf erişimi yok) |
@@ -317,6 +332,9 @@ ADMIN_PASSWORD=
 # Kadın temsilci (fotoğraf onay / red / yasak)
 REP_USERNAME=temsilci
 REP_PASSWORD=
+
+# Oturum imzası (admin/temsilci — production zorunlu)
+SESSION_SECRET=
 
 # Service Account — Firebase Console > Service Accounts > private key
 FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}

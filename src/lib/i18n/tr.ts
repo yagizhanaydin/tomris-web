@@ -205,6 +205,102 @@ export const tr: TranslationDictionary = {
     chatFriendsDesc: "Arkadaş listende olanlar sana mesaj atabilir.",
     chatEveryone: "Herkes",
     chatEveryoneDesc: "Doğrulanmış tüm kullanıcılar sana mesaj başlatabilir.",
+    legalTitle: "Yasal",
+    deleteTitle: "Hesabı kalıcı sil",
+    deleteHint:
+      "Hesabın, gönderilerin, yorumların ve profil verilerin kalıcı olarak silinir. Bu işlem geri alınamaz.",
+    deletePrompt: 'Onaylamak için kutuya DELETE yazın',
+    deleteButton: "Hesabımı Sil",
+    deleteConfirmError: 'Onay için tam olarak DELETE yazmalısınız.',
+    deleteError: "Hesap silinemedi. Lütfen tekrar deneyin.",
+  },
+  legal: {
+    termsLink: "Kullanım Koşulları",
+    privacyLink: "Gizlilik Politikası",
+    backLogin: "← Giriş sayfası",
+    footerTerms: "Kullanım Koşulları",
+    footerPrivacy: "Gizlilik",
+    registerAccept: "Kullanım Koşulları ve Gizlilik Politikası'nı okudum, kabul ediyorum.",
+    registerAcceptRequired: "Devam etmek için sözleşmeyi kabul etmelisiniz.",
+    terms: {
+      title: "Kullanım Koşulları",
+      updated: "Son güncelleme: 6 Temmuz 2026",
+      sections: [
+        {
+          title: "1. Hizmet",
+          body: [
+            "Tomris, kadın dayanışması için oluşturulmuş bir topluluk platformudur. Kayıt olarak bu koşulları kabul etmiş sayılırsınız.",
+            "Platformu yalnızca yasalara uygun, saygılı ve topluluk kurallarına uygun şekilde kullanmayı kabul edersiniz.",
+          ],
+        },
+        {
+          title: "2. Hesap ve doğrulama",
+          body: [
+            "Kayıt için doğru bilgi vermekle yükümlüsünüz. Doğrulama fotoğrafı yalnızca kadın temsilciler tarafından incelenir; onay veya red sonrası silinir.",
+            "Troll, nefret söylemi, taciz veya sahte hesap tespitinde hesabınız kalıcı olarak yasaklanabilir.",
+          ],
+        },
+        {
+          title: "3. İçerik kuralları",
+          body: [
+            "Şiddet, cinsiyetçi, ırkçı veya taciz içeren içerik yasaktır. Otomatik filtreler ve moderasyon uygulanır.",
+            "Paylaştığınız gönderi ve mesajlardan siz sorumlusunuz.",
+          ],
+        },
+        {
+          title: "4. Hesap silme",
+          body: [
+            "Ayarlar sayfasından hesabınızı kalıcı olarak silebilirsiniz. Silme sonrası verileriniz geri getirilemez.",
+          ],
+        },
+        {
+          title: "5. Sorumluluk sınırı",
+          body: [
+            "Tomris, kullanıcılar arası etkileşimlerde aracıdır. Hizmet 'olduğu gibi' sunulur; kesintisiz çalışma garanti edilmez.",
+          ],
+        },
+      ],
+    },
+    privacy: {
+      title: "Gizlilik Politikası",
+      updated: "Son güncelleme: 6 Temmuz 2026 · KVKK kapsamında",
+      sections: [
+        {
+          title: "1. Toplanan veriler",
+          body: [
+            "E-posta, kullanıcı adı, cinsiyet, doğrulama durumu, gönderi/mesaj içerikleri ve teknik loglar (IP, istek sayısı) işlenir.",
+            "Doğrulama fotoğrafı geçici olarak sunucuda tutulur; onay/red/yasak sonrası silinir.",
+          ],
+        },
+        {
+          title: "2. Verilerin kullanımı",
+          body: [
+            "Veriler hesap yönetimi, güvenlik, moderasyon ve topluluk özelliklerinin sunulması için kullanılır.",
+            "Verileriniz üçüncü taraflara satılmaz.",
+          ],
+        },
+        {
+          title: "3. Saklama ve silme",
+          body: [
+            "Hesabınızı sildiğinizde profil, gönderi, yorum ve mesaj verileriniz kalıcı olarak silinir.",
+            "Yasaklanan hesaplarda e-posta, tekrar kayıt engeli için ban listesinde tutulabilir.",
+          ],
+        },
+        {
+          title: "4. Güvenlik",
+          body: [
+            "Rate limiting, imzalı oturum çerezleri ve Firestore güvenlik kuralları uygulanır.",
+            "Şifreler Firebase Auth altyapısında hash'lenerek saklanır.",
+          ],
+        },
+        {
+          title: "5. Haklarınız",
+          body: [
+            "KVKK kapsamında verilerinize erişim, düzeltme ve silme talebinde bulunabilirsiniz. Hesap silme: Ayarlar → Hesabı kalıcı sil.",
+          ],
+        },
+      ],
+    },
   },
   verification: {
     bannerTitle: "Topluluğa tam katılmak için doğrulama gerekli",

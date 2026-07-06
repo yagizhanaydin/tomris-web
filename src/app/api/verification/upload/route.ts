@@ -1,13 +1,18 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { getAuth } from "firebase-admin/auth";
-import { getAdminApp, isAdminConfigured } from "@/lib/firebase-admin";
-import { saveLocalPhoto } from "@/lib/verification/local-storage";
+import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
+import { isAdminConfigured } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
+import { saveLocalPhoto } from "@/lib/verification/local-storage";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const limit = checkRateLimit(`upload:${ip}`, 10, 60 * 1000);
+  if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
+
   if (!isAdminConfigured()) {
     return NextResponse.json(
       { error: "Sunucu yapılandırması eksik (FIREBASE_SERVICE_ACCOUNT_JSON)." },
@@ -15,21 +20,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const authHeader = request.headers.get("authorization");
-  const token = authHeader?.replace("Bearer ", "");
-  if (!token) {
+  const auth = await verifyFirebaseIdToken(request.headers.get("authorization"));
+  if (!auth) {
     return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
   }
 
-  let uid: string;
-  try {
-    const decoded = await getAuth(getAdminApp()).verifyIdToken(token);
-    uid = decoded.uid;
-  } catch {
-    return NextResponse.json({ error: "Geçersiz oturum." }, { status: 401 });
-  }
-
-  if (await isUidBanned(uid)) {
+  if (await isUidBanned(auth.uid)) {
     return NextResponse.json(
       { error: "Hesabınız platformdan yasaklanmıştır." },
       { status: 403 }
@@ -52,7 +48,7 @@ export async function POST(request: NextRequest) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  await saveLocalPhoto(uid, buffer);
+  await saveLocalPhoto(auth.uid, buffer);
 
-  return NextResponse.json({ success: true, uid });
+  return NextResponse.json({ success: true, uid: auth.uid });
 }

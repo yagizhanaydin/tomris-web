@@ -9,6 +9,8 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { needsProfileCompletion } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
 import { ChatVisibilitySetting } from "@/components/settings/ChatVisibilitySetting";
+import { DeleteAccountSetting } from "@/components/settings/DeleteAccountSetting";
+import Link from "next/link";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -48,6 +50,20 @@ export default function SettingsPage() {
         </div>
 
         <ChatVisibilitySetting profile={profile} onUpdated={refreshProfile} />
+
+        <div className="card space-y-3">
+          <h2 className="font-semibold text-tomris">{t.settings.legalTitle}</h2>
+          <div className="flex flex-wrap gap-4 text-sm">
+            <Link href="/kullanim-kosullari" className="link-tomris">
+              {t.legal.termsLink}
+            </Link>
+            <Link href="/gizlilik-politikasi" className="link-tomris">
+              {t.legal.privacyLink}
+            </Link>
+          </div>
+        </div>
+
+        <DeleteAccountSetting />
       </div>
     </AppShell>
   );

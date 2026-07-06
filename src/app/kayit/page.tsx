@@ -25,6 +25,7 @@ export default function RegisterPage() {
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [successEmail, setSuccessEmail] = useState("");
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -40,6 +41,10 @@ export default function RegisterPage() {
     }
     if (!gender) {
       setError("Lütfen cinsiyet seçin.");
+      return;
+    }
+    if (!acceptedTerms) {
+      setError(t.legal.registerAcceptRequired);
       return;
     }
 
@@ -75,6 +80,10 @@ export default function RegisterPage() {
     }
     if (!gender) {
       setError("Google ile kayıt için önce cinsiyet seçin.");
+      return;
+    }
+    if (!acceptedTerms) {
+      setError(t.legal.registerAcceptRequired);
       return;
     }
 
@@ -231,6 +240,25 @@ export default function RegisterPage() {
           </div>
         </fieldset>
 
+        <label className="flex items-start gap-3 text-sm cursor-pointer">
+          <input
+            type="checkbox"
+            checked={acceptedTerms}
+            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            className="mt-1"
+          />
+          <span className="text-[var(--muted)] leading-relaxed">
+            {t.legal.registerAccept}{" "}
+            <Link href="/kullanim-kosullari" className="link-tomris" target="_blank">
+              {t.legal.termsLink}
+            </Link>
+            {" · "}
+            <Link href="/gizlilik-politikasi" className="link-tomris" target="_blank">
+              {t.legal.privacyLink}
+            </Link>
+          </span>
+        </label>
+
         <button type="submit" disabled={submitting} className="btn-primary">
           {submitting ? "Kayıt olunuyor..." : "Kayıt Ol"}
         </button>
@@ -248,7 +276,7 @@ export default function RegisterPage() {
       <button
         type="button"
         onClick={handleGoogleRegister}
-        disabled={googleLoading || !gender || !username.trim()}
+        disabled={googleLoading || !gender || !username.trim() || !acceptedTerms}
         className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-[var(--border)] bg-white font-medium text-tomris hover:bg-primary-light disabled:opacity-50 transition-colors shadow-sm"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24" aria-hidden>

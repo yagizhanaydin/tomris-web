@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-
-const REP_COOKIE = "tomris_rep_session";
+import { setRepSessionCookie } from "@/lib/auth/session";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request);
+  const limit = checkRateLimit(`rep-login:${ip}`, 5, 15 * 60 * 1000);
+  if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
+
   const { username, password } = await request.json();
 
   const repUsername = process.env.REP_USERNAME;
@@ -24,13 +28,6 @@ export async function POST(request: NextRequest) {
   }
 
   const response = NextResponse.json({ success: true });
-  response.cookies.set(REP_COOKIE, "authenticated", {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 60 * 60 * 8,
-    path: "/",
-  });
-
+  setRepSessionCookie(response);
   return response;
 }

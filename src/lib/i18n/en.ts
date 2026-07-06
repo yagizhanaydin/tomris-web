@@ -205,6 +205,102 @@ export const en: TranslationDictionary = {
     chatFriendsDesc: "Only people on your friends list can message you.",
     chatEveryone: "Everyone",
     chatEveryoneDesc: "Any verified user can start a chat with you.",
+    legalTitle: "Legal",
+    deleteTitle: "Permanently delete account",
+    deleteHint:
+      "Your account, posts, comments, and profile data will be permanently deleted. This cannot be undone.",
+    deletePrompt: 'Type DELETE in the box to confirm',
+    deleteButton: "Delete My Account",
+    deleteConfirmError: "You must type DELETE exactly to confirm.",
+    deleteError: "Could not delete account. Please try again.",
+  },
+  legal: {
+    termsLink: "Terms of Service",
+    privacyLink: "Privacy Policy",
+    backLogin: "← Back to login",
+    footerTerms: "Terms",
+    footerPrivacy: "Privacy",
+    registerAccept: "I have read and accept the Terms of Service and Privacy Policy.",
+    registerAcceptRequired: "You must accept the terms to continue.",
+    terms: {
+      title: "Terms of Service",
+      updated: "Last updated: 6 July 2026",
+      sections: [
+        {
+          title: "1. Service",
+          body: [
+            "Tomris is a women's solidarity community platform. By registering you accept these terms.",
+            "You agree to use the platform lawfully, respectfully, and in line with community rules.",
+          ],
+        },
+        {
+          title: "2. Account & verification",
+          body: [
+            "You must provide accurate information. Verification photos are reviewed only by female representatives and deleted after approval, rejection, or ban.",
+            "Accounts may be permanently banned for trolling, hate speech, harassment, or fake profiles.",
+          ],
+        },
+        {
+          title: "3. Content rules",
+          body: [
+            "Violent, sexist, racist, or harassing content is prohibited. Automated filters and moderation apply.",
+            "You are responsible for posts and messages you share.",
+          ],
+        },
+        {
+          title: "4. Account deletion",
+          body: [
+            "You may permanently delete your account from Settings. Deleted data cannot be recovered.",
+          ],
+        },
+        {
+          title: "5. Limitation of liability",
+          body: [
+            "Tomris facilitates interaction between users. The service is provided 'as is' without uptime guarantees.",
+          ],
+        },
+      ],
+    },
+    privacy: {
+      title: "Privacy Policy",
+      updated: "Last updated: 6 July 2026 · GDPR/KVKK aligned",
+      sections: [
+        {
+          title: "1. Data we collect",
+          body: [
+            "Email, username, gender, verification status, post/message content, and technical logs (IP, request counts) are processed.",
+            "Verification photos are stored temporarily on the server and deleted after review or ban.",
+          ],
+        },
+        {
+          title: "2. How we use data",
+          body: [
+            "Data is used for account management, security, moderation, and community features.",
+            "We do not sell your data to third parties.",
+          ],
+        },
+        {
+          title: "3. Retention & deletion",
+          body: [
+            "When you delete your account, profile, posts, comments, and messages are permanently removed.",
+            "Banned accounts may retain email on a ban list to prevent re-registration.",
+          ],
+        },
+        {
+          title: "4. Security",
+          body: [
+            "Rate limiting, signed session cookies, and Firestore security rules are enforced.",
+            "Passwords are hashed via Firebase Auth.",
+          ],
+        },
+        {
+          title: "5. Your rights",
+          body: [
+            "You may request access, correction, or deletion of your data. Self-service deletion: Settings → Permanently delete account.",
+          ],
+        },
+      ],
+    },
   },
   verification: {
     bannerTitle: "Verification required to fully join the community",
