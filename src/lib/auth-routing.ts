@@ -15,6 +15,11 @@ export function needsVerificationPhoto(profile: UserProfile | null): boolean {
   );
 }
 
+/** Fotoğraf gönderildi, temsilci onayı bekleniyor mu? */
+export function isVerificationPending(profile: UserProfile | null): boolean {
+  return profile?.verificationStatus === "pending";
+}
+
 /** Arkadaşlık, yorum vb. platform özellikleri açık mı? */
 export function isPlatformUnlocked(profile: UserProfile | null): boolean {
   return profile?.verificationStatus === "approved";
@@ -27,8 +32,6 @@ export function getPostAuthRedirect(profile: UserProfile | null): string {
   switch (profile.verificationStatus) {
     case "banned":
       return "/hesap-yasaklandi";
-    case "pending":
-      return "/dogrulama-bekliyor";
     case "rejected":
       return "/dogrulama-reddedildi";
     default:

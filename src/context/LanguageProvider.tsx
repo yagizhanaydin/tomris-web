@@ -8,7 +8,13 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
-import { getDictionary, type Dictionary, defaultLocale, interpolate } from "@/lib/i18n";
+import {
+  getDictionary,
+  type Dictionary,
+  defaultLocale,
+  interpolate,
+  isLocale,
+} from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n/types";
 
 const STORAGE_KEY = "tomris_locale";
@@ -26,8 +32,8 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(defaultLocale);
 
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY) as Locale | null;
-    if (stored === "tr" || stored === "en") {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (isLocale(stored)) {
       setLocaleState(stored);
     }
   }, []);

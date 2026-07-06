@@ -20,7 +20,7 @@ export default function VerificationRejectedPage() {
       router.replace("/dashboard");
     }
     if (!loading && profile?.verificationStatus === "pending") {
-      router.replace("/dogrulama-bekliyor");
+      router.replace("/dashboard");
     }
   }, [user, profile, loading, router]);
 
@@ -32,11 +32,10 @@ export default function VerificationRejectedPage() {
   if (loading) return null;
 
   return (
-    <AuthLayout title="Doğrulama Reddedildi" subtitle="Hesabınız onaylanmadı">
+    <AuthLayout title={t.verification.rejectedTitle} subtitle={t.verification.rejectedSubtitle}>
       <div className="text-center space-y-4">
-        <div className="alert-error">
-          Doğrulama fotoğrafınız temsilciler tarafından reddedildi. Fotoğrafınız
-          silinmiştir. Tekrar deneyebilir veya destek için bizimle iletişime geçebilirsiniz.
+        <div className="alert-error text-sm leading-relaxed text-left">
+          {t.verification.rejectedBody}
         </div>
         <Link href="/dogrulama" className="btn-primary inline-block">
           {t.verification.rejectedRetry}

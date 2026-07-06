@@ -11,7 +11,7 @@ import {
   onAuthStateChanged,
   type User,
 } from "firebase/auth";
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
 import type { UserProfile } from "@/types/user";
 
@@ -62,6 +62,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return unsubscribe;
   }, []);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const unsub = onSnapshot(doc(getFirebaseDb(), "users", user.uid), (snap) => {
+      if (snap.exists()) {
+        setProfile(snap.data() as UserProfile);
+      } else {
+        setProfile(null);
+      }
+    });
+
+    return unsub;
+  }, [user]);
 
   return (
     <AuthContext.Provider value={{ user, profile, loading, refreshProfile }}>

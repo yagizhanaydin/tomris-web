@@ -15,7 +15,7 @@
 |--------|-----------|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
 | Auth / Veri | Firebase Auth + Firestore |
-| Fotoğraf (geçici) | Sunucu diski `data/verifications/` — **Firebase Storage kullanılmıyor** |
+| Fotoğraf (geçici) | **Local:** `data/verifications/` · **Vercel:** Firebase Storage (Admin SDK) |
 | Kadın Temsilci / Admin | Next.js API + HTTP-only cookie (Firebase auth'tan bağımsız) |
 
 ---
@@ -28,13 +28,14 @@
 | Authentication — E-posta/Şifre | ✅ |
 | Authentication — Google | ✅ |
 | Firestore Database | ✅ |
-| Firestore Security Rules (`firestore.rules`) | ✅ — `platform_bans` kurallarını Console'da yayınla |
+| Firestore Security Rules (`firestore.rules`) | ⚠️ Repodaki dosyayı Console'da **Publish** et — eski kısa sürümü kullanma |
 | Service Account JSON (`.env.local`) | ✅ |
-| Firebase Storage | ❌ Gerek yok (Blaze/yükseltme yok) |
+| Firebase Storage | ✅ Vercel deploy için (Spark yeterli) — [`DEPLOY.md`](DEPLOY.md) |
 | Canlı test (`npm run dev`) | ⏳ Yapılacak |
 
 Detaylı kurulum: [`FIREBASE-KURULUM.md`](FIREBASE-KURULUM.md)  
-Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
+Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)  
+**Canlıya alma:** [`DEPLOY.md`](DEPLOY.md)
 
 ---
 
@@ -56,7 +57,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] **Kadın temsilci paneli** (`/temsilci`) — yalnızca kadın temsilciler inceler
 - [x] **Admin panelinin fotoğrafa erişimi yok** — teknik ve metinsel olarak ayrılmış
 - [x] Onay / red / yasak sonrası fotoğraf **anında silinir**
-- [x] Bekleyen: `/dogrulama-bekliyor` · Reddedilen: `/dogrulama-reddedildi` · Onaylı: tam erişim
+- [x] Bekleyen: dashboard + akış okuma (turuncu banner) · Reddedilen: `/dogrulama-reddedildi` · Onaylı: tam erişim
 
 ### Ban Sistemi (troll / uygunsuz içerik)
 - [x] Temsilci panelinde **Kalıcı Yasakla** (Reddet'ten ayrı)
@@ -143,7 +144,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `/dashboard` | Ana sayfa (doğrulanmamış: kısıtlı mod + banner) |
 | `/akis` | Topluluk akışı — gönderi, yorum, filtreler (paylaşım: doğrulama gerekli) |
 | `/dogrulama` | Fotoğraf doğrulama (isteğe bağlı adım) |
-| `/dogrulama-bekliyor` | Kadın temsilci onayı bekleniyor |
+| `/dogrulama-bekliyor` | Eski bekleme URL'si → dashboard'a yönlendirir |
 | `/dogrulama-reddedildi` | Doğrulama reddedildi — tekrar denenebilir |
 | `/hesap-yasaklandi` | Kalıcı ban |
 | `/arkadaslar` | Arkadaşlık yönetimi (doğrulama gerekli) |
@@ -178,6 +179,9 @@ Kayıt (fotoğrafsız) → verificationStatus = "unverified" → /dashboard (kı
        ↓
 Firestore: verificationStatus = "pending"
        ↓
+Dashboard + akış (okuma) — turuncu banner: "Doğrulaman inceleniyor"
+Yazma / arkadaş / mesaj kapalı (onay sonrası otomatik açılır)
+       ↓
 Kadın temsilci inceler (/temsilci)
        ↓
 Onayla & Sil  →  "approved"  →  tam erişim
@@ -188,6 +192,8 @@ Fotoğraf diskten silinir — kalıcı kalmaz
 ```
 
 ### Kullanıcıya gösterilen güven metni (özet)
+
+> **Kullanıcı / müşteri iletişimi (doğrulama):** Tomris boş bir uygulama değildir — kadınların birbirine destek olduğu, gerçek bir **kadın dayanışma platformudur**. Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığınız zorlukları ve yorgunluğu biliyoruz; sizi bu uygulamada **rahat ve konforlu** hissettirmek istiyoruz. Doğrulama sizi yargılamak için değil, topluluğu güvende tutmak içindir. Kadın temsilcilerimiz her başvuruda görselin yapay zeka (AI) üretimi olmadığını, başka hesaptan alınmadığını ve kötü niyetli sahte profil olmadığını kontrol eder. Fotoğrafa yalnızca kadın temsilciler bakar; erkek adminler erişemez. İnceleme sonrası fotoğraf kalıcı olarak silinir. Onay gelene kadar kullanıcı akışı okuyabilir; paylaşım ve mesajlaşma onay sonrası açılır.
 
 > Bir kadın olarak ne kadar yorulduğunu biliyoruz. Doğrulamayı yalnızca kadın temsilciler gerçekleştirir. Erkek adminler ve genel yönetim panelinin bu fotoğraflara erişimi yoktur. Onay veya red sonrası fotoğraf kalıcı olarak silinir.
 
@@ -220,7 +226,7 @@ src/
 │       └── content-filter.ts  # Yasaklı kelime listesi
 ├── components/
 │   ├── posts/             # PostComposer, PostCard, PostFilters
-│   ├── VerificationBanner.tsx
+│   ├── VerificationStatusBanner.tsx
 │   ├── VerificationGate.tsx
 │   ├── VerificationIntro.tsx
 │   └── ...
@@ -228,7 +234,49 @@ src/
 
 data/verifications/          # Geçici fotoğraflar (git'e girmez)
 firestore.rules              # users, friendships, posts, comments, platform_bans...
+firestore.indexes.json       # Mesajlar / gruplar composite index tanımları
 ```
+
+---
+
+## Firestore Rules — Hangi dosya? (ÖNEMLİ)
+
+> **Kuralları terminale yapıştırma.** Firestore rules yalnızca [Firebase Console](https://console.firebase.google.com/project/tomrisapp/firestore/rules) → **Rules** sekmesine yapıştırılır ve **Publish** edilir. PowerShell / CMD'ye yapıştırırsan komut hatası alırsın — projeye veya Firebase'e zarar vermez, yok say.
+
+### Kullanılacak dosya: repodaki `firestore.rules`
+
+Chat'te veya eski notlarda dolaşan kısa rules sürümü **güncel değildir — onu kullanma.** Aşağıdaki farklar kritik:
+
+| Konu | Eski / yapıştırdığın sürüm | Repodaki `firestore.rules` |
+|------|---------------------------|----------------------------|
+| `users` update | Her owner istediğini yazar → **kendini `approved` yapabilir** | Sadece `chatVisibility` veya `pending` fotoğraf gönderimi |
+| `users` create | Her alan serbest | `unverified` zorunlu, ban alanları engelli |
+| `friendships` / `blocks` | Sadece `isSignedIn()` | **`isApproved()`** — doğrulanmadan arkadaşlık yok |
+| `conversations` update | Participant her alanı değiştirebilir | Sadece `lastMessage*` veya kontrollü gruba katılma |
+| `signals` | Herkes yazabilir | Client kapalı (henüz feature yok) |
+
+### Console'a doğru yükleme (3 adım)
+
+1. Bu repodaki [`firestore.rules`](firestore.rules) dosyasını aç — **tüm içeriği** kopyala
+2. Firebase Console → TomrisApp → **Firestore Database** → **Rules**
+3. Editörü temizle → yapıştır → **Publish**
+
+Doğru sürümde şu satırlar **mutlaka** görünmeli:
+
+```
+function userSelfUpdateAllowed() { ... }
+function groupJoinAllowed() { ... }
+function lastMessageUpdateAllowed() { ... }
+match /signals/{signalId} {
+  allow read, write: if false;
+}
+```
+
+Eski sürümde `allow update: if isOwner(userId);` ve `signals` için `allow write: if isSignedIn();` varsa — **yanlış rules yayında demektir**, hemen `firestore.rules` ile değiştir.
+
+### Index (mesajlar hatası)
+
+Rules'tan ayrı: `/mesajlar` için [`firestore.indexes.json`](firestore.indexes.json) index'leri Console'da oluştur. Detay: [`FIREBASE-KURULUM.md`](FIREBASE-KURULUM.md).
 
 ---
 
@@ -338,6 +386,9 @@ SESSION_SECRET=
 
 # Service Account — Firebase Console > Service Accounts > private key
 FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}
+
+# local = disk (npm run dev / VPS) | firebase = Storage (Vercel)
+VERIFICATION_PHOTO_STORAGE=local
 ```
 
 > ⚠️ `.env.local` ve indirilen JSON dosyasını asla Git'e commit etme.
@@ -373,8 +424,7 @@ FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}
 
 ## Sonraki Öncelikler
 
-1. ⏳ İlk uçtan uca test (kayıt → doğrulama → temsilci onayı → akış + sohbet)
-2. Firestore rules'u Firebase Console'da yayınla (`conversations`, `messages`, `posts`, `platform_bans`)
-3. Firestore index: `conversations` participantUids + updatedAt; `messages` createdAt
-4. Acil durum sinyali + push bildirim
+1. ⏳ Uçtan uca test + **git commit/push**
+2. Canlı deploy — adımlar: [`DEPLOY.md`](DEPLOY.md) (Vercel + Firebase Storage **veya** VPS + disk)
+3. Acil durum sinyali + push bildirim
 5. PWA / mobil uygulama dönüşümü

@@ -6,7 +6,7 @@ import { AuthLayout } from "@/components/AuthLayout";
 import { GenderVerification } from "@/components/GenderVerification";
 import { VerificationIntro } from "@/components/VerificationIntro";
 import { submitVerificationPhoto } from "@/lib/auth-helpers";
-import { isPlatformUnlocked } from "@/lib/auth-routing";
+import { isPlatformUnlocked, isVerificationPending } from "@/lib/auth-routing";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
 
@@ -23,8 +23,8 @@ export default function VerificationPage() {
     if (!loading && profile && isPlatformUnlocked(profile)) {
       router.replace("/dashboard");
     }
-    if (!loading && profile?.verificationStatus === "pending") {
-      router.replace("/dogrulama-bekliyor");
+    if (!loading && profile && isVerificationPending(profile)) {
+      router.replace("/dashboard");
     }
     if (!loading && profile?.verificationStatus === "banned") {
       router.replace("/hesap-yasaklandi");
@@ -38,7 +38,7 @@ export default function VerificationPage() {
     try {
       await submitVerificationPhoto(photoBlob);
       await refreshProfile();
-      router.push("/dogrulama-bekliyor");
+      router.push("/dashboard");
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : t.common.error);
     } finally {

@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
 import { isAdminConfigured } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
-import { saveLocalPhoto } from "@/lib/verification/local-storage";
+import { saveVerificationPhoto } from "@/lib/verification/photo-storage";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  await saveLocalPhoto(auth.uid, buffer);
+  await saveVerificationPhoto(auth.uid, buffer);
 
   return NextResponse.json({ success: true, uid: auth.uid });
 }

@@ -11,12 +11,14 @@ export const tr: TranslationDictionary = {
     error: "Bir hata oluştu",
     contentBlocked:
       "Metniniz şiddet, cinsiyetçi veya ırkçı ifadeler içeriyor. Tomris güvenli bir alandır.",
+    showPassword: "Şifreyi göster",
+    hidePassword: "Şifreyi gizle",
   },
   brand: {
     name: "Tomris",
-    tagline: "Kadına yönelik şiddete karşı dayanışma platformu",
+    tagline: "Kadına karşı her türlü şiddete karşı dayanışma platformu",
     footer: "Mor, dayanışmanın rengidir.",
-    solidarity: "Dayanışma platformu",
+    solidarity: "Kadın dayanışma platformu",
   },
   quote: {
     text: "Şuna inanmak lazımdır ki, dünya yüzünde gördüğümüz her şey kadının eseridir.",
@@ -220,6 +222,8 @@ export const tr: TranslationDictionary = {
     backLogin: "← Giriş sayfası",
     footerTerms: "Kullanım Koşulları",
     footerPrivacy: "Gizlilik",
+    switchToEnglish: "İngilizce",
+    switchToTurkish: "Türkçe",
     registerAccept: "Kullanım Koşulları ve Gizlilik Politikası'nı okudum, kabul ediyorum.",
     registerAcceptRequired: "Devam etmek için sözleşmeyi kabul etmelisiniz.",
     terms: {
@@ -303,27 +307,44 @@ export const tr: TranslationDictionary = {
     },
   },
   verification: {
-    bannerTitle: "Topluluğa tam katılmak için doğrulama gerekli",
+    bannerTitle: "Kadınların güvenliği için kısa bir adım",
     bannerBody:
-      "Şu an siteyi gezebilirsin; arkadaşlık, yorum ve diğer özellikler doğrulama sonrası açılır. Fotoğrafını yalnızca kadın temsilciler görür.",
+      "Tomris boş bir uygulama değil — gerçek bir kadın dayanışma alanı. Seni burada rahat ve konforlu hissettirmek istiyoruz. Şimdilik siteyi gezebilirsin; kadın temsilcilerimiz seni doğruladıktan sonra paylaşım, yorum ve mesajlaşma açılır.",
     bannerCta: "Doğrulamayı Başlat",
     pageTitle: "Topluluğa Katıl",
-    pageSubtitle: "Güvenli bir alan için kısa bir adım",
+    pageSubtitle: "Seni rahat ve konforlu hissettirmek için — kısa, gönüllü bir adım",
     introTitle: "Seni anlıyoruz",
     introBody:
-      "Bir kadın olarak ne kadar yorulduğunu biliyoruz. Tomris'te içeride elinden gelen rahatlığı sağlamak için kısa bir fotoğraf doğrulaması yapıyoruz — doğrulamayı yalnızca kadın temsilciler gerçekleştirir; böylece kötü niyetli troll ve sahte hesapları uzak tutuyoruz.",
+      "Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığın zorlukları ve yorgunluğu biliyoruz — seni anlıyoruz. Seni bu uygulamada rahat ve konforlu hissettirmek istiyoruz. Bu yüzden Tomris'te kısa bir fotoğraf doğrulaması yapıyoruz; doğrulamayı yalnızca kadın temsilcilerimiz gerçekleştirir. Bu adım seni yargılamak için değil, her kadının burada güvende ve huzurlu hissetmesi içindir.",
     introNote:
-      "Fotoğrafın yalnızca kadın temsilciler tarafından incelenir — erkek adminler ve genel yönetim panelinin bu fotoğraflara erişimi yoktur. Onay veya red sonrası kalıcı olarak silinir.",
+      "İnceleme biter bitmez fotoğrafın kalıcı olarak silinir. Erkek adminler ve genel yönetim panelinin bu görsellere erişimi yoktur. Onay gelene kadar akışı okuyabilirsin; yazma ve mesajlaşma onay sonrası açılır.",
+    introPoints: [
+      "Görselin yapay zeka (AI) ile üretilmediğinden emin olunur",
+      "Başka bir hesaptan veya internetten alınmadığı kontrol edilir",
+      "Kötü niyetli sahte profillerin önüne geçilir",
+    ],
     gateTitle: "Bu özellik doğrulama sonrası açılır",
     gateBody:
-      "Arkadaşlık isteği, gönderi, yorum ve diğer etkileşimler için önce kısa fotoğraf doğrulamasını tamamlaman gerekiyor. Endişelenme — fotoğrafın saklanmaz.",
+      "Kadın kullanıcılarımızın güvenliği için paylaşım, yorum, arkadaşlık ve mesajlaşma — kadın temsilcilerimiz kısa incelemeyi tamamladıktan sonra açılır. Endişelenme; fotoğrafın kalıcı saklanmaz.",
     gateCta: "Doğrulamaya Git",
+    pendingBannerTitle: "Doğrulaman inceleniyor",
+    pendingBannerBody:
+      "Kadın temsilcilerimiz fotoğrafını güvenlik amacıyla inceliyor: gerçeklik, yapay zeka (AI) veya başka hesaptan alınma kontrolü. Genelde birkaç saat sürer. Bu arada akışı okuyabilirsin; yazma ve mesaj onay sonrası açılır.",
+    pendingBannerCta: "Akışa göz at",
+    pendingGateTitle: "Onay sonrası açılacak",
+    pendingGateBody:
+      "Kadın temsilcilerimiz incelemeyi sürdürüyor. Onaylandığında paylaşım, yorum ve mesajlar otomatik açılır — sayfayı yenilemene gerek kalmaz.",
     statusUnverified: "Henüz doğrulanmadı",
     statusPending: "İnceleniyor",
     statusApproved: "Onaylandı ✓",
     statusRejected: "Reddedildi",
-    submitSuccess: "Fotoğrafın gönderildi. Kadın temsilciler inceleyecek.",
+    submitSuccess:
+      "Fotoğrafın güvenle iletildi. Kadın temsilcilerimiz inceleyecek; tamamlandığında bilgilendirileceksin.",
     rejectedRetry: "Tekrar Dene",
+    rejectedTitle: "Doğrulama tamamlanamadı",
+    rejectedSubtitle: "Endişelenme — tekrar deneyebilirsin",
+    rejectedBody:
+      "Kadın temsilcilerimiz gönderdiğin görseli güvenlik kontrolünden geçiremedi (örneğin net olmaması, AI görseli veya başka hesaba ait olması). Fotoğrafın silindi. Canlı, kendi çektiğin net bir selfie ile tekrar deneyebilirsin.",
   },
   ban: {
     pageTitle: "Hesap Yasaklandı",

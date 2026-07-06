@@ -9,6 +9,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
 import { needsProfileCompletion, isPlatformUnlocked } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
+import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { VerificationGate } from "@/components/VerificationGate";
 import { GroupFiltersBar, GroupLocationFields, defaultGroupLocation } from "@/components/chat/GroupLocationFields";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
@@ -39,6 +40,8 @@ function MessagesPageContent() {
   const [groups, setGroups] = useState<Conversation[]>([]);
   const [groupFilters, setGroupFilters] = useState(DEFAULT_GROUP_FILTERS);
   const [fetching, setFetching] = useState(true);
+  const [inboxError, setInboxError] = useState("");
+  const [groupsError, setGroupsError] = useState("");
   const [dmUsername, setDmUsername] = useState("");
   const [dmError, setDmError] = useState("");
   const [dmSubmitting, setDmSubmitting] = useState(false);
@@ -52,40 +55,44 @@ function MessagesPageContent() {
   const unlocked = isPlatformUnlocked(profile);
 
   const loadGroups = useCallback(async () => {
+    setGroupsError("");
     try {
       const allGroups = await fetchPublicGroups();
       setGroups(allGroups);
+    } catch {
+      setGroupsError(t.chat.errorLoad);
     } finally {
       setFetching(false);
     }
-  }, []);
+  }, [t.chat.errorLoad]);
 
   useEffect(() => {
     if (!user) return;
 
     setFetching(true);
+    setInboxError("");
     const unsub = subscribeToMyConversations(
       user.uid,
       (convs) => {
         setInbox(convs);
         setFetching(false);
       },
-      () => setFetching(false)
+      () => {
+        setInboxError(t.chat.errorLoad);
+        setFetching(false);
+      }
     );
 
     loadGroups();
 
     return unsub;
-  }, [user, loadGroups]);
+  }, [user, loadGroups, t.chat.errorLoad]);
 
   useEffect(() => {
     if (!loading && !user) router.replace("/giris");
     if (!loading && user && !profile) router.replace("/kayit-tamamla");
     if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
-    }
-    if (!loading && profile?.verificationStatus === "pending") {
-      router.replace("/dogrulama-bekliyor");
     }
     if (!loading && profile?.verificationStatus === "rejected") {
       router.replace("/dogrulama-reddedildi");
@@ -224,8 +231,13 @@ function MessagesPageContent() {
           ))}
         </div>
 
+        {!unlocked && <VerificationStatusBanner />}
+
+        {(inboxError || groupsError) && (
+          <div className="alert-error text-sm">{inboxError || groupsError}</div>
+        )}
+
         {groupMessage && <div className="alert-success text-sm">{groupMessage}</div>}
-        {groupError && <div className="alert-error text-sm">{groupError}</div>}
 
         {tab === "inbox" && (
           <div className="card space-y-3">

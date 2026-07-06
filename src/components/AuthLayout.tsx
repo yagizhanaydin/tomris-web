@@ -17,7 +17,7 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col tomris-gradient">
-      <div className="absolute top-4 right-4">
+      <div className="fixed top-4 right-4 z-20">
         <LanguageSwitcher />
       </div>
 

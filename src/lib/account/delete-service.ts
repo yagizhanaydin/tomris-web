@@ -1,7 +1,7 @@
 import { getAuth } from "firebase-admin/auth";
 import type { Query } from "firebase-admin/firestore";
 import { getAdminApp, getAdminDb } from "@/lib/firebase-admin";
-import { deleteLocalPhoto } from "@/lib/verification/local-storage";
+import { deleteVerificationPhoto } from "@/lib/verification/photo-storage";
 import type { UserProfile } from "@/types/user";
 
 async function deleteQueryBatch(query: Query, batchSize = 100): Promise<void> {
@@ -25,9 +25,9 @@ export async function deleteUserAccount(uid: string): Promise<void> {
 
   if (userSnap.exists) {
     const profile = userSnap.data() as UserProfile;
-    await deleteLocalPhoto(profile.verificationPhotoPath || uid);
+    await deleteVerificationPhoto(profile.verificationPhotoPath || uid);
   } else {
-    await deleteLocalPhoto(uid);
+    await deleteVerificationPhoto(uid);
   }
 
   await deleteQueryBatch(

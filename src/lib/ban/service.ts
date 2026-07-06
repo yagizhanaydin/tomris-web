@@ -1,6 +1,6 @@
 import { getAuth } from "firebase-admin/auth";
 import { getAdminApp, getAdminDb } from "@/lib/firebase-admin";
-import { deleteLocalPhoto } from "@/lib/verification/local-storage";
+import { deleteVerificationPhoto } from "@/lib/verification/photo-storage";
 import type { UserProfile } from "@/types/user";
 import type { PlatformBan } from "@/types/ban";
 
@@ -51,7 +51,7 @@ export async function banUser(
 
   const profile = snap.data() as UserProfile;
 
-  await deleteLocalPhoto(profile.verificationPhotoPath || uid);
+  await deleteVerificationPhoto(profile.verificationPhotoPath || uid);
 
   const email = normalizeEmail(profile.email);
   const now = new Date().toISOString();

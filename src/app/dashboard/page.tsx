@@ -9,12 +9,11 @@ import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
 import {
   needsProfileCompletion,
-  needsVerificationPhoto,
   isPlatformUnlocked,
 } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
 import { AtaturkQuote } from "@/components/AtaturkQuote";
-import { VerificationBanner } from "@/components/VerificationBanner";
+import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -26,9 +25,6 @@ export default function DashboardPage() {
     if (!loading && user && !profile) router.replace("/kayit-tamamla");
     if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
-    }
-    if (!loading && profile?.verificationStatus === "pending") {
-      router.replace("/dogrulama-bekliyor");
     }
     if (!loading && profile?.verificationStatus === "rejected") {
       router.replace("/dogrulama-reddedildi");
@@ -53,14 +49,14 @@ export default function DashboardPage() {
 
   const verificationLabel = isPlatformUnlocked(profile)
     ? t.verification.statusApproved
-    : needsVerificationPhoto(profile)
-      ? t.verification.statusUnverified
-      : t.verification.statusPending;
+    : profile.verificationStatus === "pending"
+      ? t.verification.statusPending
+      : t.verification.statusUnverified;
 
   return (
     <AppShell onLogout={handleLogout}>
       <div className="space-y-6">
-        {needsVerificationPhoto(profile) && <VerificationBanner />}
+        {!isPlatformUnlocked(profile) && <VerificationStatusBanner />}
 
         <div className="card">
           <h1 className="text-xl sm:text-3xl font-bold text-tomris mb-1">

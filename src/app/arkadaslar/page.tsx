@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
 import { needsProfileCompletion, isPlatformUnlocked } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
+import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { VerificationGate } from "@/components/VerificationGate";
 import { validateUsername, normalizeUsername } from "@/lib/security/validate";
 import {
@@ -60,9 +61,6 @@ export default function FriendsPage() {
     if (!loading && user && !profile) router.replace("/kayit-tamamla");
     if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
-    }
-    if (!loading && profile?.verificationStatus === "pending") {
-      router.replace("/dogrulama-bekliyor");
     }
     if (!loading && profile?.verificationStatus === "rejected") {
       router.replace("/dogrulama-reddedildi");
@@ -180,6 +178,8 @@ export default function FriendsPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-tomris">{t.friends.title}</h1>
           <p className="text-sm text-[var(--muted)] mt-1">{t.friends.subtitle}</p>
         </div>
+
+        {!unlocked && <VerificationStatusBanner />}
 
         <div className="card space-y-4">
           <h2 className="font-semibold text-tomris">{t.friends.addFriend}</h2>

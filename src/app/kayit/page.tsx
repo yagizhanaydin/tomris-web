@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import { AuthLayout } from "@/components/AuthLayout";
+import { PasswordField } from "@/components/PasswordField";
 import { registerWithEmail, createGoogleProfile, checkEmailNotBanned } from "@/lib/auth-helpers";
 import { getPostAuthRedirect } from "@/lib/auth-routing";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
@@ -188,14 +189,15 @@ export default function RegisterPage() {
           <label htmlFor="password" className="block text-sm font-medium mb-1.5 text-tomris">
             Şifre
           </label>
-          <input
+          <PasswordField
             id="password"
-            type="password"
-            required
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input-field"
+            onChange={setPassword}
             placeholder="En az 6 karakter"
+            required
+            showLabel={t.common.showPassword}
+            hideLabel={t.common.hidePassword}
+            autoComplete="new-password"
           />
         </div>
 
@@ -203,14 +205,15 @@ export default function RegisterPage() {
           <label htmlFor="confirmPassword" className="block text-sm font-medium mb-1.5 text-tomris">
             Şifre Tekrar
           </label>
-          <input
+          <PasswordField
             id="confirmPassword"
-            type="password"
-            required
             value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            className="input-field"
+            onChange={setConfirmPassword}
             placeholder="Şifrenizi tekrar girin"
+            required
+            showLabel={t.common.showPassword}
+            hideLabel={t.common.hidePassword}
+            autoComplete="new-password"
           />
         </div>
 
@@ -269,7 +272,7 @@ export default function RegisterPage() {
           <div className="w-full border-t border-[var(--border)]" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-white text-[var(--muted)]">veya</span>
+          <span className="px-3 bg-white text-[var(--muted)]">{t.common.or}</span>
         </div>
       </div>
 

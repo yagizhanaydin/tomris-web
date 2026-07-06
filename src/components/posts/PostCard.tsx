@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageProvider";
+import { localeToIntl } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n/types";
 import { fetchComments, addComment } from "@/lib/posts/service";
 import { ContentBlockedError } from "@/lib/security/content-filter";
 import { formatPostLocation } from "@/lib/locations";
@@ -17,8 +19,8 @@ interface PostCardProps {
   genderLabel: (gender: Post["authorGender"]) => string;
 }
 
-function formatDate(iso: string, locale: string) {
-  return new Date(iso).toLocaleString(locale === "en" ? "en-GB" : "tr-TR", {
+function formatDate(iso: string, locale: Locale) {
+  return new Date(iso).toLocaleString(localeToIntl(locale), {
     day: "numeric",
     month: "short",
     year: "numeric",

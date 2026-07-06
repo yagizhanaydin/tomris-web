@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { isRepSession } from "@/lib/auth/session";
-import { readLocalPhoto } from "@/lib/verification/local-storage";
+import { readVerificationPhoto } from "@/lib/verification/photo-storage";
 
 export async function GET(
   request: NextRequest,
@@ -17,7 +17,7 @@ export async function GET(
     return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
   }
 
-  const photo = await readLocalPhoto(uid);
+  const photo = await readVerificationPhoto(uid);
   if (!photo) {
     return NextResponse.json({ error: "Fotoğraf bulunamadı." }, { status: 404 });
   }

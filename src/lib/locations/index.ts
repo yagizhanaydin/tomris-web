@@ -8,7 +8,7 @@ export const TR_COUNTRY = "Türkiye";
 export { CITIES_TR, getDistricts, EU_COUNTRY_LIST, getEuCities };
 
 export function getCountryLabel(country: string, locale: Locale): string {
-  if (locale === "en" && COUNTRY_EN[country]) return COUNTRY_EN[country];
+  if (locale !== "tr" && COUNTRY_EN[country]) return COUNTRY_EN[country];
   return country;
 }
 

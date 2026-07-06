@@ -1,4 +1,4 @@
-export type Locale = "tr" | "en";
+export type Locale = "tr" | "en" | "de" | "fr" | "es";
 
 export interface TranslationDictionary {
   common: {
@@ -10,6 +10,8 @@ export interface TranslationDictionary {
     or: string;
     error: string;
     contentBlocked: string;
+    showPassword: string;
+    hidePassword: string;
   };
   brand: {
     name: string;
@@ -217,6 +219,8 @@ export interface TranslationDictionary {
     backLogin: string;
     footerTerms: string;
     footerPrivacy: string;
+    switchToEnglish: string;
+    switchToTurkish: string;
     registerAccept: string;
     registerAcceptRequired: string;
     terms: {
@@ -250,11 +254,20 @@ export interface TranslationDictionary {
     gateTitle: string;
     gateBody: string;
     gateCta: string;
+    pendingBannerTitle: string;
+    pendingBannerBody: string;
+    pendingBannerCta: string;
+    pendingGateTitle: string;
+    pendingGateBody: string;
     statusUnverified: string;
     statusPending: string;
     statusApproved: string;
     statusRejected: string;
     submitSuccess: string;
     rejectedRetry: string;
+    rejectedTitle: string;
+    rejectedSubtitle: string;
+    rejectedBody: string;
+    introPoints: string[];
   };
 }

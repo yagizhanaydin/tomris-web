@@ -11,7 +11,7 @@ import {
   isPlatformUnlocked,
 } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
-import { VerificationBanner } from "@/components/VerificationBanner";
+import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { VerificationGate } from "@/components/VerificationGate";
 import { PostFiltersBar } from "@/components/posts/PostFilters";
 import { PostComposer } from "@/components/posts/PostComposer";
@@ -56,9 +56,6 @@ export default function FeedPage() {
     if (!loading && user && !profile) router.replace("/kayit-tamamla");
     if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
-    }
-    if (!loading && profile?.verificationStatus === "pending") {
-      router.replace("/dogrulama-bekliyor");
     }
     if (!loading && profile?.verificationStatus === "rejected") {
       router.replace("/dogrulama-reddedildi");
@@ -134,7 +131,7 @@ export default function FeedPage() {
           <p className="text-sm text-[var(--muted)] mt-1">{t.posts.subtitle}</p>
         </div>
 
-        {!unlocked && <VerificationBanner />}
+        {!unlocked && <VerificationStatusBanner />}
 
         {unlocked ? (
           <PostComposer onPublish={handlePublish} />

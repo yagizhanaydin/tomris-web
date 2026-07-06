@@ -1,24 +1,36 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageProvider";
-import type { Locale } from "@/lib/i18n/types";
+import { LOCALE_ARIA, LOCALE_CODES, SUPPORTED_LOCALES } from "@/lib/i18n";
 
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
   const { locale, setLocale } = useLanguage();
 
-  const toggle = () => {
-    const next: Locale = locale === "tr" ? "en" : "tr";
-    setLocale(next);
-  };
-
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-label={locale === "tr" ? "Switch to English" : "Türkçe'ye geç"}
-      className={`text-xs sm:text-sm px-3 py-1.5 rounded-lg border border-[var(--border)] text-tomris font-medium hover:bg-[var(--primary-light)] transition-colors ${className}`}
+    <div
+      className={`flex flex-col gap-1 ${className}`}
+      role="group"
+      aria-label="Language"
     >
-      {locale === "tr" ? "EN" : "TR"}
-    </button>
+      {SUPPORTED_LOCALES.map((code) => {
+        const active = locale === code;
+        return (
+          <button
+            key={code}
+            type="button"
+            onClick={() => setLocale(code)}
+            aria-label={LOCALE_ARIA[code]}
+            aria-current={active ? "true" : undefined}
+            className={`w-10 text-xs sm:text-sm py-1.5 rounded-lg border font-semibold tracking-wide transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomris/40 ${
+              active
+                ? "border-tomris bg-tomris text-white"
+                : "border-[var(--border)] bg-white/90 text-tomris hover:bg-[var(--primary-light)]"
+            }`}
+          >
+            {LOCALE_CODES[code]}
+          </button>
+        );
+      })}
+    </div>
   );
 }

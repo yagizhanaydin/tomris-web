@@ -1,5 +1,5 @@
 import { getAdminDb } from "@/lib/firebase-admin";
-import { deleteLocalPhoto } from "@/lib/verification/local-storage";
+import { deleteVerificationPhoto } from "@/lib/verification/photo-storage";
 import type { UserProfile, VerificationStatus } from "@/types/user";
 
 export { getVerificationPhotoId } from "./paths";
@@ -27,7 +27,7 @@ async function finalizeReview(
     throw new Error("already_reviewed");
   }
 
-  await deleteLocalPhoto(profile.verificationPhotoPath || uid);
+  await deleteVerificationPhoto(profile.verificationPhotoPath || uid);
 
   const now = new Date().toISOString();
   await ref.update({

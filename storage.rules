@@ -2,14 +2,10 @@ rules_version = '2';
 
 service firebase.storage {
   match /b/{bucket}/o {
-    // Geçici doğrulama fotoğrafları — temsilci onay/red sonrası sunucu siler
-    match /verifications/pending/{userId}.jpg {
-      allow read: if request.auth != null && request.auth.uid == userId;
-      allow write: if request.auth != null
-                   && request.auth.uid == userId
-                   && request.resource.size < 5 * 1024 * 1024
-                   && request.resource.contentType.matches('image/.*');
-      allow delete: if false;
+    // Doğrulama fotoğrafları yalnızca sunucu (Admin SDK) yazar/okur/siler.
+    // Kadın temsilci fotoğrafı /api/temsilci/.../photo üzerinden görür — client erişimi kapalı.
+    match /verifications/{allPaths=**} {
+      allow read, write: if false;
     }
   }
 }

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { AuthLayout } from "@/components/AuthLayout";
+import { PasswordField } from "@/components/PasswordField";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
@@ -111,13 +112,13 @@ export default function LoginPage() {
               {t.auth.login.forgotPassword}
             </Link>
           </div>
-          <input
+          <PasswordField
             id="password"
-            type="password"
-            required
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input-field"
+            onChange={setPassword}
+            required
+            showLabel={t.common.showPassword}
+            hideLabel={t.common.hidePassword}
           />
         </div>
 

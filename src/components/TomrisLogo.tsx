@@ -1,3 +1,7 @@
+"use client";
+
+import { useLanguage } from "@/context/LanguageProvider";
+
 interface TomrisLogoProps {
   size?: "sm" | "md" | "lg";
   showText?: boolean;
@@ -16,6 +20,8 @@ const textSizes = {
 };
 
 export function TomrisLogo({ size = "md", showText = true }: TomrisLogoProps) {
+  const { t } = useLanguage();
+
   return (
     <div className="flex items-center gap-3">
       <div
@@ -27,11 +33,9 @@ export function TomrisLogo({ size = "md", showText = true }: TomrisLogoProps) {
       {showText && (
         <div className="text-left">
           <p className={`font-bold ${textSizes[size]} text-tomris leading-tight tracking-tight`}>
-            Tomris
+            {t.brand.name}
           </p>
-          <p className="text-xs text-[var(--muted)] hidden sm:block">
-            Dayanışma platformu
-          </p>
+          <p className="text-[10px] sm:text-xs text-[var(--muted)] leading-snug">{t.brand.solidarity}</p>
         </div>
       )}
     </div>

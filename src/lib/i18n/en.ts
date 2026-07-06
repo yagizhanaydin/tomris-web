@@ -11,12 +11,14 @@ export const en: TranslationDictionary = {
     error: "An error occurred",
     contentBlocked:
       "Your text contains violent, sexist, or racist language. Tomris is a safe space.",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
   },
   brand: {
     name: "Tomris",
-    tagline: "Solidarity platform against violence against women",
+    tagline: "Solidarity platform against all forms of violence against women",
     footer: "Purple is the color of solidarity.",
-    solidarity: "Solidarity platform",
+    solidarity: "Women's solidarity platform",
   },
   quote: {
     text: "One must believe that everything we see on the face of the earth is the work of women.",
@@ -220,6 +222,8 @@ export const en: TranslationDictionary = {
     backLogin: "← Back to login",
     footerTerms: "Terms",
     footerPrivacy: "Privacy",
+    switchToEnglish: "English",
+    switchToTurkish: "Turkish",
     registerAccept: "I have read and accept the Terms of Service and Privacy Policy.",
     registerAcceptRequired: "You must accept the terms to continue.",
     terms: {
@@ -303,27 +307,44 @@ export const en: TranslationDictionary = {
     },
   },
   verification: {
-    bannerTitle: "Verification required to fully join the community",
+    bannerTitle: "A brief step for women's safety",
     bannerBody:
-      "You can browse for now; friends, comments, and other features unlock after verification. Only women representatives will see your photo.",
+      "Tomris is not an empty app — it is a real solidarity space. The safety of our women users is our priority. You can browse for now; posting, comments, and messaging unlock after our women representatives verify you.",
     bannerCta: "Start Verification",
     pageTitle: "Join the Community",
-    pageSubtitle: "One quick step for a safer space",
+    pageSubtitle: "So you feel comfortable and at ease — a brief, voluntary step",
     introTitle: "We understand",
     introBody:
-      "As women, we know how exhausting it can be. To help everyone feel at ease inside Tomris, we use brief photo verification — reviewed only by women representatives — keeping out trolls and bad-faith accounts.",
+      "As women, we know the difficulties and exhaustion you face in digital spaces and in real life — we understand you. We want you to feel comfortable and at ease in this app. That's why we use brief photo verification, carried out only by our women representatives. This step is not to judge you; it helps every woman here feel safe and at peace.",
     introNote:
-      "Your photo is reviewed only by women representatives — male admins and the general admin panel cannot access it. It is permanently deleted after approval or rejection.",
+      "Your photo is permanently deleted as soon as the review ends. Male admins and the general admin panel cannot access these images. Until approval, you can read the feed; posting and messaging unlock afterward.",
+    introPoints: [
+      "We check the image is not AI-generated",
+      "We check it was not taken from another account or the internet",
+      "We help keep out bad-faith fake profiles",
+    ],
     gateTitle: "This feature unlocks after verification",
     gateBody:
-      "Friend requests, posts, comments, and other interactions require verification first. Don't worry — your photo is not stored permanently.",
+      "For the safety of our women users, posting, comments, friends, and messaging open after our women representatives complete a brief review. Your photo is not stored permanently.",
     gateCta: "Go to Verification",
+    pendingBannerTitle: "Your verification is under review",
+    pendingBannerBody:
+      "Our women representatives are reviewing your photo for security: authenticity, AI-generated images, or photos taken from other accounts. This usually takes a few hours. You can browse the feed meanwhile.",
+    pendingBannerCta: "Browse feed",
+    pendingGateTitle: "Unlocks after approval",
+    pendingGateBody:
+      "Our women representatives are still reviewing. Once approved, posting, comments, and messages open automatically — no refresh needed.",
     statusUnverified: "Not verified yet",
     statusPending: "Under review",
     statusApproved: "Approved ✓",
     statusRejected: "Rejected",
-    submitSuccess: "Your photo was submitted. Women representatives will review it.",
+    submitSuccess:
+      "Your photo was sent securely. Our women representatives will review it and you will be notified when done.",
     rejectedRetry: "Try Again",
+    rejectedTitle: "Verification could not be completed",
+    rejectedSubtitle: "Don't worry — you can try again",
+    rejectedBody:
+      "Our women representatives could not pass your image through the security check (for example: unclear photo, AI image, or photo belonging to another account). Your photo was deleted. Please try again with a clear, live selfie you took yourself.",
   },
   ban: {
     pageTitle: "Account Banned",

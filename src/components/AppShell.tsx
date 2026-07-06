@@ -23,13 +23,16 @@ export function AppShell({ children, onLogout }: AppShellProps) {
   ];
 
   return (
-    <div className="min-h-screen tomris-gradient">
+    <div className="min-h-screen tomris-gradient relative">
+      <div className="fixed top-4 right-4 z-20">
+        <LanguageSwitcher />
+      </div>
+
       <header className="bg-white/90 backdrop-blur border-b border-[var(--border)] sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4">
+        <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4 pr-14">
           <div className="flex items-center justify-between gap-3">
             <TomrisLogo size="sm" showText />
             <div className="flex items-center gap-2">
-              <LanguageSwitcher />
               {onLogout && (
                 <button
                   onClick={onLogout}
