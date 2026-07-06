@@ -6,7 +6,8 @@ import {
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
 import { getVerificationPhotoId } from "@/lib/verification/paths";
-import { normalizeUsername } from "@/lib/security/validate";
+import { normalizeUsername, validateUsername } from "@/lib/security/validate";
+import { findBannedTerm } from "@/lib/security/content-filter";
 import type { Gender, UserProfile } from "@/types/user";
 
 export async function checkEmailNotBanned(email: string): Promise<void> {
@@ -61,6 +62,13 @@ export async function registerWithEmail(
 ) {
   await checkEmailNotBanned(email);
 
+  const normalizedUsername = normalizeUsername(username);
+  if (!validateUsername(normalizedUsername)) {
+    throw new Error(
+      findBannedTerm(normalizedUsername) ? "CONTENT_BLOCKED" : "INVALID_USERNAME"
+    );
+  }
+
   const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   const { user } = credential;
 
@@ -88,8 +96,15 @@ export async function createGoogleProfile(
 ) {
   await checkEmailNotBanned(email);
 
+  const normalizedUsername = normalizeUsername(username);
+  if (!validateUsername(normalizedUsername)) {
+    throw new Error(
+      findBannedTerm(normalizedUsername) ? "CONTENT_BLOCKED" : "INVALID_USERNAME"
+    );
+  }
+
   await saveUserProfile(uid, {
-    username: normalizeUsername(username),
+    username: normalizedUsername,
     email,
     gender,
     verificationPhotoPath: "",

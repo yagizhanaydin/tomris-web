@@ -54,14 +54,41 @@ service cloud.firestore {
       allow update: if false;
     }
 
+    function isApproved() {
+      return isSignedIn() &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.verificationStatus == 'approved';
+    }
+
     match /posts/{postId} {
       allow read: if isSignedIn();
-      allow write: if isSignedIn();
+
+      allow create: if isApproved() &&
+        request.resource.data.authorUid == request.auth.uid &&
+        request.resource.data.region in ['tr', 'eu'] &&
+        request.resource.data.audience in ['all', 'kadin', 'erkek'] &&
+        request.resource.data.authorGender in ['kadin', 'erkek'] &&
+        request.resource.data.keys().hasAll([
+          'authorUid', 'authorUsername', 'authorGender', 'content',
+          'region', 'country', 'city', 'district', 'audience', 'createdAt'
+        ]);
+
+      allow update, delete: if isApproved() &&
+        resource.data.authorUid == request.auth.uid;
     }
 
     match /comments/{commentId} {
       allow read: if isSignedIn();
-      allow write: if isSignedIn();
+
+      allow create: if isApproved() &&
+        request.resource.data.authorUid == request.auth.uid &&
+        request.resource.data.keys().hasAll([
+          'postId', 'authorUid', 'authorUsername', 'content', 'createdAt'
+        ]);
+
+      allow delete: if isApproved() &&
+        resource.data.authorUid == request.auth.uid;
+
+      allow update: if false;
     }
 
     match /signals/{signalId} {

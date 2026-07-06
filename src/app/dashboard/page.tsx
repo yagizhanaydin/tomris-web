@@ -91,32 +91,30 @@ export default function DashboardPage() {
         </div>
 
         <div className="card">
-          <h2 className="text-lg font-semibold text-tomris mb-3">{t.dashboard.comingSoon}</h2>
-          <ul className="space-y-2 text-sm text-[var(--muted)] mb-4">
+          <h2 className="text-lg font-semibold text-tomris mb-3">{t.nav.feed}</h2>
+          <p className="text-sm text-[var(--muted)] mb-4">{t.posts.subtitle}</p>
+          <div className="flex flex-wrap gap-3">
+            <Link
+              href="/akis"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
+            >
+              {t.nav.feed} →
+            </Link>
+            {isPlatformUnlocked(profile) && (
+              <Link
+                href="/arkadaslar"
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-xl border border-[var(--border)] text-tomris font-medium hover:bg-primary-light transition-colors"
+              >
+                {t.dashboard.friends} →
+              </Link>
+            )}
+          </div>
+          <ul className="space-y-2 text-sm text-[var(--muted)] mt-4">
             <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-primary" />
-              {t.dashboard.posts}
-            </li>
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-primary" />
+              <span className="w-2 h-2 rounded-full bg-[var(--muted)]" />
               {t.dashboard.signal}
             </li>
           </ul>
-          {isPlatformUnlocked(profile) ? (
-            <Link
-              href="/arkadaslar"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
-            >
-              {t.dashboard.friends} →
-            </Link>
-          ) : (
-            <Link
-              href="/dogrulama"
-              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
-            >
-              {t.verification.bannerCta} →
-            </Link>
-          )}
         </div>
       </div>
     </AppShell>

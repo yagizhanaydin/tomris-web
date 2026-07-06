@@ -6,11 +6,13 @@ import { AuthLayout } from "@/components/AuthLayout";
 import { createGoogleProfile } from "@/lib/auth-helpers";
 import { getPostAuthRedirect, needsProfileCompletion } from "@/lib/auth-routing";
 import { useAuth } from "@/context/AuthProvider";
+import { useLanguage } from "@/context/LanguageProvider";
 import type { Gender } from "@/types/user";
 
 export default function CompleteRegistrationPage() {
   const router = useRouter();
   const { user, profile, loading, refreshProfile } = useAuth();
+  const { t } = useLanguage();
   const [username, setUsername] = useState("");
   const [gender, setGender] = useState<Gender | "">("");
   const [error, setError] = useState("");
@@ -49,7 +51,14 @@ export default function CompleteRegistrationPage() {
       await refreshProfile();
       router.push("/dashboard");
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Profil tamamlanamadı.");
+      const message = err instanceof Error ? err.message : "";
+      if (message === "CONTENT_BLOCKED") {
+        setError(t.common.contentBlocked);
+      } else if (message === "INVALID_USERNAME") {
+        setError(t.friends.invalidUsername);
+      } else {
+        setError(message || "Profil tamamlanamadı.");
+      }
     } finally {
       setSubmitting(false);
     }

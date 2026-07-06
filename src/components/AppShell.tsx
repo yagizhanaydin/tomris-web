@@ -17,6 +17,7 @@ export function AppShell({ children, onLogout }: AppShellProps) {
 
   const navItems = [
     { href: "/dashboard", label: t.nav.dashboard },
+    { href: "/akis", label: t.nav.feed },
     { href: "/arkadaslar", label: t.nav.friends },
   ];
 

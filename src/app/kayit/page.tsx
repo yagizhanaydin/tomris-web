@@ -52,6 +52,10 @@ export default function RegisterPage() {
         err instanceof Error ? err.message : "Kayıt sırasında bir hata oluştu.";
       if (message === "BANNED_EMAIL") {
         setError(t.ban.registerBlocked);
+      } else if (message === "CONTENT_BLOCKED") {
+        setError(t.common.contentBlocked);
+      } else if (message === "INVALID_USERNAME") {
+        setError(t.friends.invalidUsername);
       } else if (message.includes("email-already-in-use")) {
         setError("Bu e-posta adresi zaten kullanılıyor.");
       } else {
@@ -100,6 +104,12 @@ export default function RegisterPage() {
       if (message === "BANNED_EMAIL") {
         await getFirebaseAuth().signOut();
         setError(t.ban.registerBlocked);
+      } else if (message === "CONTENT_BLOCKED") {
+        await getFirebaseAuth().signOut();
+        setError(t.common.contentBlocked);
+      } else if (message === "INVALID_USERNAME") {
+        await getFirebaseAuth().signOut();
+        setError(t.friends.invalidUsername);
       } else if (!message.includes("popup-closed")) {
         setError(message);
       }

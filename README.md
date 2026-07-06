@@ -61,13 +61,26 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 ### Ban Sistemi (troll / uygunsuz içerik)
 - [x] Temsilci panelinde **Kalıcı Yasakla** (Reddet'ten ayrı)
 - [x] Fotoğraf anında silinir, Firebase Auth hesabı devre dışı bırakılır
-- [x] E-posta `platform_bans` koleksiyonuna eklenir — **aynı mail ile tekrar kayıt olamaz**
+- [x] E-posta + UID `platform_bans` koleksiyonuna eklenir — **aynı mail ile tekrar kayıt olamaz**
 - [x] Yasaklı kullanıcı: `/hesap-yasaklandi`
 - [x] Kayıt öncesi e-posta ban kontrolü (`/api/auth/check-ban`)
+- [x] **IP ban yok** — hesap + e-posta bazlı yasak (paylaşımlı IP riski nedeniyle)
+
+### İçerik Moderasyonu (yasaklı kelime filtresi)
+- [x] TR / EN şiddet, cinsiyetçi ve ırkçı kelime listesi (`src/lib/security/content-filter.ts`)
+- [x] Kayıt ve kullanıcı adında kontrol (`kill`, `women killer`, `katil`, `öldür` vb.)
+- [x] Gönderi ve yorum metninde kontrol (`sanitizeText`)
+- [x] Birleşik yazım yakalanır (`womenkiller`, `kadınkiller`)
+- [x] TR / EN hata mesajları (`contentBlocked`, `errorBannedContent`)
 
 ### Sosyal
 - [x] Arkadaş ekleme / kabul / red / çıkarma / engelleme (`/arkadaslar`)
 - [x] Doğrulanmamış kullanıcılar sayfayı görür, etkileşim kilitli (`VerificationGate`)
+- [x] **Akış / gönderi paylaşma** (`/akis`) — Instagram tarzı metin gönderileri
+- [x] Gönderiye yorum (doğrulama gerekli)
+- [x] Konum: Türkiye (81 il + ilçe) ve **AB (27 ülke + şehir, ilçe yok)**
+- [x] Hedef kitle filtresi: tüm kullanıcılar / yalnızca kadın / yalnızca erkek
+- [x] Filtreler: bölge, il/ülke, ilçe, cinsiyet, hedef kitle, tarih aralığı
 
 ### UI / UX
 - [x] Mobil uyumlu Tailwind tasarım
@@ -85,9 +98,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 ## Planlanan Özellikler (Yapılacaklar)
 
 ### Sosyal
-- [ ] Gönderi paylaşma
-- [ ] Gönderiye yorum
-- [ ] Gönderi için il / ilçe seçme
+- [ ] Gönderiye fotoğraf ekleme
+- [ ] Beğeni / etkileşim sayacı
 
 ### Acil Durum
 - [ ] Sinyal gönderme — arkadaşlara acil bildirim
@@ -108,6 +120,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `/kayit-tamamla` | Google kayıt sonrası profil |
 | `/sifremi-unuttum` | Şifre sıfırlama |
 | `/dashboard` | Ana sayfa (doğrulanmamış: kısıtlı mod + banner) |
+| `/akis` | Topluluk akışı — gönderi, yorum, filtreler (paylaşım: doğrulama gerekli) |
 | `/dogrulama` | Fotoğraf doğrulama (isteğe bağlı adım) |
 | `/dogrulama-bekliyor` | Kadın temsilci onayı bekleniyor |
 | `/dogrulama-reddedildi` | Doğrulama reddedildi — tekrar denenebilir |
@@ -143,7 +156,7 @@ Kadın temsilci inceler (/temsilci)
        ↓
 Onayla & Sil  →  "approved"  →  tam erişim
 Reddet & Sil  →  "rejected"  →  tekrar /dogrulama
-Kalıcı Yasakla → "banned"   →  Auth devre dışı, e-posta ban listesinde
+Kalıcı Yasakla → "banned"   →  Auth devre dışı, e-posta + UID ban listesinde (IP ban yok)
        ↓
 Fotoğraf diskten silinir — kalıcı kalmaz
 ```
@@ -161,7 +174,7 @@ src/
 ├── app/
 │   ├── giris/ kayit/ kayit-tamamla/ sifremi-unuttum/
 │   ├── dashboard/ dogrulama/ dogrulama-bekliyor/ dogrulama-reddedildi/
-│   ├── hesap-yasaklandi/ arkadaslar/
+│   ├── hesap-yasaklandi/ arkadaslar/ akis/
 │   ├── temsilci/          # Kadın temsilci paneli
 │   ├── admin/             # Admin paneli (fotoğraf yok)
 │   └── api/
@@ -171,11 +184,16 @@ src/
 ├── lib/
 │   ├── auth-routing.ts    # Soft gate yönlendirme
 │   ├── ban/               # Kalıcı yasak servisi
+│   ├── posts/             # Gönderi ve yorum servisi
+│   ├── locations/         # TR iller/ilçeler + AB ülkeler/şehirler
 │   ├── verification/      # local-storage, service
 │   ├── friends/           # Arkadaşlık servisi
 │   ├── i18n/              # TR / EN
-│   └── security/validate.ts
+│   └── security/
+│       ├── validate.ts
+│       └── content-filter.ts  # Yasaklı kelime listesi
 ├── components/
+│   ├── posts/             # PostComposer, PostCard, PostFilters
 │   ├── VerificationBanner.tsx
 │   ├── VerificationGate.tsx
 │   ├── VerificationIntro.tsx
@@ -183,7 +201,7 @@ src/
 └── middleware.ts            # /admin ve /temsilci koruması
 
 data/verifications/          # Geçici fotoğraflar (git'e girmez)
-firestore.rules              # users, friendships, platform_bans...
+firestore.rules              # users, friendships, posts, comments, platform_bans...
 ```
 
 ---
@@ -225,6 +243,37 @@ firestore.rules              # users, friendships, platform_bans...
 ```
 
 Koleksiyonlar kayıt olunca **otomatik** oluşur — Firebase Console'dan elle oluşturma.
+
+### `posts`
+
+```typescript
+{
+  authorUid: string;
+  authorUsername: string;
+  authorGender: "kadin" | "erkek";
+  content: string;
+  region: "tr" | "eu";
+  country: string;       // TR için "TR"
+  city: string;
+  district: string;      // AB gönderilerinde boş
+  audience: "all" | "kadin" | "erkek";
+  createdAt: string;
+}
+```
+
+### `comments`
+
+```typescript
+{
+  postId: string;
+  authorUid: string;
+  authorUsername: string;
+  content: string;
+  createdAt: string;
+}
+```
+
+> Gönderi ve yorum oluşturmak için Firestore rules: `verificationStatus == "approved"` (`isApproved()`).
 
 ---
 
@@ -272,7 +321,8 @@ FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}
 - Doğrulama fotoğrafları: `data/verifications/` — dışarıdan erişilemez
 - Fotoğraf API'si yalnızca **temsilci oturumu** ile (`isRepSession`) — admin erişemez
 - Onay / red / yasak sonrası fotoğraf diskten silinir
-- Kalıcı yasak: Firebase Auth `disabled: true` + e-posta ban listesi
+- Kalıcı yasak: Firebase Auth `disabled: true` + e-posta/UID ban listesi (**IP ban yok**)
+- İçerik filtresi: `src/lib/security/content-filter.ts` — kayıt, kullanıcı adı, gönderi, yorum
 - Input doğrulama: `src/lib/security/validate.ts`
 - Şifre temsilciye veya Firestore'a **asla** yazılmaz
 
@@ -282,19 +332,21 @@ FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}
 
 1. `npm run dev`
 2. `/kayit` → kayıt ol (fotoğrafsız) → `/dashboard` (banner görünür)
-3. `/arkadaslar` → kilitli form
-4. `/dogrulama` → fotoğraf çek
-5. `/temsilci/giris` → kadın temsilci → **Onayla & Sil** (veya troll için **Kalıcı Yasakla**)
-6. `/giris` → kullanıcı giriş → tam erişim
-7. Firestore → `users` + gerekirse `platform_bans`
+3. `/akis` → akışı gör; gönderi/yorum kilitli (doğrulama gerekli)
+4. `/arkadaslar` → kilitli form
+5. `/dogrulama` → fotoğraf çek
+6. `/temsilci/giris` → kadın temsilci → **Onayla & Sil** (veya troll için **Kalıcı Yasakla**)
+7. `/giris` → kullanıcı giriş → `/akis` üzerinden gönderi + yorum dene
+8. Yasaklı kelime testi: kayıt veya gönderide `kill` vb. → engellenmeli
+9. Firestore → `users`, `posts`, `comments` + gerekirse `platform_bans`
 
 ---
 
 ## Sonraki Öncelikler
 
-1. ⏳ İlk uçtan uca test (kayıt → doğrulama → temsilci onayı)
-2. Firestore rules'u Firebase Console'da güncelle (`platform_bans`)
-3. Gönderi paylaşma + yorum + il/ilçe
+1. ⏳ İlk uçtan uca test (kayıt → doğrulama → temsilci onayı → akış)
+2. Firestore rules'u Firebase Console'da güncelle (`posts`, `comments`, `platform_bans`, `isApproved`)
+3. Firestore composite index: `comments` → `postId` + `createdAt` (gerekirse Console önerir)
 4. Acil durum sinyali + push bildirim
 5. Canlı chat (Firestore, Spark plan)
 6. PWA / mobil uygulama dönüşümü
