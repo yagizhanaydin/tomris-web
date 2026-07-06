@@ -11,11 +11,13 @@ import { AppShell } from "@/components/AppShell";
 import { ChatVisibilitySetting } from "@/components/settings/ChatVisibilitySetting";
 import { DeleteAccountSetting } from "@/components/settings/DeleteAccountSetting";
 import Link from "next/link";
+import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user, profile, loading, refreshProfile } = useAuth();
   const { t } = useLanguage();
+  useRedirectUnverifiedEmail();
 
   useEffect(() => {
     if (!loading && !user) router.replace("/giris");

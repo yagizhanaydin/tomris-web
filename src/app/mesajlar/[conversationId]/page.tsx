@@ -14,6 +14,7 @@ import { fetchConversation } from "@/lib/chat/service";
 import { conversationTitle } from "@/lib/chat/helpers";
 import { formatPostLocation } from "@/lib/locations";
 import type { Conversation } from "@/types/chat";
+import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function ConversationPage() {
   const router = useRouter();
@@ -21,6 +22,7 @@ export default function ConversationPage() {
   const conversationId = params.conversationId as string;
   const { user, profile, loading } = useAuth();
   const { t, locale } = useLanguage();
+  useRedirectUnverifiedEmail();
 
   const [conversation, setConversation] = useState<Conversation | null>(null);
   const [fetching, setFetching] = useState(true);

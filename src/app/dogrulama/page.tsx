@@ -9,11 +9,13 @@ import { submitVerificationPhoto } from "@/lib/auth-helpers";
 import { isPlatformUnlocked, isVerificationPending } from "@/lib/auth-routing";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
+import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function VerificationPage() {
   const router = useRouter();
   const { user, profile, loading, refreshProfile } = useAuth();
   const { t } = useLanguage();
+  useRedirectUnverifiedEmail();
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 

@@ -14,11 +14,13 @@ import {
 import { AppShell } from "@/components/AppShell";
 import { AtaturkQuote } from "@/components/AtaturkQuote";
 import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
+import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
   const { t, ti } = useLanguage();
+  useRedirectUnverifiedEmail();
 
   useEffect(() => {
     if (!loading && !user) router.replace("/giris");

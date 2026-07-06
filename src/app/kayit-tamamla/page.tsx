@@ -24,7 +24,7 @@ export default function CompleteRegistrationPage() {
       return;
     }
     if (!loading && profile && !needsProfileCompletion(profile)) {
-      router.replace(getPostAuthRedirect(profile));
+      router.replace(getPostAuthRedirect(user, profile));
     }
     if (user?.displayName && !username) {
       setUsername(user.displayName);

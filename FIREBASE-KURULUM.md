@@ -74,6 +74,7 @@ Kontrol: Publish sonrası rules editöründe `userSelfUpdateAllowed` ve `signals
 | `Missing or insufficient permissions` | Repodaki `firestore.rules` yapıştır + Publish (eski kısa sürüm yetmez) |
 | `The query requires an index` | Aşağıdaki **Firestore Index** adımını uygula |
 | Fotoğraf yüklenemedi | `npm run dev` yeniden başlat |
+| Doğrulama e-postası gelmiyor | Spam klasörü · Firebase → Authentication → **Templates** · **Authorized domains** (`localhost`, canlı domain) |
 
 ---
 

@@ -49,6 +49,19 @@ export interface TranslationDictionary {
       success: string;
       backToLogin: string;
     };
+    verifyEmail: {
+      title: string;
+      subtitle: string;
+      sentTo: string;
+      checkSpam: string;
+      resend: string;
+      resending: string;
+      resent: string;
+      confirm: string;
+      confirming: string;
+      stillUnverified: string;
+      backToLogin: string;
+    };
   };
   dashboard: {
     welcome: string;

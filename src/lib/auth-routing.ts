@@ -1,4 +1,16 @@
+import type { User } from "firebase/auth";
 import type { UserProfile } from "@/types/user";
+
+/** E-posta/şifre ile kayıt — e-posta doğrulanmadan platforma giremez */
+export function needsEmailVerification(
+  user: User | null,
+  profile: UserProfile | null
+): boolean {
+  if (!user?.email) return false;
+  if (user.emailVerified) return false;
+  if (profile?.authProvider === "google") return false;
+  return user.providerData.some((p) => p.providerId === "password");
+}
 
 /** Google kaydı: kullanıcı adı ve cinsiyet eksik mi? */
 export function needsProfileCompletion(profile: UserProfile | null): boolean {
@@ -26,7 +38,11 @@ export function isPlatformUnlocked(profile: UserProfile | null): boolean {
 }
 
 /** Giriş sonrası yönlendirme hedefi */
-export function getPostAuthRedirect(profile: UserProfile | null): string {
+export function getPostAuthRedirect(
+  user: User | null,
+  profile: UserProfile | null
+): string {
+  if (needsEmailVerification(user, profile)) return "/eposta-dogrula";
   if (!profile || needsProfileCompletion(profile)) return "/kayit-tamamla";
 
   switch (profile.verificationStatus) {

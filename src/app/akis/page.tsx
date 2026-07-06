@@ -25,11 +25,13 @@ import {
 import { DEFAULT_POST_FILTERS } from "@/types/post";
 import type { Post, PostAudience, PostLocationInput } from "@/types/post";
 import type { Gender } from "@/types/user";
+import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function FeedPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
   const { t } = useLanguage();
+  useRedirectUnverifiedEmail();
 
   const [posts, setPosts] = useState<Post[]>([]);
   const [filters, setFilters] = useState(DEFAULT_POST_FILTERS);

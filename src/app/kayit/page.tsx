@@ -25,7 +25,6 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [successEmail, setSuccessEmail] = useState("");
   const [acceptedTerms, setAcceptedTerms] = useState(false);
 
   const handleFormSubmit = async (e: React.FormEvent) => {
@@ -52,7 +51,7 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       await registerWithEmail(username, email, password, gender as Gender);
-      setSuccessEmail(email);
+      router.replace("/eposta-dogrula");
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Kayıt sırasında bir hata oluştu.";
@@ -102,7 +101,7 @@ export default function RegisterPage() {
       const snap = await getDoc(doc(getFirebaseDb(), "users", user.uid));
       if (snap.exists()) {
         const profile = snap.data() as UserProfile;
-        router.replace(getPostAuthRedirect(profile));
+        router.replace(getPostAuthRedirect(getFirebaseAuth().currentUser, profile));
         return;
       }
 
@@ -127,28 +126,6 @@ export default function RegisterPage() {
       setGoogleLoading(false);
     }
   };
-
-  if (successEmail) {
-    return (
-      <AuthLayout title="Kayıt Başarılı" subtitle="Hoş geldin!">
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 mx-auto rounded-full bg-primary-light flex items-center justify-center">
-            <svg className="w-8 h-8 text-tomris" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <p className="text-[var(--muted)] text-sm leading-relaxed">
-            Hesabın oluşturuldu! <strong>{successEmail}</strong> adresine doğrulama e-postası
-            gönderdik. Siteyi gezebilirsin; arkadaşlık ve diğer özellikler için istediğin
-            zaman fotoğraf doğrulamasını tamamlayabilirsin.
-          </p>
-          <Link href="/dashboard" className="btn-primary inline-block text-center">
-            Ana Sayfaya Git
-          </Link>
-        </div>
-      </AuthLayout>
-    );
-  }
 
   return (
     <AuthLayout title="Kayıt Ol" subtitle="Yeni hesap oluşturun">

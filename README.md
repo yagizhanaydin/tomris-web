@@ -44,7 +44,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 ### Kimlik Doğrulama
 - [x] E-posta / şifre kayıt ve giriş
 - [x] Google (Gmail) giriş ve kayıt
-- [x] E-posta doğrulama (`sendEmailVerification`)
+- [x] E-posta doğrulama (`sendEmailVerification`) — **doğrulanmadan platforma giriş kapalı** (`/eposta-dogrula`)
 - [x] Google profil tamamlama (`/kayit-tamamla`)
 - [x] Şifremi unuttum (`/sifremi-unuttum`)
 
@@ -138,6 +138,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | URL | Açıklama |
 |-----|----------|
 | `/giris` | Kullanıcı girişi |
+| `/eposta-dogrula` | E-posta doğrulama (e-posta/şifre kayıtları) |
 | `/kayit` | Kayıt (fotoğrafsız) |
 | `/kayit-tamamla` | Google kayıt sonrası profil |
 | `/sifremi-unuttum` | Şifre sıfırlama |

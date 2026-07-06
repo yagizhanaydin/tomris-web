@@ -23,6 +23,7 @@ import {
 } from "@/lib/friends/service";
 import { getOrCreateDm } from "@/lib/chat/service";
 import type { Friendship } from "@/types/friendship";
+import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 type FriendErrorKey =
   | "userNotFound"
@@ -36,6 +37,7 @@ export default function FriendsPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
   const { t } = useLanguage();
+  useRedirectUnverifiedEmail();
 
   const [username, setUsername] = useState("");
   const [friendships, setFriendships] = useState<Friendship[]>([]);

@@ -3,14 +3,14 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { AuthLayout } from "@/components/AuthLayout";
 import { PasswordField } from "@/components/PasswordField";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
-import { getPostAuthRedirect } from "@/lib/auth-routing";
+import { getPostAuthRedirect, needsEmailVerification } from "@/lib/auth-routing";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -20,47 +20,34 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [needsVerification, setNeedsVerification] = useState(false);
 
   useEffect(() => {
-    if (!loading && user && profile) {
-      router.replace(getPostAuthRedirect(profile));
+    if (loading) return;
+    if (user && needsEmailVerification(user, profile)) {
+      router.replace("/eposta-dogrula");
+      return;
     }
-    if (!loading && user && !profile) router.replace("/kayit-tamamla");
+    if (user && profile) {
+      router.replace(getPostAuthRedirect(user, profile));
+    }
+    if (user && !profile) router.replace("/kayit-tamamla");
   }, [user, profile, loading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
-    setNeedsVerification(false);
     setSubmitting(true);
 
     try {
       const credential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
       if (!credential.user.emailVerified) {
-        setNeedsVerification(true);
-        setError(t.auth.login.errorUnverified);
-        setSubmitting(false);
+        router.replace("/eposta-dogrula");
         return;
       }
     } catch {
       setError(t.auth.login.errorInvalid);
     } finally {
       setSubmitting(false);
-    }
-  };
-
-  const handleResendVerification = async () => {
-    setResending(true);
-    try {
-      const auth = getFirebaseAuth();
-      if (auth.currentUser) {
-        await sendEmailVerification(auth.currentUser);
-        alert(t.auth.login.resendVerification);
-      }
-    } finally {
-      setResending(false);
     }
   };
 
@@ -76,17 +63,6 @@ export default function LoginPage() {
     <AuthLayout title={t.auth.login.title} subtitle={t.auth.login.subtitle}>
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && <div className="alert-error">{error}</div>}
-
-        {needsVerification && (
-          <button
-            type="button"
-            onClick={handleResendVerification}
-            disabled={resending}
-            className="w-full py-2 text-sm link-tomris underline disabled:opacity-50"
-          >
-            {resending ? t.auth.login.resending : t.auth.login.resendVerification}
-          </button>
-        )}
 
         <div>
           <label htmlFor="email" className="block text-sm font-medium mb-1.5 text-tomris">

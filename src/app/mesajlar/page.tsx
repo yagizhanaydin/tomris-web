@@ -26,6 +26,7 @@ import { conversationTitle } from "@/lib/chat/helpers";
 import { formatPostLocation } from "@/lib/locations";
 import { DEFAULT_GROUP_FILTERS } from "@/types/chat";
 import type { Conversation } from "@/types/chat";
+import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 type Tab = "inbox" | "groups" | "newDm";
 
@@ -34,6 +35,7 @@ function MessagesPageContent() {
   const searchParams = useSearchParams();
   const { user, profile, loading } = useAuth();
   const { t, locale } = useLanguage();
+  useRedirectUnverifiedEmail();
 
   const [tab, setTab] = useState<Tab>("inbox");
   const [inbox, setInbox] = useState<Conversation[]>([]);

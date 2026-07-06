@@ -4,6 +4,7 @@ import type { TranslationDictionary } from "./types";
 type AuthOverrides = {
   login?: Partial<TranslationDictionary["auth"]["login"]>;
   forgot?: Partial<TranslationDictionary["auth"]["forgot"]>;
+  verifyEmail?: Partial<TranslationDictionary["auth"]["verifyEmail"]>;
 };
 
 export function fromEnglish(overrides: {
@@ -21,6 +22,7 @@ export function fromEnglish(overrides: {
       ...en.auth,
       login: { ...en.auth.login, ...overrides.auth?.login },
       forgot: { ...en.auth.forgot, ...overrides.auth?.forgot },
+      verifyEmail: { ...en.auth.verifyEmail, ...overrides.auth?.verifyEmail },
     },
   };
 }

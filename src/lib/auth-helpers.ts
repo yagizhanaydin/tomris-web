@@ -73,7 +73,10 @@ export async function registerWithEmail(
   const { user } = credential;
 
   await updateProfile(user, { displayName: username });
-  await sendEmailVerification(user);
+  await sendEmailVerification(user, {
+    url: `${window.location.origin}/giris`,
+    handleCodeInApp: false,
+  });
 
   await saveUserProfile(user.uid, {
     username: normalizeUsername(username),
