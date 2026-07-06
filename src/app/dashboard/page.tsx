@@ -2,20 +2,39 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { signOut } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthProvider";
+import { useLanguage } from "@/context/LanguageProvider";
+import {
+  needsProfileCompletion,
+  needsVerificationPhoto,
+  isPlatformUnlocked,
+} from "@/lib/auth-routing";
+import { AppShell } from "@/components/AppShell";
+import { AtaturkQuote } from "@/components/AtaturkQuote";
+import { VerificationBanner } from "@/components/VerificationBanner";
 
 export default function DashboardPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
+  const { t, ti } = useLanguage();
 
   useEffect(() => {
-    if (!loading && !user) {
-      router.replace("/giris");
-    }
-    if (!loading && user && !profile) {
+    if (!loading && !user) router.replace("/giris");
+    if (!loading && user && !profile) router.replace("/kayit-tamamla");
+    if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
+    }
+    if (!loading && profile?.verificationStatus === "pending") {
+      router.replace("/dogrulama-bekliyor");
+    }
+    if (!loading && profile?.verificationStatus === "rejected") {
+      router.replace("/dogrulama-reddedildi");
+    }
+    if (!loading && profile?.verificationStatus === "banned") {
+      router.replace("/hesap-yasaklandi");
     }
   }, [user, profile, loading, router]);
 
@@ -26,66 +45,89 @@ export default function DashboardPage() {
 
   if (loading || !user || !profile) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--surface)]">
-        <div className="animate-spin w-8 h-8 border-4 border-[var(--primary)] border-t-transparent rounded-full" />
+      <div className="min-h-screen flex items-center justify-center tomris-gradient">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
 
+  const verificationLabel = isPlatformUnlocked(profile)
+    ? t.verification.statusApproved
+    : needsVerificationPhoto(profile)
+      ? t.verification.statusUnverified
+      : t.verification.statusPending;
+
   return (
-    <div className="min-h-screen bg-[var(--surface)]">
-      <header className="bg-white border-b border-[var(--border)] sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[var(--primary)] text-white flex items-center justify-center font-bold">
-              T
-            </div>
-            <span className="font-semibold text-lg hidden sm:block">Tomris Web</span>
-          </div>
-          <button
-            onClick={handleLogout}
-            className="text-sm px-4 py-2 rounded-lg border border-[var(--border)] hover:bg-gray-50 transition-colors"
-          >
-            Çıkış Yap
-          </button>
-        </div>
-      </header>
+    <AppShell onLogout={handleLogout}>
+      <div className="space-y-6">
+        {needsVerificationPhoto(profile) && <VerificationBanner />}
 
-      <main className="max-w-4xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-lg border border-[var(--border)] p-6 sm:p-8">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-2">
-            Hoş geldin, {profile.username}!
+        <div className="card">
+          <h1 className="text-xl sm:text-3xl font-bold text-tomris mb-1">
+            {ti(t.dashboard.welcome, { name: profile.username })}
           </h1>
-          <p className="text-[var(--muted)] mb-8">
-            Hesabınız başarıyla doğrulandı.
-          </p>
+          <p className="text-[var(--muted)] text-sm sm:text-base mb-6">{t.dashboard.joined}</p>
 
-          <div className="grid gap-4 sm:grid-cols-2">
-            <InfoCard label="E-posta" value={profile.email} />
+          <div className="mb-6">
+            <AtaturkQuote />
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <InfoCard label={t.dashboard.email} value={profile.email} />
             <InfoCard
-              label="Cinsiyet"
-              value={profile.gender === "kadin" ? "Kadın" : "Erkek"}
+              label={t.dashboard.gender}
+              value={profile.gender === "kadin" ? t.dashboard.female : t.dashboard.male}
             />
+            <InfoCard label={t.dashboard.verification} value={verificationLabel} />
             <InfoCard
-              label="Doğrulama"
-              value={profile.genderVerified ? "Tamamlandı ✓" : "Bekliyor"}
-            />
-            <InfoCard
-              label="Giriş Yöntemi"
-              value={profile.authProvider === "google" ? "Google" : "E-posta / Şifre"}
+              label={t.dashboard.authMethod}
+              value={
+                profile.authProvider === "google"
+                  ? t.dashboard.google
+                  : t.dashboard.emailPassword
+              }
             />
           </div>
         </div>
-      </main>
-    </div>
+
+        <div className="card">
+          <h2 className="text-lg font-semibold text-tomris mb-3">{t.dashboard.comingSoon}</h2>
+          <ul className="space-y-2 text-sm text-[var(--muted)] mb-4">
+            <li className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-primary" />
+              {t.dashboard.posts}
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-primary" />
+              {t.dashboard.signal}
+            </li>
+          </ul>
+          {isPlatformUnlocked(profile) ? (
+            <Link
+              href="/arkadaslar"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
+            >
+              {t.dashboard.friends} →
+            </Link>
+          ) : (
+            <Link
+              href="/dogrulama"
+              className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-primary text-white font-medium hover:bg-primary-dark transition-colors"
+            >
+              {t.verification.bannerCta} →
+            </Link>
+          )}
+        </div>
+      </div>
+    </AppShell>
   );
 }
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-[var(--border)] p-4">
-      <p className="text-xs text-[var(--muted)] uppercase tracking-wide mb-1">{label}</p>
-      <p className="font-medium text-[var(--foreground)]">{value}</p>
+    <div className="rounded-xl border border-[var(--border)] bg-primary-light/30 p-4">
+      <p className="text-xs text-tomris uppercase tracking-wide mb-1 font-medium">{label}</p>
+      <p className="font-medium text-[var(--foreground)] text-sm sm:text-base break-all">{value}</p>
     </div>
   );
 }

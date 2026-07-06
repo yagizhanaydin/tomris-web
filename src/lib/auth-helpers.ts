@@ -3,15 +3,41 @@ import {
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getFirebaseAuth, getFirebaseDb, getFirebaseStorage } from "@/lib/firebase";
+import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
+import { getVerificationPhotoId } from "@/lib/verification/paths";
+import { normalizeUsername } from "@/lib/security/validate";
 import type { Gender, UserProfile } from "@/types/user";
 
-export async function uploadVerificationPhoto(uid: string, photoBlob: Blob) {
-  const storageRef = ref(getFirebaseStorage(), `verifications/${uid}/${Date.now()}.jpg`);
-  await uploadBytes(storageRef, photoBlob, { contentType: "image/jpeg" });
-  return getDownloadURL(storageRef);
+export async function checkEmailNotBanned(email: string): Promise<void> {
+  const res = await fetch(`/api/auth/check-ban?email=${encodeURIComponent(email)}`);
+  if (!res.ok) return;
+  const data = await res.json();
+  if (data.banned) {
+    throw new Error("BANNED_EMAIL");
+  }
+}
+
+async function uploadVerificationPhotoToServer(photoBlob: Blob): Promise<string> {
+  const user = getFirebaseAuth().currentUser;
+  if (!user) throw new Error("Oturum bulunamadı.");
+
+  const token = await user.getIdToken();
+  const formData = new FormData();
+  formData.append("photo", photoBlob, "verification.jpg");
+
+  const res = await fetch("/api/verification/upload", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || "Fotoğraf yüklenemedi.");
+  }
+
+  return getVerificationPhotoId(user.uid);
 }
 
 export async function saveUserProfile(
@@ -31,44 +57,44 @@ export async function registerWithEmail(
   username: string,
   email: string,
   password: string,
-  gender: Gender,
-  photoBlob: Blob
+  gender: Gender
 ) {
+  await checkEmailNotBanned(email);
+
   const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   const { user } = credential;
 
   await updateProfile(user, { displayName: username });
   await sendEmailVerification(user);
 
-  const photoUrl = await uploadVerificationPhoto(user.uid, photoBlob);
-
   await saveUserProfile(user.uid, {
-    username,
+    username: normalizeUsername(username),
     email,
     gender,
-    verificationPhotoUrl: photoUrl,
-    genderVerified: true,
+    verificationPhotoPath: "",
+    verificationStatus: "unverified",
+    genderVerified: false,
     authProvider: "email",
   });
 
   return user;
 }
 
-export async function completeGoogleProfile(
+export async function createGoogleProfile(
   uid: string,
   username: string,
   email: string,
-  gender: Gender,
-  photoBlob: Blob
+  gender: Gender
 ) {
-  const photoUrl = await uploadVerificationPhoto(uid, photoBlob);
+  await checkEmailNotBanned(email);
 
   await saveUserProfile(uid, {
-    username,
+    username: normalizeUsername(username),
     email,
     gender,
-    verificationPhotoUrl: photoUrl,
-    genderVerified: true,
+    verificationPhotoPath: "",
+    verificationStatus: "unverified",
+    genderVerified: false,
     authProvider: "google",
   });
 
@@ -76,4 +102,18 @@ export async function completeGoogleProfile(
   if (currentUser) {
     await updateProfile(currentUser, { displayName: username });
   }
+}
+
+/** Fotoğraf gönder — temsilci incelemesine alınır */
+export async function submitVerificationPhoto(photoBlob: Blob) {
+  const user = getFirebaseAuth().currentUser;
+  if (!user) throw new Error("Oturum bulunamadı.");
+
+  const photoId = await uploadVerificationPhotoToServer(photoBlob);
+
+  await updateDoc(doc(getFirebaseDb(), "users", user.uid), {
+    verificationPhotoPath: photoId,
+    verificationStatus: "pending",
+    genderVerified: false,
+  });
 }

@@ -1,0 +1,125 @@
+export type Locale = "tr" | "en";
+
+export interface TranslationDictionary {
+  common: {
+    loading: string;
+    save: string;
+    cancel: string;
+    back: string;
+    logout: string;
+    or: string;
+    error: string;
+  };
+  brand: {
+    name: string;
+    tagline: string;
+    footer: string;
+    solidarity: string;
+  };
+  quote: {
+    text: string;
+    author: string;
+  };
+  auth: {
+    login: {
+      title: string;
+      subtitle: string;
+      email: string;
+      password: string;
+      submit: string;
+      submitting: string;
+      forgotPassword: string;
+      noAccount: string;
+      register: string;
+      google: string;
+      errorInvalid: string;
+      errorUnverified: string;
+      resendVerification: string;
+      resending: string;
+    };
+    forgot: {
+      title: string;
+      subtitle: string;
+      description: string;
+      submit: string;
+      submitting: string;
+      success: string;
+      backToLogin: string;
+    };
+  };
+  dashboard: {
+    welcome: string;
+    joined: string;
+    email: string;
+    gender: string;
+    female: string;
+    male: string;
+    verification: string;
+    verified: string;
+    pending: string;
+    unverified: string;
+    authMethod: string;
+    google: string;
+    emailPassword: string;
+    comingSoon: string;
+    friends: string;
+    posts: string;
+    signal: string;
+  };
+  friends: {
+    title: string;
+    subtitle: string;
+    addFriend: string;
+    usernamePlaceholder: string;
+    search: string;
+    searching: string;
+    myFriends: string;
+    incoming: string;
+    noFriends: string;
+    noRequests: string;
+    accept: string;
+    reject: string;
+    remove: string;
+    block: string;
+    blocked: string;
+    requestSent: string;
+    requestAccepted: string;
+    userNotFound: string;
+    alreadyFriends: string;
+    alreadyPending: string;
+    cannotAddSelf: string;
+    blockedUser: string;
+    invalidUsername: string;
+  };
+  nav: {
+    dashboard: string;
+    friends: string;
+  };
+  ban: {
+    pageTitle: string;
+    pageSubtitle: string;
+    body: string;
+    reasonLabel: string;
+    noReturn: string;
+    registerBlocked: string;
+  };
+  verification: {
+    bannerTitle: string;
+    bannerBody: string;
+    bannerCta: string;
+    pageTitle: string;
+    pageSubtitle: string;
+    introTitle: string;
+    introBody: string;
+    introNote: string;
+    gateTitle: string;
+    gateBody: string;
+    gateCta: string;
+    statusUnverified: string;
+    statusPending: string;
+    statusApproved: string;
+    statusRejected: string;
+    submitSuccess: string;
+    rejectedRetry: string;
+  };
+}

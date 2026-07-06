@@ -123,18 +123,14 @@ export function GenderVerification({
       <div className="text-center">
         <h3 className="font-semibold text-[var(--foreground)]">Cinsiyet Doğrulama</h3>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Seçilen cinsiyet: <span className="font-medium text-[var(--primary)]">{genderLabel}</span>
+          Seçilen cinsiyet: <span className="font-medium text-tomris">{genderLabel}</span>
         </p>
         <p className="text-xs text-[var(--muted)] mt-2">
           Yüzünüz net görünecek şekilde kameraya bakın. 5 saniye geri sayım sonrası fotoğraf çekilecektir.
         </p>
       </div>
 
-      {error && (
-        <div className="rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
-          {error}
-        </div>
-      )}
+      {error && <div className="alert-error">{error}</div>}
 
       <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-black">
         {phase === "captured" && previewUrl ? (
@@ -163,18 +159,14 @@ export function GenderVerification({
       <div className="flex flex-col gap-3 sm:flex-row">
         {phase === "ready" && (
           <>
-            <button
-              type="button"
-              onClick={onBack}
-              className="flex-1 py-3 px-4 rounded-xl border border-[var(--border)] text-[var(--muted)] font-medium hover:bg-gray-50 transition-colors"
-            >
+            <button type="button" onClick={onBack} className="btn-secondary flex-1">
               Geri
             </button>
             <button
               type="button"
               onClick={handleStartCountdown}
               disabled={!cameraReady || !!error}
-              className="flex-1 py-3 px-4 rounded-xl bg-[var(--primary)] text-white font-medium hover:bg-[var(--primary-dark)] disabled:opacity-50 transition-colors"
+              className="btn-primary flex-1"
             >
               Fotoğraf Çek
             </button>
@@ -182,29 +174,17 @@ export function GenderVerification({
         )}
 
         {phase === "countdown" && (
-          <button
-            type="button"
-            disabled
-            className="w-full py-3 px-4 rounded-xl bg-[var(--primary)] text-white font-medium opacity-70"
-          >
+          <button type="button" disabled className="btn-primary w-full opacity-70">
             Çekiliyor... {countdown}
           </button>
         )}
 
         {phase === "captured" && (
           <>
-            <button
-              type="button"
-              onClick={handleRetake}
-              className="flex-1 py-3 px-4 rounded-xl border border-[var(--border)] text-[var(--muted)] font-medium hover:bg-gray-50 transition-colors"
-            >
+            <button type="button" onClick={handleRetake} className="btn-secondary flex-1">
               Tekrar Çek
             </button>
-            <button
-              type="button"
-              onClick={handleConfirm}
-              className="flex-1 py-3 px-4 rounded-xl bg-[var(--primary)] text-white font-medium hover:bg-[var(--primary-dark)] transition-colors"
-            >
+            <button type="button" onClick={handleConfirm} className="btn-primary flex-1">
               Onayla
             </button>
           </>

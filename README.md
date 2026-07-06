@@ -2,72 +2,155 @@
 
 > **AI / Geliştirici Notu:** Bu README, projeye yeni katılan geliştiriciler ve yapay zeka asistanları için proje durumunu, mimariyi ve yol haritasını özetler. Kod yazmadan önce bu dosyayı okuyun.
 
+**GitHub:** https://github.com/yagizhanaydin/tomris-web  
+**Firebase projesi:** TomrisApp (`tomrisapp`) — **Spark (ücretsiz) plan**
+
+---
+
 ## Proje Özeti
 
-**Tomris Web**, kadınların birbirine destek olduğu bir dayanışma platformudur. Backend tamamen **Firebase** üzerinde çalışır. Frontend **Next.js 16 (App Router)** + **TypeScript** + **Tailwind CSS** ile geliştirilmektedir.
+**Tomris Web**, kadınların birbirine destek olduğu bir dayanışma platformudur.
 
-Firebase projesi: **TomrisApp** (`tomrisapp`)
+| Katman | Teknoloji |
+|--------|-----------|
+| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
+| Auth / Veri | Firebase Auth + Firestore |
+| Fotoğraf (geçici) | Sunucu diski `data/verifications/` — **Firebase Storage kullanılmıyor** |
+| Kadın Temsilci / Admin | Next.js API + HTTP-only cookie (Firebase auth'tan bağımsız) |
+
+---
+
+## Firebase Kurulum Durumu
+
+| Adım | Durum |
+|------|--------|
+| Firebase projesi (TomrisApp) | ✅ |
+| Authentication — E-posta/Şifre | ✅ |
+| Authentication — Google | ✅ |
+| Firestore Database | ✅ |
+| Firestore Security Rules (`firestore.rules`) | ✅ — `platform_bans` kurallarını Console'da yayınla |
+| Service Account JSON (`.env.local`) | ✅ |
+| Firebase Storage | ❌ Gerek yok (Blaze/yükseltme yok) |
+| Canlı test (`npm run dev`) | ⏳ Yapılacak |
+
+Detaylı kurulum: [`FIREBASE-KURULUM.md`](FIREBASE-KURULUM.md)  
+Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ---
 
 ## Tamamlanan Özellikler
 
-### Kimlik Doğrulama (Auth)
-- [x] E-posta / şifre ile kayıt ve giriş
-- [x] Google (Gmail) ile giriş
-- [x] Kayıt sonrası e-posta doğrulama (Firebase `sendEmailVerification`)
-- [x] Google ile giriş yapan kullanıcılar için profil tamamlama akışı (`/kayit-tamamla`)
-- [ ] Şifremi unuttum (Gmail doğrulama ile sıfırlama) — **planlandı, henüz yapılmadı**
+### Kimlik Doğrulama
+- [x] E-posta / şifre kayıt ve giriş
+- [x] Google (Gmail) giriş ve kayıt
+- [x] E-posta doğrulama (`sendEmailVerification`)
+- [x] Google profil tamamlama (`/kayit-tamamla`)
+- [x] Şifremi unuttum (`/sifremi-unuttum`)
 
-### Cinsiyet Doğrulama
-- [x] Kayıt sırasında cinsiyet seçimi (kadın / erkek)
-- [x] 5 saniyelik geri sayım ile kamera selfie doğrulaması
-- [x] Doğrulama fotoğrafı Firebase Storage'a yüklenir
-- [x] Kullanıcı profili Firestore `users` koleksiyonuna kaydedilir
+### Doğrulama — Soft Gate (kullanıcı dostu)
+- [x] **Kayıt fotoğrafsız** — kullanıcı hemen dashboard'a girer
+- [x] **Kısıtlı mod:** doğrulama olmadan arkadaşlık, yorum vb. **kapalı**
+- [x] `/dogrulama` — isteğe bağlı fotoğraf doğrulama + güven verici açıklama metni
+- [x] 5 saniyelik geri sayım + kamera selfie
+- [x] Fotoğraf **sunucuda geçici** tutulur (`data/verifications/{uid}.jpg`)
+- [x] **Kadın temsilci paneli** (`/temsilci`) — yalnızca kadın temsilciler inceler
+- [x] **Admin panelinin fotoğrafa erişimi yok** — teknik ve metinsel olarak ayrılmış
+- [x] Onay / red / yasak sonrası fotoğraf **anında silinir**
+- [x] Bekleyen: `/dogrulama-bekliyor` · Reddedilen: `/dogrulama-reddedildi` · Onaylı: tam erişim
+
+### Ban Sistemi (troll / uygunsuz içerik)
+- [x] Temsilci panelinde **Kalıcı Yasakla** (Reddet'ten ayrı)
+- [x] Fotoğraf anında silinir, Firebase Auth hesabı devre dışı bırakılır
+- [x] E-posta `platform_bans` koleksiyonuna eklenir — **aynı mail ile tekrar kayıt olamaz**
+- [x] Yasaklı kullanıcı: `/hesap-yasaklandi`
+- [x] Kayıt öncesi e-posta ban kontrolü (`/api/auth/check-ban`)
+
+### Sosyal
+- [x] Arkadaş ekleme / kabul / red / çıkarma / engelleme (`/arkadaslar`)
+- [x] Doğrulanmamış kullanıcılar sayfayı görür, etkileşim kilitli (`VerificationGate`)
 
 ### UI / UX
-- [x] Mobil uyumlu (responsive) tasarım
-- [x] Giriş ve kayıt ekranlarında Atatürk sözü:
-  > *"Şuna inanmak lazımdır ki, dünya yüzünde gördüğümüz her şey kadının eseridir."*
-- [x] Kullanıcı dashboard (`/dashboard`)
+- [x] Mobil uyumlu Tailwind tasarım
+- [x] Mor Tomris teması + Tomris logosu/isim
+- [x] TR / EN dil desteği (`src/lib/i18n/`)
+- [x] Atatürk sözü (giriş/kayıt)
 
-### Admin Paneli
-- [x] Normal kullanıcı hesaplarından **tamamen ayrı** admin girişi (`/admin/giris`)
-- [x] Admin oturumu HTTP-only cookie ile yönetilir
-- [x] Temel admin panel iskeleti (`/admin`)
-- [ ] Admin panelinde kullanıcı listesi / moderasyon — **planlandı**
+### Admin (genel yönetim — doğrulama fotoğrafı yok)
+- [x] Ayrı admin girişi (`/admin/giris`)
+- [x] Temel admin iskeleti (`/admin`)
+- [x] Doğrulama fotoğraflarına **erişemez** (yalnızca `/temsilci`)
 
 ---
 
 ## Planlanan Özellikler (Yapılacaklar)
 
-### Sosyal Özellikler
-- [ ] Arkadaş ekleme
-- [ ] Arkadaş çıkarma
-- [ ] Kullanıcı engelleme
+### Sosyal
 - [ ] Gönderi paylaşma
-- [ ] Gönderiye yorum atma
-- [ ] Gönderi için **il / ilçe seçme**
+- [ ] Gönderiye yorum
+- [ ] Gönderi için il / ilçe seçme
 
 ### Acil Durum
-- [ ] **Sinyal gönderme** — acil durumda kayıtlı arkadaşlara bildirim / sinyal
+- [ ] Sinyal gönderme — arkadaşlara acil bildirim
 
-### Auth Ek
-- [ ] **Şifremi unuttum** — Firebase `sendPasswordResetEmail` ile Gmail doğrulama / şifre sıfırlama
+### Panel / Yönetim
+- [ ] Admin moderasyon araçları
+- [ ] Canlı chat (Firestore ile — Spark planda)
+- [ ] PWA / mobil uygulama kabuğu
 
 ---
 
 ## Sayfa Haritası
 
-| URL | Açıklama | Durum |
-|-----|----------|-------|
-| `/` | `/giris` yönlendirmesi | ✅ |
-| `/giris` | Kullanıcı girişi (e-posta + Google) | ✅ |
-| `/kayit` | Kullanıcı kaydı + cinsiyet doğrulama | ✅ |
-| `/kayit-tamamla` | Google kayıt sonrası profil tamamlama | ✅ |
-| `/dashboard` | Kullanıcı ana sayfası | ✅ |
-| `/admin/giris` | Admin girişi (Firebase'den bağımsız) | ✅ |
-| `/admin` | Admin paneli | ✅ (iskelet) |
+| URL | Açıklama |
+|-----|----------|
+| `/giris` | Kullanıcı girişi |
+| `/kayit` | Kayıt (fotoğrafsız) |
+| `/kayit-tamamla` | Google kayıt sonrası profil |
+| `/sifremi-unuttum` | Şifre sıfırlama |
+| `/dashboard` | Ana sayfa (doğrulanmamış: kısıtlı mod + banner) |
+| `/dogrulama` | Fotoğraf doğrulama (isteğe bağlı adım) |
+| `/dogrulama-bekliyor` | Kadın temsilci onayı bekleniyor |
+| `/dogrulama-reddedildi` | Doğrulama reddedildi — tekrar denenebilir |
+| `/hesap-yasaklandi` | Kalıcı ban |
+| `/arkadaslar` | Arkadaşlık yönetimi (doğrulama gerekli) |
+| `/temsilci/giris` | **Kadın temsilci** girişi |
+| `/temsilci` | Kadın temsilci paneli (onay / red / yasak) |
+| `/admin/giris` | Admin girişi (fotoğraf erişimi yok) |
+| `/admin` | Admin paneli |
+
+---
+
+## Roller
+
+| Rol | Giriş | Görev |
+|-----|-------|-------|
+| Kullanıcı | Firebase Auth | Platform kullanımı |
+| **Kadın Temsilci** | `.env` → `REP_USERNAME` / `REP_PASSWORD` | Fotoğraf inceleme, onay / red / **kalıcı yasak** |
+| **Admin** | `.env` → `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Genel yönetim — **doğrulama fotoğrafına erişemez** |
+
+---
+
+## Doğrulama Akışı (Soft Gate)
+
+```
+Kayıt (fotoğrafsız) → verificationStatus = "unverified" → /dashboard (kısıtlı)
+       ↓
+İsteğe bağlı /dogrulama → selfie → data/verifications/{uid}.jpg (geçici)
+       ↓
+Firestore: verificationStatus = "pending"
+       ↓
+Kadın temsilci inceler (/temsilci)
+       ↓
+Onayla & Sil  →  "approved"  →  tam erişim
+Reddet & Sil  →  "rejected"  →  tekrar /dogrulama
+Kalıcı Yasakla → "banned"   →  Auth devre dışı, e-posta ban listesinde
+       ↓
+Fotoğraf diskten silinir — kalıcı kalmaz
+```
+
+### Kullanıcıya gösterilen güven metni (özet)
+
+> Bir kadın olarak ne kadar yorulduğunu biliyoruz. Doğrulamayı yalnızca kadın temsilciler gerçekleştirir. Erkek adminler ve genel yönetim panelinin bu fotoğraflara erişimi yoktur. Onay veya red sonrası fotoğraf kalıcı olarak silinir.
 
 ---
 
@@ -76,54 +159,72 @@ Firebase projesi: **TomrisApp** (`tomrisapp`)
 ```
 src/
 ├── app/
-│   ├── giris/page.tsx          # Login
-│   ├── kayit/page.tsx          # Register
-│   ├── kayit-tamamla/page.tsx  # Google profil tamamlama
-│   ├── dashboard/page.tsx      # Kullanıcı paneli
-│   ├── admin/
-│   │   ├── giris/page.tsx      # Admin login
-│   │   └── page.tsx            # Admin panel
-│   └── api/admin/              # Admin oturum API
-├── components/
-│   ├── AtaturkQuote.tsx
-│   ├── AuthLayout.tsx
-│   ├── GenderVerification.tsx  # 5sn geri sayım + kamera
-│   ├── GoogleSignInButton.tsx
-│   └── Providers.tsx
-├── context/
-│   └── AuthProvider.tsx        # Firebase auth state
+│   ├── giris/ kayit/ kayit-tamamla/ sifremi-unuttum/
+│   ├── dashboard/ dogrulama/ dogrulama-bekliyor/ dogrulama-reddedildi/
+│   ├── hesap-yasaklandi/ arkadaslar/
+│   ├── temsilci/          # Kadın temsilci paneli
+│   ├── admin/             # Admin paneli (fotoğraf yok)
+│   └── api/
+│       ├── auth/check-ban/
+│       ├── verification/upload/
+│       └── temsilci/      # Onay / red / ban API
 ├── lib/
-│   ├── firebase.ts             # Firebase client init
-│   └── auth-helpers.ts         # Kayıt, profil, foto yükleme
-├── types/
-│   └── user.ts
-└── middleware.ts               # Admin route koruması
+│   ├── auth-routing.ts    # Soft gate yönlendirme
+│   ├── ban/               # Kalıcı yasak servisi
+│   ├── verification/      # local-storage, service
+│   ├── friends/           # Arkadaşlık servisi
+│   ├── i18n/              # TR / EN
+│   └── security/validate.ts
+├── components/
+│   ├── VerificationBanner.tsx
+│   ├── VerificationGate.tsx
+│   ├── VerificationIntro.tsx
+│   └── ...
+└── middleware.ts            # /admin ve /temsilci koruması
+
+data/verifications/          # Geçici fotoğraflar (git'e girmez)
+firestore.rules              # users, friendships, platform_bans...
 ```
 
 ---
 
-## Firebase Koleksiyonları (Mevcut)
+## Firestore Koleksiyonları
 
 ### `users`
+
 ```typescript
 {
   uid: string;
   username: string;
   email: string;
   gender: "kadin" | "erkek";
-  verificationPhotoUrl: string;
+  verificationPhotoPath: string;   // boş = henüz foto yok
+  verificationStatus: "unverified" | "pending" | "approved" | "rejected" | "banned";
   genderVerified: boolean;
-  createdAt: string;
+  reviewedAt?: string;
+  reviewedBy?: string;
+  bannedAt?: string;
+  bannedBy?: string;
+  banReason?: string;
   authProvider: "email" | "google";
+  createdAt: string;
 }
 ```
 
-### Planlanan koleksiyonlar
-- `posts` — gönderiler (il, ilçe, içerik, yazar, tarih)
-- `comments` — gönderi yorumları
-- `friendships` — arkadaşlık istekleri / ilişkiler
-- `blocks` — engellenen kullanıcılar
-- `signals` — acil durum sinyalleri
+### `platform_bans` (yalnızca sunucu — Admin SDK)
+
+```typescript
+{
+  uid: string;
+  email: string;       // tekrar kayıt engeli
+  username: string;
+  reason: string;
+  bannedAt: string;
+  bannedBy: string;
+}
+```
+
+Koleksiyonlar kayıt olunca **otomatik** oluşur — Firebase Console'dan elle oluşturma.
 
 ---
 
@@ -131,18 +232,17 @@ src/
 
 ```bash
 npm install
-cp .env.local.example .env.local   # veya .env.local dosyasını düzenle
+cp .env.local.example .env.local
+# .env.local dosyasını doldur (aşağıya bak)
 npm run dev
 ```
-
-Uygulama: `http://localhost:3000`
 
 ---
 
 ## Ortam Değişkenleri (`.env.local`)
 
 ```env
-# Firebase — Firebase Console > Proje ayarları > Genel > Web uygulaması
+# Firebase web config
 NEXT_PUBLIC_FIREBASE_API_KEY=
 NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=
 NEXT_PUBLIC_FIREBASE_PROJECT_ID=
@@ -150,76 +250,51 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
 
-# Admin paneli — Firebase'de YOK, projede kendin belirlersin
+# Admin (genel yönetim — fotoğraf erişimi yok)
 ADMIN_USERNAME=admin
-ADMIN_PASSWORD=guclu_sifre_buraya
+ADMIN_PASSWORD=
+
+# Kadın temsilci (fotoğraf onay / red / yasak)
+REP_USERNAME=temsilci
+REP_PASSWORD=
+
+# Service Account — Firebase Console > Service Accounts > private key
+FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}
 ```
 
-> ⚠️ `.env.local` dosyasını asla Git'e commit etme.
+> ⚠️ `.env.local` ve indirilen JSON dosyasını asla Git'e commit etme.
 
 ---
 
-## Admin Şifresi Nasıl Ayarlanır?
+## Güvenlik
 
-Admin şifresi **Firebase'de değil**, proje kökündeki **`.env.local`** dosyasında tanımlanır.
-
-**CEO / yönetici için adımlar (kod bilgisi gerekmez):**
-
-1. Cursor veya Not Defteri ile `.env.local` dosyasını aç
-2. Şu satırları kendi istediğin değerlerle değiştir:
-   ```env
-   ADMIN_USERNAME=admin
-   ADMIN_PASSWORD=Tomris2026!
-   ```
-3. Dosyayı kaydet
-4. Terminalde `npm run dev` çalışıyorsa durdur (Ctrl+C) ve tekrar başlat
-5. Tarayıcıda `http://localhost:3000/admin/giris` adresine git
-6. Az önce belirlediğin kullanıcı adı ve şifre ile giriş yap
-
-**Önemli:**
-- Normal kullanıcı kayıtları (e-posta/şifre veya Google) admin paneline **giremez**
-- Admin şifresini değiştirmek için sadece `.env.local` dosyasını düzenlemen yeterli
-- Canlıya (production) alırken hosting platformunda (Vercel vb.) aynı env değişkenlerini panelden gir
+- Firestore kuralları: kullanıcı kendi verisini yazar; `platform_bans` yalnızca sunucu
+- Doğrulama fotoğrafları: `data/verifications/` — dışarıdan erişilemez
+- Fotoğraf API'si yalnızca **temsilci oturumu** ile (`isRepSession`) — admin erişemez
+- Onay / red / yasak sonrası fotoğraf diskten silinir
+- Kalıcı yasak: Firebase Auth `disabled: true` + e-posta ban listesi
+- Input doğrulama: `src/lib/security/validate.ts`
+- Şifre temsilciye veya Firestore'a **asla** yazılmaz
 
 ---
 
-## Firebase Console Kurulumu (Yapılması Gerekenler)
+## Test Senaryosu
 
-Firebase Console → **TomrisApp** projesi:
-
-1. **Authentication** → Email/Password ✅ + Google ✅ etkinleştir
-2. **Firestore Database** → oluştur (test mode ile başlanabilir)
-3. **Storage** → oluştur (doğrulama fotoğrafları için)
-4. **Authorized domains** → `localhost` ekli olsun
-
----
-
-## Teknoloji Stack
-
-| Katman | Teknoloji |
-|--------|-----------|
-| Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
-| Backend | Firebase Auth, Firestore, Storage |
-| Admin auth | Next.js API Route + HTTP-only cookie (Firebase dışı) |
+1. `npm run dev`
+2. `/kayit` → kayıt ol (fotoğrafsız) → `/dashboard` (banner görünür)
+3. `/arkadaslar` → kilitli form
+4. `/dogrulama` → fotoğraf çek
+5. `/temsilci/giris` → kadın temsilci → **Onayla & Sil** (veya troll için **Kalıcı Yasakla**)
+6. `/giris` → kullanıcı giriş → tam erişim
+7. Firestore → `users` + gerekirse `platform_bans`
 
 ---
 
-## Geliştirme Notları (AI için)
+## Sonraki Öncelikler
 
-- Firebase client yalnızca tarayıcıda init edilir (`src/lib/firebase.ts` — lazy init)
-- Tüm auth sayfaları `"use client"` bileşenleridir
-- Cinsiyet doğrulama fotoğrafları: `Storage/verifications/{uid}/{timestamp}.jpg`
-- Admin middleware: `src/middleware.ts` — `/admin/*` rotalarını korur (`/admin/giris` hariç)
-- Yeni özellik eklerken mevcut `AuthLayout`, `AuthProvider` ve Firebase helper'ları kullan
-- Türkçe UI dili kullanılıyor; URL'ler Türkçe (`/giris`, `/kayit`)
-
----
-
-## Sonraki Öncelikler (Önerilen Sıra)
-
-1. Firebase Console'da Auth + Firestore + Storage'ı tam aç
-2. Şifremi unuttum akışı
-3. Arkadaşlık sistemi (ekle / çıkar / engelle)
-4. Gönderi + yorum + il/ilçe
-5. Acil durum sinyali
-6. Admin panelinde moderasyon araçları
+1. ⏳ İlk uçtan uca test (kayıt → doğrulama → temsilci onayı)
+2. Firestore rules'u Firebase Console'da güncelle (`platform_bans`)
+3. Gönderi paylaşma + yorum + il/ilçe
+4. Acil durum sinyali + push bildirim
+5. Canlı chat (Firestore, Spark plan)
+6. PWA / mobil uygulama dönüşümü

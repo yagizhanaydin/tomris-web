@@ -1,77 +1,95 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { AuthLayout } from "@/components/AuthLayout";
 import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useAuth } from "@/context/AuthProvider";
-import { useEffect } from "react";
+import { useLanguage } from "@/context/LanguageProvider";
+import { getPostAuthRedirect } from "@/lib/auth-routing";
 
 export default function LoginPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
+  const { t } = useLanguage();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [resending, setResending] = useState(false);
+  const [needsVerification, setNeedsVerification] = useState(false);
 
   useEffect(() => {
     if (!loading && user && profile) {
-      router.replace("/dashboard");
+      router.replace(getPostAuthRedirect(profile));
     }
-    if (!loading && user && !profile) {
-      router.replace("/kayit-tamamla");
-    }
+    if (!loading && user && !profile) router.replace("/kayit-tamamla");
   }, [user, profile, loading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setNeedsVerification(false);
     setSubmitting(true);
 
     try {
       const credential = await signInWithEmailAndPassword(getFirebaseAuth(), email, password);
-      const { user: signedInUser } = credential;
-
-      if (!signedInUser.emailVerified) {
-        setError(
-          "E-posta adresiniz henüz doğrulanmamış. Lütfen gelen kutunuzu kontrol edin."
-        );
+      if (!credential.user.emailVerified) {
+        setNeedsVerification(true);
+        setError(t.auth.login.errorUnverified);
         setSubmitting(false);
         return;
       }
-
-      router.push("/dashboard");
     } catch {
-      setError("E-posta veya şifre hatalı.");
+      setError(t.auth.login.errorInvalid);
     } finally {
       setSubmitting(false);
     }
   };
 
+  const handleResendVerification = async () => {
+    setResending(true);
+    try {
+      const auth = getFirebaseAuth();
+      if (auth.currentUser) {
+        await sendEmailVerification(auth.currentUser);
+        alert(t.auth.login.resendVerification);
+      }
+    } finally {
+      setResending(false);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin w-8 h-8 border-4 border-[var(--primary)] border-t-transparent rounded-full" />
+      <div className="min-h-screen flex items-center justify-center tomris-gradient">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
 
   return (
-    <AuthLayout title="Giriş Yap" subtitle="Hesabınıza giriş yapın">
+    <AuthLayout title={t.auth.login.title} subtitle={t.auth.login.subtitle}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        {error && (
-          <div className="rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm p-3">
-            {error}
-          </div>
+        {error && <div className="alert-error">{error}</div>}
+
+        {needsVerification && (
+          <button
+            type="button"
+            onClick={handleResendVerification}
+            disabled={resending}
+            className="w-full py-2 text-sm link-tomris underline disabled:opacity-50"
+          >
+            {resending ? t.auth.login.resending : t.auth.login.resendVerification}
+          </button>
         )}
 
         <div>
-          <label htmlFor="email" className="block text-sm font-medium mb-1.5">
-            E-posta
+          <label htmlFor="email" className="block text-sm font-medium mb-1.5 text-tomris">
+            {t.auth.login.email}
           </label>
           <input
             id="email"
@@ -79,32 +97,32 @@ export default function LoginPage() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-base"
+            className="input-field"
             placeholder="ornek@gmail.com"
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-sm font-medium mb-1.5">
-            Şifre
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label htmlFor="password" className="block text-sm font-medium text-tomris">
+              {t.auth.login.password}
+            </label>
+            <Link href="/sifremi-unuttum" className="text-xs link-tomris">
+              {t.auth.login.forgotPassword}
+            </Link>
+          </div>
           <input
             id="password"
             type="password"
             required
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-3 rounded-xl border border-[var(--border)] focus:outline-none focus:ring-2 focus:ring-[var(--primary)] focus:border-transparent text-base"
-            placeholder="••••••••"
+            className="input-field"
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full py-3 px-4 rounded-xl bg-[var(--primary)] text-white font-semibold hover:bg-[var(--primary-dark)] disabled:opacity-50 transition-colors"
-        >
-          {submitting ? "Giriş yapılıyor..." : "Giriş Yap"}
+        <button type="submit" disabled={submitting} className="btn-primary">
+          {submitting ? t.auth.login.submitting : t.auth.login.submit}
         </button>
       </form>
 
@@ -113,16 +131,16 @@ export default function LoginPage() {
           <div className="w-full border-t border-[var(--border)]" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-white text-[var(--muted)]">veya</span>
+          <span className="px-3 bg-white text-[var(--muted)]">{t.common.or}</span>
         </div>
       </div>
 
-      <GoogleSignInButton />
+      <GoogleSignInButton label={t.auth.login.google} />
 
       <p className="mt-6 text-center text-sm text-[var(--muted)]">
-        Hesabınız yok mu?{" "}
-        <Link href="/kayit" className="font-semibold text-[var(--primary)] hover:underline">
-          Kayıt Ol
+        {t.auth.login.noAccount}{" "}
+        <Link href="/kayit" className="link-tomris">
+          {t.auth.login.register}
         </Link>
       </p>
     </AuthLayout>

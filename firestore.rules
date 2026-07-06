@@ -1,0 +1,77 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow create: if isOwner(userId);
+      allow update: if isOwner(userId);
+      allow delete: if false;
+    }
+
+    match /friendships/{friendshipId} {
+      allow read: if isSignedIn() &&
+        (resource.data.fromUid == request.auth.uid ||
+         resource.data.toUid == request.auth.uid);
+
+      allow create: if isSignedIn() &&
+        request.resource.data.fromUid == request.auth.uid &&
+        request.resource.data.fromUid != request.resource.data.toUid &&
+        request.resource.data.status == 'pending' &&
+        request.resource.data.keys().hasAll(['fromUid', 'toUid', 'fromUsername', 'toUsername', 'status', 'createdAt', 'updatedAt']);
+
+      allow update: if isSignedIn() &&
+        resource.data.toUid == request.auth.uid &&
+        resource.data.status == 'pending' &&
+        request.resource.data.status in ['accepted', 'rejected'];
+
+      allow delete: if isSignedIn() &&
+        (resource.data.fromUid == request.auth.uid ||
+         resource.data.toUid == request.auth.uid);
+    }
+
+    match /blocks/{blockId} {
+      allow read: if isSignedIn() &&
+        (resource.data.blockerUid == request.auth.uid ||
+         resource.data.blockedUid == request.auth.uid);
+
+      allow create: if isSignedIn() &&
+        request.resource.data.blockerUid == request.auth.uid &&
+        request.resource.data.blockerUid != request.resource.data.blockedUid;
+
+      allow delete: if isSignedIn() &&
+        resource.data.blockerUid == request.auth.uid;
+
+      allow update: if false;
+    }
+
+    match /posts/{postId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    match /comments/{commentId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    match /signals/{signalId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn();
+    }
+
+    // Platform yasakları — yalnızca sunucu (Admin SDK) yazar/okur
+    match /platform_bans/{banId} {
+      allow read, write: if false;
+    }
+  }
+}

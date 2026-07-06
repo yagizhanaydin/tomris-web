@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tomris Web",
-  description: "Tomris Web — Giriş ve Kayıt",
+  title: "Tomris — Kadın Dayanışma Platformu",
+  description: "Tomris — Kadına yönelik şiddete karşı dayanışma platformu",
 };
 
 export const viewport: Viewport = {
