@@ -31,7 +31,8 @@ type FriendErrorKey =
   | "alreadyPending"
   | "cannotAddSelf"
   | "blockedUser"
-  | "invalidUsername";
+  | "invalidUsername"
+  | "errorNetwork";
 
 export default function FriendsPage() {
   const router = useRouter();
@@ -63,9 +64,6 @@ export default function FriendsPage() {
     if (!loading && user && !profile) router.replace("/kayit-tamamla");
     if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
-    }
-    if (!loading && profile?.verificationStatus === "rejected") {
-      router.replace("/dogrulama-reddedildi");
     }
     if (!loading && profile?.verificationStatus === "banned") {
       router.replace("/hesap-yasaklandi");
@@ -112,7 +110,7 @@ export default function FriendsPage() {
       setUsername("");
       await loadFriendships();
     } catch {
-      setError("");
+      setError("errorNetwork" as FriendErrorKey);
       setMessage("");
     } finally {
       setSubmitting(false);
@@ -180,8 +178,6 @@ export default function FriendsPage() {
           <h1 className="text-xl sm:text-2xl font-bold text-tomris">{t.friends.title}</h1>
           <p className="text-sm text-[var(--muted)] mt-1">{t.friends.subtitle}</p>
         </div>
-
-        {!unlocked && <VerificationStatusBanner />}
 
         {!unlocked && <VerificationStatusBanner />}
 

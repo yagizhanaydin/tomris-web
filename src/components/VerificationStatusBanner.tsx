@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
-import { isVerificationPending, needsVerificationPhoto } from "@/lib/auth-routing";
+import {
+  isVerificationPending,
+  isVerificationRejected,
+  isVerificationUnverified,
+} from "@/lib/auth-routing";
 
 export function VerificationStatusBanner() {
   const { profile } = useAuth();
@@ -32,7 +36,28 @@ export function VerificationStatusBanner() {
     );
   }
 
-  if (needsVerificationPhoto(profile)) {
+  if (isVerificationRejected(profile)) {
+    return (
+      <div className="rounded-2xl border border-rose-200 bg-gradient-to-br from-rose-50 to-orange-50 p-5 sm:p-6">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+          <div className="flex-1 space-y-2">
+            <p className="font-semibold text-tomris">{t.verification.rejectedBannerTitle}</p>
+            <p className="text-sm text-[var(--muted)] leading-relaxed">
+              {t.verification.rejectedBannerBody}
+            </p>
+          </div>
+          <Link
+            href="/dogrulama"
+            className="shrink-0 inline-flex justify-center px-5 py-3 rounded-xl bg-primary text-white font-semibold hover:bg-primary-dark transition-colors text-sm"
+          >
+            {t.verification.rejectedBannerCta}
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (isVerificationUnverified(profile)) {
     return (
       <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-purple-50 p-5 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center gap-4">

@@ -34,11 +34,11 @@ export default function CompleteRegistrationPage() {
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!gender) {
-      setError("Lütfen cinsiyet seçin.");
+      setError(t.auth.completeProfile.errorGender);
       return;
     }
     if (!username.trim()) {
-      setError("Kullanıcı adı gerekli.");
+      setError(t.auth.completeProfile.errorUsername);
       return;
     }
     if (!user) return;
@@ -57,7 +57,7 @@ export default function CompleteRegistrationPage() {
       } else if (message === "INVALID_USERNAME") {
         setError(t.friends.invalidUsername);
       } else {
-        setError(message || "Profil tamamlanamadı.");
+        setError(message || t.auth.completeProfile.errorFailed);
       }
     } finally {
       setSubmitting(false);
@@ -74,15 +74,15 @@ export default function CompleteRegistrationPage() {
 
   return (
     <AuthLayout
-      title="Profili Tamamla"
-      subtitle="Google ile giriş yaptınız — birkaç bilgi kaldı"
+      title={t.auth.completeProfile.title}
+      subtitle={t.auth.completeProfile.subtitle}
     >
       <form onSubmit={handleFormSubmit} className="space-y-4">
         {error && <div className="alert-error">{error}</div>}
 
         <div>
           <label htmlFor="username" className="block text-sm font-medium mb-1.5 text-tomris">
-            Kullanıcı Adı
+            {t.auth.completeProfile.username}
           </label>
           <input
             id="username"
@@ -95,7 +95,9 @@ export default function CompleteRegistrationPage() {
         </div>
 
         <fieldset>
-          <legend className="block text-sm font-medium mb-2 text-tomris">Cinsiyet</legend>
+          <legend className="block text-sm font-medium mb-2 text-tomris">
+            {t.auth.completeProfile.gender}
+          </legend>
           <div className="grid grid-cols-2 gap-3">
             {(["kadin", "erkek"] as const).map((g) => (
               <label
@@ -114,14 +116,14 @@ export default function CompleteRegistrationPage() {
                   onChange={() => setGender(g)}
                   className="sr-only"
                 />
-                {g === "kadin" ? "Kadın" : "Erkek"}
+                {g === "kadin" ? t.dashboard.female : t.dashboard.male}
               </label>
             ))}
           </div>
         </fieldset>
 
         <button type="submit" disabled={submitting} className="btn-primary">
-          {submitting ? "Kaydediliyor..." : "Devam Et"}
+          {submitting ? t.auth.completeProfile.submitting : t.auth.completeProfile.submit}
         </button>
       </form>
     </AuthLayout>

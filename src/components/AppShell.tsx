@@ -20,6 +20,7 @@ export function AppShell({ children, onLogout }: AppShellProps) {
     { href: "/akis", label: t.nav.feed },
     { href: "/mesajlar", label: t.nav.messages },
     { href: "/arkadaslar", label: t.nav.friends },
+    { href: "/ayarlar", label: t.nav.settings },
   ];
 
   return (

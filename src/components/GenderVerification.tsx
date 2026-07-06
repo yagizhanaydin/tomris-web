@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/context/LanguageProvider";
 import type { Gender } from "@/types/user";
 
 interface GenderVerificationProps {
@@ -16,6 +17,7 @@ export function GenderVerification({
   onCapture,
   onBack,
 }: GenderVerificationProps) {
+  const { t } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -26,7 +28,7 @@ export function GenderVerification({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [cameraReady, setCameraReady] = useState(false);
 
-  const genderLabel = gender === "kadin" ? "Kadın" : "Erkek";
+  const genderLabel = gender === "kadin" ? t.dashboard.female : t.dashboard.male;
 
   const stopCamera = useCallback(() => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
@@ -47,9 +49,9 @@ export function GenderVerification({
         setCameraReady(true);
       }
     } catch {
-      setError("Kamera erişimi reddedildi. Lütfen tarayıcı izinlerini kontrol edin.");
+      setError(t.verification.camera.errorCamera);
     }
-  }, []);
+  }, [t.verification.camera.errorCamera]);
 
   useEffect(() => {
     startCamera();
@@ -121,13 +123,12 @@ export function GenderVerification({
   return (
     <div className="space-y-4">
       <div className="text-center">
-        <h3 className="font-semibold text-[var(--foreground)]">Cinsiyet Doğrulama</h3>
+        <h3 className="font-semibold text-[var(--foreground)]">{t.verification.camera.title}</h3>
         <p className="text-sm text-[var(--muted)] mt-1">
-          Seçilen cinsiyet: <span className="font-medium text-tomris">{genderLabel}</span>
+          {t.verification.camera.selectedGender}:{" "}
+          <span className="font-medium text-tomris">{genderLabel}</span>
         </p>
-        <p className="text-xs text-[var(--muted)] mt-2">
-          Yüzünüz net görünecek şekilde kameraya bakın. 5 saniye geri sayım sonrası fotoğraf çekilecektir.
-        </p>
+        <p className="text-xs text-[var(--muted)] mt-2">{t.verification.camera.hint}</p>
       </div>
 
       {error && <div className="alert-error">{error}</div>}
@@ -135,7 +136,11 @@ export function GenderVerification({
       <div className="relative aspect-[4/3] rounded-xl overflow-hidden bg-black">
         {phase === "captured" && previewUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={previewUrl} alt="Doğrulama fotoğrafı" className="w-full h-full object-cover" />
+          <img
+            src={previewUrl}
+            alt={t.verification.camera.previewAlt}
+            className="w-full h-full object-cover"
+          />
         ) : (
           <>
             <video
@@ -160,7 +165,7 @@ export function GenderVerification({
         {phase === "ready" && (
           <>
             <button type="button" onClick={onBack} className="btn-secondary flex-1">
-              Geri
+              {t.verification.camera.back}
             </button>
             <button
               type="button"
@@ -168,24 +173,24 @@ export function GenderVerification({
               disabled={!cameraReady || !!error}
               className="btn-primary flex-1"
             >
-              Fotoğraf Çek
+              {t.verification.camera.capture}
             </button>
           </>
         )}
 
         {phase === "countdown" && (
           <button type="button" disabled className="btn-primary w-full opacity-70">
-            Çekiliyor... {countdown}
+            {t.verification.camera.capturing} {countdown}
           </button>
         )}
 
         {phase === "captured" && (
           <>
             <button type="button" onClick={handleRetake} className="btn-secondary flex-1">
-              Tekrar Çek
+              {t.verification.camera.retake}
             </button>
             <button type="button" onClick={handleConfirm} className="btn-primary flex-1">
-              Onayla
+              {t.verification.camera.confirm}
             </button>
           </>
         )}

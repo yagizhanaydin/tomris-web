@@ -74,7 +74,7 @@ export async function registerWithEmail(
 
   await updateProfile(user, { displayName: username });
   await sendEmailVerification(user, {
-    url: `${window.location.origin}/giris`,
+    url: `${window.location.origin}/dashboard`,
     handleCodeInApp: false,
   });
 

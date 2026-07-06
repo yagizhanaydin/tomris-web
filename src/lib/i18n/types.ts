@@ -12,6 +12,7 @@ export interface TranslationDictionary {
     contentBlocked: string;
     showPassword: string;
     hidePassword: string;
+    selectLanguage: string;
   };
   brand: {
     name: string;
@@ -40,6 +41,49 @@ export interface TranslationDictionary {
       resendVerification: string;
       resending: string;
     };
+    register: {
+      title: string;
+      subtitle: string;
+      username: string;
+      email: string;
+      password: string;
+      confirmPassword: string;
+      gender: string;
+      submit: string;
+      submitting: string;
+      google: string;
+      googleLoading: string;
+      hasAccount: string;
+      loginLink: string;
+      emailPlaceholder: string;
+      usernamePlaceholder: string;
+      passwordPlaceholder: string;
+      confirmPlaceholder: string;
+      errorPasswordShort: string;
+      errorPasswordMatch: string;
+      errorGender: string;
+      errorEmailInUse: string;
+      errorGoogleUsername: string;
+      errorGoogleGender: string;
+      errorRegister: string;
+      errorGoogleRegister: string;
+      errorGoogleSession: string;
+    };
+    completeProfile: {
+      title: string;
+      subtitle: string;
+      username: string;
+      gender: string;
+      submit: string;
+      submitting: string;
+      errorGender: string;
+      errorUsername: string;
+      errorFailed: string;
+    };
+    google: {
+      loading: string;
+      error: string;
+    };
     forgot: {
       title: string;
       subtitle: string;
@@ -48,6 +92,7 @@ export interface TranslationDictionary {
       submitting: string;
       success: string;
       backToLogin: string;
+      errorInvalidEmail: string;
     };
     verifyEmail: {
       title: string;
@@ -107,6 +152,7 @@ export interface TranslationDictionary {
     blockedUser: string;
     invalidUsername: string;
     message: string;
+    errorNetwork: string;
   };
   nav: {
     dashboard: string;
@@ -281,6 +327,21 @@ export interface TranslationDictionary {
     rejectedTitle: string;
     rejectedSubtitle: string;
     rejectedBody: string;
+    rejectedBannerTitle: string;
+    rejectedBannerBody: string;
+    rejectedBannerCta: string;
     introPoints: string[];
+    camera: {
+      title: string;
+      selectedGender: string;
+      hint: string;
+      previewAlt: string;
+      back: string;
+      capture: string;
+      capturing: string;
+      retake: string;
+      confirm: string;
+      errorCamera: string;
+    };
   };
 }

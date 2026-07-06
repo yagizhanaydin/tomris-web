@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { sendEmailVerification, signOut } from "firebase/auth";
 import { AuthLayout } from "@/components/AuthLayout";
@@ -37,7 +36,7 @@ export default function VerifyEmailPage() {
     setMessage("");
     try {
       await sendEmailVerification(user, {
-        url: `${window.location.origin}/giris`,
+        url: `${window.location.origin}/dashboard`,
         handleCodeInApp: false,
       });
       setMessage(t.auth.verifyEmail.resent);
@@ -133,12 +132,6 @@ export default function VerifyEmailPage() {
         >
           {t.auth.verifyEmail.backToLogin}
         </button>
-
-        <p className="text-center text-sm text-[var(--muted)]">
-          <Link href="/giris" className="link-tomris">
-            {t.auth.forgot.backToLogin}
-          </Link>
-        </p>
       </div>
     </AuthLayout>
   );

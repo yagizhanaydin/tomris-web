@@ -29,7 +29,13 @@ export default function VerificationRejectedPage() {
     router.push("/giris");
   };
 
-  if (loading) return null;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center tomris-gradient">
+        <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full" />
+      </div>
+    );
+  }
 
   return (
     <AuthLayout title={t.verification.rejectedTitle} subtitle={t.verification.rejectedSubtitle}>

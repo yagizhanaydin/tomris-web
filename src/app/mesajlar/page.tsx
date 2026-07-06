@@ -24,6 +24,7 @@ import {
 } from "@/lib/chat/service";
 import { conversationTitle } from "@/lib/chat/helpers";
 import { formatPostLocation } from "@/lib/locations";
+import { localeToIntl } from "@/lib/i18n";
 import { DEFAULT_GROUP_FILTERS } from "@/types/chat";
 import type { Conversation } from "@/types/chat";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
@@ -96,21 +97,25 @@ function MessagesPageContent() {
     if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
     }
-    if (!loading && profile?.verificationStatus === "rejected") {
-      router.replace("/dogrulama-reddedildi");
-    }
     if (!loading && profile?.verificationStatus === "banned") {
       router.replace("/hesap-yasaklandi");
     }
   }, [user, profile, loading, router]);
 
   useEffect(() => {
+    const tabParam = searchParams.get("tab");
+    if (tabParam === "groups") {
+      setTab("groups");
+    } else if (tabParam === "newDm") {
+      setTab("newDm");
+    }
+
     const dm = searchParams.get("dm");
     if (dm && profile && user && unlocked) {
       setTab("newDm");
       setDmUsername(dm);
     }
-  }, [searchParams, profile, user, unlocked, loading, router]);
+  }, [searchParams, profile, user, unlocked]);
 
   const filteredGroups = useMemo(
     () => filterGroups(groups, groupFilters),
@@ -266,7 +271,7 @@ function MessagesPageContent() {
                     {conv.lastMessageAt && (
                       <span className="text-xs text-[var(--muted)] shrink-0">
                         {new Date(conv.lastMessageAt).toLocaleDateString(
-                          locale === "en" ? "en-GB" : "tr-TR"
+                          localeToIntl(locale)
                         )}
                       </span>
                     )}

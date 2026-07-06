@@ -4,13 +4,13 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { LOCALE_ARIA, LOCALE_CODES, SUPPORTED_LOCALES } from "@/lib/i18n";
 
 export function LanguageSwitcher({ className = "" }: { className?: string }) {
-  const { locale, setLocale } = useLanguage();
+  const { locale, setLocale, t } = useLanguage();
 
   return (
     <div
       className={`flex flex-col gap-1 ${className}`}
       role="group"
-      aria-label="Language"
+      aria-label={t.common.selectLanguage}
     >
       {SUPPORTED_LOCALES.map((code) => {
         const active = locale === code;

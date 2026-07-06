@@ -59,9 +59,6 @@ export default function FeedPage() {
     if (!loading && profile && needsProfileCompletion(profile)) {
       router.replace("/kayit-tamamla");
     }
-    if (!loading && profile?.verificationStatus === "rejected") {
-      router.replace("/dogrulama-reddedildi");
-    }
     if (!loading && profile?.verificationStatus === "banned") {
       router.replace("/hesap-yasaklandi");
     }

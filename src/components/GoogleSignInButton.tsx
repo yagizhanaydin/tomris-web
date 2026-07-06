@@ -3,16 +3,15 @@
 import { useState } from "react";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
+import { useLanguage } from "@/context/LanguageProvider";
 
 interface GoogleSignInButtonProps {
   onSuccess?: () => void;
   label?: string;
 }
 
-export function GoogleSignInButton({
-  onSuccess,
-  label = "Google ile Giriş Yap",
-}: GoogleSignInButtonProps) {
+export function GoogleSignInButton({ onSuccess, label }: GoogleSignInButtonProps) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,9 +24,10 @@ export function GoogleSignInButton({
       await signInWithPopup(getFirebaseAuth(), provider);
       onSuccess?.();
     } catch (err: unknown) {
-      const message =
-        err instanceof Error ? err.message : "Google girişi başarısız oldu.";
-      setError(message);
+      const message = err instanceof Error ? err.message : t.auth.google.error;
+      if (!message.includes("popup-closed")) {
+        setError(message);
+      }
     } finally {
       setLoading(false);
     }
@@ -62,7 +62,7 @@ export function GoogleSignInButton({
             d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
           />
         </svg>
-        {loading ? "Giriş yapılıyor..." : label}
+        {loading ? t.auth.google.loading : (label ?? t.auth.login.google)}
       </button>
     </div>
   );

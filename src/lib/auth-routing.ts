@@ -18,6 +18,16 @@ export function needsProfileCompletion(profile: UserProfile | null): boolean {
   return !profile.username || !profile.gender;
 }
 
+/** Fotoğraf doğrulaması reddedildi mi? */
+export function isVerificationRejected(profile: UserProfile | null): boolean {
+  return profile?.verificationStatus === "rejected";
+}
+
+/** Fotoğraf doğrulaması henüz yapılmamış mi? */
+export function isVerificationUnverified(profile: UserProfile | null): boolean {
+  return profile?.verificationStatus === "unverified";
+}
+
 /** Fotoğraf doğrulaması henüz yapılmamış veya reddedilmiş mi? */
 export function needsVerificationPhoto(profile: UserProfile | null): boolean {
   if (!profile) return false;
@@ -48,8 +58,6 @@ export function getPostAuthRedirect(
   switch (profile.verificationStatus) {
     case "banned":
       return "/hesap-yasaklandi";
-    case "rejected":
-      return "/dogrulama-reddedildi";
     default:
       return "/dashboard";
   }

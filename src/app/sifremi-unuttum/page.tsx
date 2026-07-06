@@ -21,7 +21,7 @@ export default function ForgotPasswordPage() {
     setSuccess(false);
 
     if (!validateEmail(email)) {
-      setError(t.auth.login.errorInvalid);
+      setError(t.auth.forgot.errorInvalidEmail);
       return;
     }
 
