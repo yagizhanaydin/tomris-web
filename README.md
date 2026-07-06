@@ -58,6 +58,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] **Admin panelinin fotoğrafa erişimi yok** — teknik ve metinsel olarak ayrılmış
 - [x] Onay / red / yasak sonrası fotoğraf **anında silinir**
 - [x] Bekleyen: dashboard + akış okuma (turuncu banner) · Reddedilen: `/dogrulama-reddedildi` · Onaylı: tam erişim
+- [x] Dashboard banner metni (`VerificationStatusBanner`) — empatik ton + **güvenli bir adım** CTA
 
 ### Ban Sistemi (troll / uygunsuz içerik)
 - [x] Temsilci panelinde **Kalıcı Yasakla** (Reddet'ten ayrı)
@@ -193,6 +194,13 @@ Fotoğraf diskten silinir — kalıcı kalmaz
 ```
 
 ### Kullanıcıya gösterilen güven metni (özet)
+
+**Dashboard banner** (`src/lib/i18n/tr.ts` → `verification.bannerTitle` / `bannerBody`):
+
+> **Başlık:** Kadınların güvenliği için güvenli bir adım  
+> **Metin:** Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığın zorlukları ve yorgunluğu biliyoruz — seni anlıyoruz. Tomris boş bir uygulama değil — gerçek bir kadın dayanışma alanı. Seni burada rahat ve konforlu hissettirmek istiyoruz. Şimdilik siteyi gezebilirsin; kadın temsilcilerimiz seni doğruladıktan sonra paylaşım, yorum ve mesajlaşma açılır.
+
+**Genel doğrulama iletişimi:**
 
 > **Kullanıcı / müşteri iletişimi (doğrulama):** Tomris boş bir uygulama değildir — kadınların birbirine destek olduğu, gerçek bir **kadın dayanışma platformudur**. Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığınız zorlukları ve yorgunluğu biliyoruz; sizi bu uygulamada **rahat ve konforlu** hissettirmek istiyoruz. Doğrulama sizi yargılamak için değil, topluluğu güvende tutmak içindir. Kadın temsilcilerimiz her başvuruda görselin yapay zeka (AI) üretimi olmadığını, başka hesaptan alınmadığını ve kötü niyetli sahte profil olmadığını kontrol eder. Fotoğrafa yalnızca kadın temsilciler bakar; erkek adminler erişemez. İnceleme sonrası fotoğraf kalıcı olarak silinir. Onay gelene kadar kullanıcı akışı okuyabilir; paylaşım ve mesajlaşma onay sonrası açılır.
 
@@ -412,7 +420,7 @@ VERIFICATION_PHOTO_STORAGE=local
 ## Test Senaryosu
 
 1. `npm run dev`
-2. `/kayit` → kayıt ol (fotoğrafsız) → `/dashboard` (banner görünür)
+2. `/kayit` → kayıt ol → `/eposta-dogrula` → maildeki link → `/giris` → `/dashboard` (mor banner görünür)
 3. `/akis` → akışı gör; gönderi/yorum kilitli (doğrulama gerekli)
 4. `/arkadaslar` → kilitli form
 5. `/dogrulama` → fotoğraf çek
