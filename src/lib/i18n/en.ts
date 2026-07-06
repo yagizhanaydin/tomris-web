@@ -322,7 +322,7 @@ export const en: TranslationDictionary = {
   verification: {
     bannerTitle: "A safe step for women's safety",
     bannerBody:
-      "As a woman, we know the difficulties and fatigue you face in digital spaces and in real life — we understand you. Tomris is not an empty app — it is a real women's solidarity space. We want you to feel comfortable here. You can browse for now; posting, comments, and messaging unlock after our women representatives verify you. We take this step only for your peace and safety — we hope you understand.",
+      "As a woman, we know the difficulties and fatigue you face in digital spaces and in real life, we understand you. Tomris is not an empty app, it is a real women's solidarity space. We want you to feel comfortable here. You can browse for now; posting, comments, and messaging unlock after our women representatives verify you. We take this step only for your peace and safety — we hope you understand.",
     bannerCta: "Start Verification",
     pageTitle: "Join the Community",
     pageSubtitle: "So you feel comfortable and at ease — a brief, voluntary step",
