@@ -15,7 +15,7 @@
 |--------|-----------|
 | Frontend | Next.js 16, React 19, TypeScript, Tailwind CSS 4 |
 | Auth / Veri | Firebase Auth + Firestore |
-| Fotoğraf (geçici) | **Local:** `data/verifications/` · **Vercel:** Firebase Storage (Admin SDK) |
+| Fotoğraf (geçici) | **Local:** `data/verifications/` · **Vercel:** Firestore geçici belge (Spark, kart gerekmez) |
 | Kadın Temsilci / Admin | Next.js API + HTTP-only cookie (Firebase auth'tan bağımsız) |
 
 ---
@@ -30,7 +30,7 @@
 | Firestore Database | ✅ |
 | Firestore Security Rules (`firestore.rules`) | ⚠️ Repodaki dosyayı Console'da **Publish** et — eski kısa sürümü kullanma |
 | Service Account JSON (`.env.local`) | ✅ |
-| Firebase Storage | ✅ Vercel deploy için (Spark yeterli) — [`DEPLOY.md`](DEPLOY.md) |
+| Firebase Storage | ⚪ Opsiyonel (Blaze) — varsayılan Vercel yolu Firestore — [`DEPLOY.md`](DEPLOY.md) |
 | Canlı test (`npm run dev`) | ⏳ Yapılacak |
 
 Detaylı kurulum: [`FIREBASE-KURULUM.md`](FIREBASE-KURULUM.md)  
@@ -126,11 +126,14 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [ ] Beğeni / etkileşim sayacı
 
 ### Acil Durum
-- [ ] Sinyal gönderme — arkadaşlara acil bildirim
+- [x] Sinyal gönderme (beta) — `/sinyal`, arkadaş listesine kayıt
+- [ ] Push ile arkadaşlara anlık bildirim → [`PWA.md`](PWA.md) Faz 2
 
 ### Panel / Yönetim
 - [ ] Admin moderasyon araçları
-- [ ] PWA / mobil uygulama kabuğu
+- [x] PWA temel manifest — [`PWA.md`](PWA.md) tam yol haritası
+- [x] Uygulama içi rozetler (arkadaş isteği + mesaj)
+- [ ] Push bildirimleri (mesaj, yorum, istek, sinyal)
 
 ---
 
@@ -152,7 +155,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `/arkadaslar` | Arkadaşlık yönetimi (doğrulama gerekli) |
 | `/mesajlar` | DM + gruplar (canlı sohbet) |
 | `/mesajlar/[id]` | Sohbet ekranı |
-| `/ayarlar` | Sohbet gizliliği (arkadaş / herkes) |
+| `/ayarlar` | Sohbet gizliliği, dil, hesap silme |
+| `/sinyal` | Acil durum sinyali (beta — arkadaşlara) |
 | `/kullanim-kosullari` | Kullanım koşulları |
 | `/gizlilik-politikasi` | Gizlilik politikası (KVKK) |
 | `/temsilci/giris` | **Kadın temsilci** girişi |
@@ -396,7 +400,7 @@ SESSION_SECRET=
 # Service Account — Firebase Console > Service Accounts > private key
 FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}
 
-# local = disk (npm run dev / VPS) | firebase = Storage (Vercel)
+# local = disk (npm run dev / VPS) | firestore = Firestore (Vercel/Spark) | firebase = Storage (Blaze)
 VERIFICATION_PHOTO_STORAGE=local
 ```
 
@@ -434,6 +438,6 @@ VERIFICATION_PHOTO_STORAGE=local
 ## Sonraki Öncelikler
 
 1. ⏳ Uçtan uca test + **git commit/push**
-2. Canlı deploy — adımlar: [`DEPLOY.md`](DEPLOY.md) (Vercel + Firebase Storage **veya** VPS + disk)
+2. Canlı deploy — adımlar: [`DEPLOY.md`](DEPLOY.md) (Vercel + Firestore **veya** VPS + disk)
 3. Acil durum sinyali + push bildirim
 5. PWA / mobil uygulama dönüşümü

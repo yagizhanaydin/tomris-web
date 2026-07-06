@@ -105,9 +105,13 @@ export default function DashboardPage() {
             )}
           </div>
           <ul className="space-y-2 text-sm text-[var(--muted)] mt-4">
-            <li className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-[var(--muted)]" />
-              {t.dashboard.signal}
+            <li>
+              <Link
+                href="/sinyal"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-red-200 bg-red-50 text-red-700 font-medium hover:bg-red-100 transition-colors"
+              >
+                🆘 {t.dashboard.signal} →
+              </Link>
             </li>
           </ul>
         </div>

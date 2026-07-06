@@ -180,5 +180,10 @@ service cloud.firestore {
     match /platform_bans/{banId} {
       allow read, write: if false;
     }
+
+    // Doğrulama fotoğrafları — yalnızca Admin SDK (Vercel API)
+    match /verification_photos/{uid} {
+      allow read, write: if false;
+    }
   }
 }

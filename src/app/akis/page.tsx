@@ -24,7 +24,6 @@ import {
 } from "@/lib/posts/service";
 import { DEFAULT_POST_FILTERS } from "@/types/post";
 import type { Post, PostAudience, PostLocationInput } from "@/types/post";
-import type { Gender } from "@/types/user";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function FeedPage() {
@@ -111,9 +110,6 @@ export default function FeedPage() {
     return t.posts.audienceMen;
   };
 
-  const genderLabel = (gender: Gender) =>
-    gender === "kadin" ? t.posts.authorFemale : t.posts.authorMale;
-
   if (loading || !user || !profile) {
     return (
       <div className="min-h-screen flex items-center justify-center tomris-gradient">
@@ -160,7 +156,6 @@ export default function FeedPage() {
                 canInteract={unlocked}
                 onDelete={handleDelete}
                 audienceLabel={audienceLabel}
-                genderLabel={genderLabel}
               />
             ))}
           </div>

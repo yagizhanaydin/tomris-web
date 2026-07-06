@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageProvider";
+import { AuthorGenderBadge } from "@/components/AuthorGenderBadge";
 import { localeToIntl } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n/types";
 import { fetchComments, addComment } from "@/lib/posts/service";
@@ -16,7 +17,6 @@ interface PostCardProps {
   canInteract: boolean;
   onDelete?: (postId: string) => void;
   audienceLabel: (audience: Post["audience"]) => string;
-  genderLabel: (gender: Post["authorGender"]) => string;
 }
 
 function formatDate(iso: string, locale: Locale) {
@@ -35,7 +35,6 @@ export function PostCard({
   canInteract,
   onDelete,
   audienceLabel,
-  genderLabel,
 }: PostCardProps) {
   const { t, locale } = useLanguage();
   const [showComments, setShowComments] = useState(false);
@@ -88,9 +87,12 @@ export function PostCard({
     <article className="card space-y-3">
       <header className="flex items-start justify-between gap-2">
         <div>
-          <p className="font-semibold text-tomris">@{post.authorUsername}</p>
-          <p className="text-xs text-[var(--muted)]">
-            {genderLabel(post.authorGender)} · {formatDate(post.createdAt, locale)}
+          <div className="flex items-center gap-2">
+            <p className="font-semibold text-tomris">@{post.authorUsername}</p>
+            <AuthorGenderBadge gender={post.authorGender} />
+          </div>
+          <p className="text-xs text-[var(--muted)] mt-0.5">
+            {formatDate(post.createdAt, locale)}
           </p>
         </div>
         {post.authorUid === profile.uid && onDelete && (

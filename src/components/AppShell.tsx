@@ -5,35 +5,45 @@ import { usePathname } from "next/navigation";
 import { TomrisLogo } from "./TomrisLogo";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageProvider";
+import { useAuth } from "@/context/AuthProvider";
+import { useNavBadges } from "@/hooks/useNavBadges";
 
 interface AppShellProps {
   children: React.ReactNode;
   onLogout?: () => void;
 }
 
+function NavBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span className="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 flex items-center justify-center rounded-full bg-red-600 text-white text-[10px] font-bold leading-none">
+      {count > 9 ? "9+" : count}
+    </span>
+  );
+}
+
 export function AppShell({ children, onLogout }: AppShellProps) {
   const pathname = usePathname();
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const badges = useNavBadges(user?.uid);
 
   const navItems = [
-    { href: "/dashboard", label: t.nav.dashboard },
-    { href: "/akis", label: t.nav.feed },
-    { href: "/mesajlar", label: t.nav.messages },
-    { href: "/arkadaslar", label: t.nav.friends },
-    { href: "/ayarlar", label: t.nav.settings },
+    { href: "/dashboard", label: t.nav.dashboard, badge: 0 },
+    { href: "/akis", label: t.nav.feed, badge: 0 },
+    { href: "/mesajlar", label: t.nav.messages, badge: badges.messages },
+    { href: "/arkadaslar", label: t.nav.friends, badge: badges.friends },
+    { href: "/ayarlar", label: t.nav.settings, badge: 0 },
   ];
 
   return (
     <div className="min-h-screen tomris-gradient relative">
-      <div className="fixed top-4 right-4 z-20">
-        <LanguageSwitcher />
-      </div>
-
       <header className="bg-white/90 backdrop-blur border-b border-[var(--border)] sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4 pr-14">
+        <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3">
             <TomrisLogo size="sm" showText />
             <div className="flex items-center gap-2">
+              <LanguageSwitcher />
               {onLogout && (
                 <button
                   onClick={onLogout}
@@ -50,13 +60,14 @@ export function AppShell({ children, onLogout }: AppShellProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm px-4 py-2 rounded-xl whitespace-nowrap transition-colors ${
+                className={`relative text-sm px-4 py-2 rounded-xl whitespace-nowrap transition-colors ${
                   pathname === item.href || pathname.startsWith(`${item.href}/`)
                     ? "bg-primary text-white font-medium"
                     : "text-tomris hover:bg-primary-light"
                 }`}
               >
                 {item.label}
+                <NavBadge count={item.badge} />
               </Link>
             ))}
           </nav>

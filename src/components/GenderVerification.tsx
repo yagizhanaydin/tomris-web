@@ -76,12 +76,21 @@ export function GenderVerification({
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    const maxDim = 960;
+    let w = video.videoWidth;
+    let h = video.videoHeight;
+    if (w > maxDim || h > maxDim) {
+      const ratio = maxDim / Math.max(w, h);
+      w = Math.round(w * ratio);
+      h = Math.round(h * ratio);
+    }
+
+    canvas.width = w;
+    canvas.height = h;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    ctx.drawImage(video, 0, 0);
+    ctx.drawImage(video, 0, 0, w, h);
     canvas.toBlob(
       (blob) => {
         if (!blob) return;
@@ -90,7 +99,7 @@ export function GenderVerification({
         setPhase("captured");
       },
       "image/jpeg",
-      0.85
+      0.75
     );
   };
 
@@ -116,7 +125,7 @@ export function GenderVerification({
         if (blob) onCapture(blob);
       },
       "image/jpeg",
-      0.85
+      0.75
     );
   };
 

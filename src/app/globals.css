@@ -96,3 +96,14 @@ input, button, select, textarea {
   background-color: var(--primary-light);
   color: var(--tomris-text);
 }
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0.6;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}

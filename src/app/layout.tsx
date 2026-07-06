@@ -16,6 +16,12 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Tomris — Kadın Dayanışma Platformu",
   description: "Tomris — Kadına karşı her türlü şiddete karşı dayanışma platformu",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    title: "Tomris",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport: Viewport = {

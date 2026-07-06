@@ -271,6 +271,9 @@ export interface TranslationDictionary {
     deleteButton: string;
     deleteConfirmError: string;
     deleteError: string;
+    languageTitle: string;
+    languageHint: string;
+    languageChange: string;
   };
   legal: {
     termsLink: string;
@@ -343,5 +346,19 @@ export interface TranslationDictionary {
       confirm: string;
       errorCamera: string;
     };
+  };
+  signal: {
+    title: string;
+    subtitle: string;
+    intro: string;
+    note: string;
+    messageLabel: string;
+    messagePlaceholder: string;
+    send: string;
+    sending: string;
+    success: string;
+    noFriends: string;
+    gateHint: string;
+    pushSoon: string;
   };
 }

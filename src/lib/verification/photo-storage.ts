@@ -8,17 +8,22 @@ import {
   readFirebasePhoto,
   deleteFirebasePhoto,
 } from "./firebase-storage";
+import {
+  saveFirestorePhoto,
+  readFirestorePhoto,
+  deleteFirestorePhoto,
+} from "./firestore-storage";
 
-export type VerificationPhotoBackend = "local" | "firebase";
+export type VerificationPhotoBackend = "local" | "firestore" | "firebase";
 
-/** Sunucu diski (local/VPS) veya Firebase Storage (Vercel/serverless). */
+/** local = disk (dev/VPS) | firestore = Spark ücretsiz (Vercel) | firebase = Storage (Blaze) */
 export function getVerificationPhotoBackend(): VerificationPhotoBackend {
   const explicit = process.env.VERIFICATION_PHOTO_STORAGE?.toLowerCase();
-  if (explicit === "firebase" || explicit === "local") {
+  if (explicit === "firebase" || explicit === "local" || explicit === "firestore") {
     return explicit;
   }
   if (process.env.VERCEL === "1") {
-    return "firebase";
+    return "firestore";
   }
   return "local";
 }
@@ -28,8 +33,13 @@ function normalizeUid(uidOrPath: string): string {
 }
 
 export async function saveVerificationPhoto(uid: string, data: Buffer): Promise<void> {
-  if (getVerificationPhotoBackend() === "firebase") {
+  const backend = getVerificationPhotoBackend();
+  if (backend === "firebase") {
     await saveFirebasePhoto(uid, data);
+    return;
+  }
+  if (backend === "firestore") {
+    await saveFirestorePhoto(uid, data);
     return;
   }
   await saveLocalPhoto(uid, data);
@@ -37,16 +47,25 @@ export async function saveVerificationPhoto(uid: string, data: Buffer): Promise<
 
 export async function readVerificationPhoto(uidOrPath: string): Promise<Buffer | null> {
   const uid = normalizeUid(uidOrPath);
-  if (getVerificationPhotoBackend() === "firebase") {
+  const backend = getVerificationPhotoBackend();
+  if (backend === "firebase") {
     return readFirebasePhoto(uid);
+  }
+  if (backend === "firestore") {
+    return readFirestorePhoto(uid);
   }
   return readLocalPhoto(uid);
 }
 
 export async function deleteVerificationPhoto(uidOrPath: string): Promise<void> {
   const uid = normalizeUid(uidOrPath);
-  if (getVerificationPhotoBackend() === "firebase") {
+  const backend = getVerificationPhotoBackend();
+  if (backend === "firebase") {
     await deleteFirebasePhoto(uid);
+    return;
+  }
+  if (backend === "firestore") {
+    await deleteFirestorePhoto(uid);
     return;
   }
   await deleteLocalPhoto(uid);

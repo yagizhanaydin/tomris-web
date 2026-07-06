@@ -1,34 +1,45 @@
 import { en } from "./en";
 import type { TranslationDictionary } from "./types";
 
-type AuthOverrides = {
-  login?: Partial<TranslationDictionary["auth"]["login"]>;
-  register?: Partial<TranslationDictionary["auth"]["register"]>;
-  completeProfile?: Partial<TranslationDictionary["auth"]["completeProfile"]>;
-  google?: Partial<TranslationDictionary["auth"]["google"]>;
-  forgot?: Partial<TranslationDictionary["auth"]["forgot"]>;
-  verifyEmail?: Partial<TranslationDictionary["auth"]["verifyEmail"]>;
-};
+type DeepPartial<T> = T extends readonly (infer U)[]
+  ? readonly DeepPartial<U>[]
+  : T extends object
+    ? { [K in keyof T]?: DeepPartial<T[K]> }
+    : T;
 
-export function fromEnglish(overrides: {
-  common?: Partial<TranslationDictionary["common"]>;
-  brand?: Partial<TranslationDictionary["brand"]>;
-  quote?: Partial<TranslationDictionary["quote"]>;
-  auth?: AuthOverrides;
-}): TranslationDictionary {
-  return {
-    ...en,
-    common: { ...en.common, ...overrides.common },
-    brand: { ...en.brand, ...overrides.brand },
-    quote: { ...en.quote, ...overrides.quote },
-    auth: {
-      ...en.auth,
-      login: { ...en.auth.login, ...overrides.auth?.login },
-      register: { ...en.auth.register, ...overrides.auth?.register },
-      completeProfile: { ...en.auth.completeProfile, ...overrides.auth?.completeProfile },
-      google: { ...en.auth.google, ...overrides.auth?.google },
-      forgot: { ...en.auth.forgot, ...overrides.auth?.forgot },
-      verifyEmail: { ...en.auth.verifyEmail, ...overrides.auth?.verifyEmail },
-    },
-  };
+function deepMerge<T extends object>(base: T, overrides: DeepPartial<T>): T {
+  if (overrides === undefined || overrides === null) return base;
+  if (typeof overrides !== "object") return overrides as T;
+  if (Array.isArray(overrides)) return overrides as T;
+  if (Array.isArray(base)) return overrides as T;
+
+  const result = { ...base } as Record<string, unknown>;
+  const source = overrides as Record<string, unknown>;
+
+  for (const key of Object.keys(source)) {
+    const overrideVal = source[key];
+    if (overrideVal === undefined) continue;
+    const baseVal = (base as Record<string, unknown>)[key];
+    if (
+      typeof overrideVal === "object" &&
+      overrideVal !== null &&
+      !Array.isArray(overrideVal) &&
+      typeof baseVal === "object" &&
+      baseVal !== null &&
+      !Array.isArray(baseVal)
+    ) {
+      result[key] = deepMerge(
+        baseVal as object,
+        overrideVal as DeepPartial<Record<string, unknown>>
+      );
+    } else {
+      result[key] = overrideVal;
+    }
+  }
+
+  return result as T;
+}
+
+export function fromEnglish(overrides: DeepPartial<TranslationDictionary>): TranslationDictionary {
+  return deepMerge(en, overrides);
 }

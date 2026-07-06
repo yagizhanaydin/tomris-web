@@ -3,7 +3,8 @@ import type { NextRequest } from "next/server";
 import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
 import { isAdminConfigured } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
-import { saveVerificationPhoto } from "@/lib/verification/photo-storage";
+import { saveVerificationPhoto, getVerificationPhotoBackend } from "@/lib/verification/photo-storage";
+import { prepareVerificationPhoto } from "@/lib/verification/compress-verification-photo";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 const MAX_SIZE = 5 * 1024 * 1024;
@@ -47,7 +48,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Geçersiz dosya türü." }, { status: 400 });
   }
 
-  const buffer = Buffer.from(await file.arrayBuffer());
+  const rawBuffer = Buffer.from(await file.arrayBuffer());
+  let buffer: Buffer;
+  try {
+    buffer =
+      getVerificationPhotoBackend() === "firestore"
+        ? prepareVerificationPhoto(rawBuffer)
+        : rawBuffer;
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Fotoğraf işlenemedi.";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
   await saveVerificationPhoto(auth.uid, buffer);
 
   return NextResponse.json({ success: true, uid: auth.uid });

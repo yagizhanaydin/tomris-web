@@ -1,0 +1,19 @@
+{
+  "name": "Tomris — Kadın Dayanışma",
+  "short_name": "Tomris",
+  "description": "Kadına karşı her türlü şiddete karşı dayanışma platformu",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#faf5ff",
+  "theme_color": "#7c3aed",
+  "orientation": "portrait-primary",
+  "lang": "tr",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
