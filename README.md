@@ -198,7 +198,7 @@ Fotoğraf diskten silinir — kalıcı kalmaz
 **Dashboard banner** (`src/lib/i18n/tr.ts` → `verification.bannerTitle` / `bannerBody`):
 
 > **Başlık:** Kadınların güvenliği için güvenli bir adım  
-> **Metin:** Şimdilik siteyi gezebilirsin. Paylaşım, yorum ve mesajlaşma, kadın temsilcilerimiz seni doğruladıktan sonra açılır. Bu önlemi yalnızca senin huzurun ve güvenliğin için alıyoruz — umarız bunu anlayışla karşılarsın.
+> **Metin:** Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığın zorlukları ve yorgunluğu biliyoruz — seni anlıyoruz. Tomris boş bir uygulama değil — gerçek bir kadın dayanışma alanı. Seni burada rahat ve konforlu hissettirmek istiyoruz. Şimdilik siteyi gezebilirsin; kadın temsilcilerimiz seni doğruladıktan sonra paylaşım, yorum ve mesajlaşma açılır. Bu önlemi yalnızca senin huzurun ve güvenliğin için alıyoruz — umarız bunu anlayışla karşılarsın.
 
 **Genel doğrulama iletişimi:**
 
