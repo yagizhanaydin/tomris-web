@@ -183,14 +183,14 @@ export default function FriendsPage() {
 
         {!unlocked && <VerificationStatusBanner />}
 
-        <div className="card space-y-4">
-          <h2 className="font-semibold text-tomris">{t.friends.addFriend}</h2>
+        {!unlocked && <VerificationStatusBanner />}
 
-          {unlocked ? (
-            <>
+        {unlocked ? (
+          <>
+            <div className="card space-y-4">
+              <h2 className="font-semibold text-tomris">{t.friends.addFriend}</h2>
               {message && <div className="alert-success">{message}</div>}
               {error && <div className="alert-error">{t.friends[error]}</div>}
-
               <form onSubmit={handleAddFriend} className="flex flex-col sm:flex-row gap-3">
                 <input
                   type="text"
@@ -205,26 +205,8 @@ export default function FriendsPage() {
                   {submitting ? t.friends.searching : t.friends.search}
                 </button>
               </form>
-            </>
-          ) : (
-            <VerificationGate>
-              <form className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="text"
-                  disabled
-                  placeholder={t.friends.usernamePlaceholder}
-                  className="input-field flex-1"
-                />
-                <button type="button" disabled className="btn-primary sm:w-auto sm:px-8">
-                  {t.friends.search}
-                </button>
-              </form>
-            </VerificationGate>
-          )}
-        </div>
+            </div>
 
-        {unlocked ? (
-          <>
             <div className="card space-y-3">
               <h2 className="font-semibold text-tomris">{t.friends.incoming}</h2>
               {fetching ? (
@@ -308,9 +290,29 @@ export default function FriendsPage() {
           </>
         ) : (
           <VerificationGate>
-            <div className="card space-y-3">
-              <h2 className="font-semibold text-tomris">{t.friends.myFriends}</h2>
-              <p className="text-sm text-[var(--muted)]">{t.friends.noFriends}</p>
+            <div className="space-y-6">
+              <div className="card space-y-4">
+                <h2 className="font-semibold text-tomris">{t.friends.addFriend}</h2>
+                <form className="flex flex-col sm:flex-row gap-3">
+                  <input
+                    type="text"
+                    disabled
+                    placeholder={t.friends.usernamePlaceholder}
+                    className="input-field flex-1"
+                  />
+                  <button type="button" disabled className="btn-primary sm:w-auto sm:px-8">
+                    {t.friends.search}
+                  </button>
+                </form>
+              </div>
+              <div className="card space-y-3">
+                <h2 className="font-semibold text-tomris">{t.friends.incoming}</h2>
+                <p className="text-sm text-[var(--muted)]">{t.friends.noRequests}</p>
+              </div>
+              <div className="card space-y-3">
+                <h2 className="font-semibold text-tomris">{t.friends.myFriends}</h2>
+                <p className="text-sm text-[var(--muted)]">{t.friends.noFriends}</p>
+              </div>
             </div>
           </VerificationGate>
         )}
