@@ -1,5 +1,7 @@
 export type Gender = "kadin" | "erkek";
 export type VerificationStatus = "unverified" | "pending" | "approved" | "rejected" | "banned";
+/** Bireysel sohbet: yalnızca arkadaşlar veya herkes */
+export type ChatVisibility = "friends" | "everyone";
 
 export interface UserProfile {
   uid: string;
@@ -14,6 +16,8 @@ export interface UserProfile {
   reviewedBy?: string;
   createdAt: string;
   authProvider: "email" | "google";
+  /** Varsayılan: friends */
+  chatVisibility?: ChatVisibility;
   bannedAt?: string;
   bannedBy?: string;
   banReason?: string;

@@ -91,11 +91,14 @@ export interface TranslationDictionary {
     cannotAddSelf: string;
     blockedUser: string;
     invalidUsername: string;
+    message: string;
   };
   nav: {
     dashboard: string;
     feed: string;
     friends: string;
+    messages: string;
+    settings: string;
   };
   posts: {
     title: string;
@@ -154,6 +157,52 @@ export interface TranslationDictionary {
     errorGeneric: string;
     errorBannedContent: string;
     gateHint: string;
+  };
+  chat: {
+    title: string;
+    subtitle: string;
+    tabInbox: string;
+    tabGroups: string;
+    tabNewDm: string;
+    emptyInbox: string;
+    emptyGroups: string;
+    emptyFilteredGroups: string;
+    newDm: string;
+    newDmPlaceholder: string;
+    startDm: string;
+    createGroup: string;
+    groupTitle: string;
+    groupTitlePlaceholder: string;
+    createGroupBtn: string;
+    joinGroup: string;
+    joinedGroup: string;
+    memberCount: string;
+    adminBadge: string;
+    messagePlaceholder: string;
+    send: string;
+    loadOlder: string;
+    emptyThread: string;
+    gateHint: string;
+    errorLoad: string;
+    errorSend: string;
+    backToInbox: string;
+    dmBlocked: string;
+    dmFriendsOnly: string;
+    dmSelf: string;
+    groupCreated: string;
+    pageSizeHint: string;
+    liveConnected: string;
+  };
+  settings: {
+    title: string;
+    subtitle: string;
+    saved: string;
+    chatVisibilityTitle: string;
+    chatVisibilityHint: string;
+    chatFriends: string;
+    chatFriendsDesc: string;
+    chatEveryone: string;
+    chatEveryoneDesc: string;
   };
   ban: {
     pageTitle: string;

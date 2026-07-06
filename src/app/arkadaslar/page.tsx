@@ -20,6 +20,7 @@ import {
   getAcceptedFriends,
   getIncomingRequests,
 } from "@/lib/friends/service";
+import { getOrCreateDm } from "@/lib/chat/service";
 import type { Friendship } from "@/types/friendship";
 
 type FriendErrorKey =
@@ -41,6 +42,7 @@ export default function FriendsPage() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [error, setError] = useState<FriendErrorKey | "">("");
+  const [messageLoading, setMessageLoading] = useState<string | null>(null);
 
   const loadFriendships = useCallback(async () => {
     if (!user) return;
@@ -141,6 +143,21 @@ export default function FriendsPage() {
     await blockUser(user.uid, friendUid, friendUsername);
     setMessage(t.friends.blocked);
     await loadFriendships();
+  };
+
+  const handleMessage = async (friendUid: string) => {
+    if (!user || !profile || !isPlatformUnlocked(profile)) return;
+    setMessageLoading(friendUid);
+    try {
+      const result = await getOrCreateDm(user.uid, profile.username, friendUid);
+      if (!result.ok) {
+        setMessage("");
+        return;
+      }
+      router.push(`/mesajlar/${result.conversationId}`);
+    } finally {
+      setMessageLoading(null);
+    }
   };
 
   if (loading || !user || !profile) {
@@ -257,7 +274,15 @@ export default function FriendsPage() {
                       className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-[var(--border)]"
                     >
                       <span className="font-medium text-tomris">@{friend.username}</span>
-                      <div className="flex gap-2">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={() => handleMessage(friend.uid)}
+                          disabled={messageLoading === friend.uid}
+                          className="flex-1 sm:flex-none px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-dark"
+                        >
+                          {messageLoading === friend.uid ? t.common.loading : t.friends.message}
+                        </button>
                         {friendship && (
                           <button
                             onClick={() => handleRemove(friendship)}

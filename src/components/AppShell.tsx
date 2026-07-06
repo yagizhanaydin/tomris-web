@@ -18,6 +18,7 @@ export function AppShell({ children, onLogout }: AppShellProps) {
   const navItems = [
     { href: "/dashboard", label: t.nav.dashboard },
     { href: "/akis", label: t.nav.feed },
+    { href: "/mesajlar", label: t.nav.messages },
     { href: "/arkadaslar", label: t.nav.friends },
   ];
 
@@ -46,7 +47,7 @@ export function AppShell({ children, onLogout }: AppShellProps) {
                 key={item.href}
                 href={item.href}
                 className={`text-sm px-4 py-2 rounded-xl whitespace-nowrap transition-colors ${
-                  pathname === item.href
+                  pathname === item.href || pathname.startsWith(`${item.href}/`)
                     ? "bg-primary text-white font-medium"
                     : "text-tomris hover:bg-primary-light"
                 }`}

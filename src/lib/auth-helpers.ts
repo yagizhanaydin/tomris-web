@@ -83,6 +83,7 @@ export async function registerWithEmail(
     verificationStatus: "unverified",
     genderVerified: false,
     authProvider: "email",
+    chatVisibility: "friends",
   });
 
   return user;
@@ -111,6 +112,7 @@ export async function createGoogleProfile(
     verificationStatus: "unverified",
     genderVerified: false,
     authProvider: "google",
+    chatVisibility: "friends",
   });
 
   const currentUser = getFirebaseAuth().currentUser;

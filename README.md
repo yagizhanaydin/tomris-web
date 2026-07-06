@@ -82,6 +82,15 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] Hedef kitle filtresi: tüm kullanıcılar / yalnızca kadın / yalnızca erkek
 - [x] Filtreler: bölge, il/ülke, ilçe, cinsiyet, hedef kitle, tarih aralığı
 
+### Sohbet (canlı — Firestore onSnapshot)
+- [x] **Bireysel DM** (`/mesajlar`) — arkadaş veya herkese açık (ayarlardan)
+- [x] **Grup sohbeti** — kurucu yönetici, üyeler mesaj yazar
+- [x] Grup konumu: TR il/ilçe, AB ülke/şehir + filtreler
+- [x] **Canlı mesajlar** — `onSnapshot` ile anında güncelleme
+- [x] Son 20 mesaj + eski mesajları yükle (sayfalama)
+- [x] Ayarlar (`/ayarlar`) — sohbet gizliliği: arkadaşlar / herkes
+- [x] Yasaklı kelime filtresi mesajlarda da aktif
+
 ### UI / UX
 - [x] Mobil uyumlu Tailwind tasarım
 - [x] Mor Tomris teması + Tomris logosu/isim
@@ -106,7 +115,6 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### Panel / Yönetim
 - [ ] Admin moderasyon araçları
-- [ ] Canlı chat (Firestore ile — Spark planda)
 - [ ] PWA / mobil uygulama kabuğu
 
 ---
@@ -126,6 +134,9 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `/dogrulama-reddedildi` | Doğrulama reddedildi — tekrar denenebilir |
 | `/hesap-yasaklandi` | Kalıcı ban |
 | `/arkadaslar` | Arkadaşlık yönetimi (doğrulama gerekli) |
+| `/mesajlar` | DM + gruplar (canlı sohbet) |
+| `/mesajlar/[id]` | Sohbet ekranı |
+| `/ayarlar` | Sohbet gizliliği (arkadaş / herkes) |
 | `/temsilci/giris` | **Kadın temsilci** girişi |
 | `/temsilci` | Kadın temsilci paneli (onay / red / yasak) |
 | `/admin/giris` | Admin girişi (fotoğraf erişimi yok) |
@@ -344,9 +355,8 @@ FIREBASE_SERVICE_ACCOUNT_JSON={"type":"service_account",...tek satır...}
 
 ## Sonraki Öncelikler
 
-1. ⏳ İlk uçtan uca test (kayıt → doğrulama → temsilci onayı → akış)
-2. Firestore rules'u Firebase Console'da güncelle (`posts`, `comments`, `platform_bans`, `isApproved`)
-3. Firestore composite index: `comments` → `postId` + `createdAt` (gerekirse Console önerir)
+1. ⏳ İlk uçtan uca test (kayıt → doğrulama → temsilci onayı → akış + sohbet)
+2. Firestore rules'u Firebase Console'da yayınla (`conversations`, `messages`, `posts`, `platform_bans`)
+3. Firestore index: `conversations` participantUids + updatedAt; `messages` createdAt
 4. Acil durum sinyali + push bildirim
-5. Canlı chat (Firestore, Spark plan)
-6. PWA / mobil uygulama dönüşümü
+5. PWA / mobil uygulama dönüşümü

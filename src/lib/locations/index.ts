@@ -23,19 +23,28 @@ export function normalizePostCountry(post: Post): string {
   return normalizePostRegion(post) === "eu" ? "" : TR_COUNTRY;
 }
 
-export function formatPostLocation(post: Post, locale: Locale): string {
-  const region = normalizePostRegion(post);
-  const country = normalizePostCountry(post) || TR_COUNTRY;
-  const countryLabel = getCountryLabel(country, locale);
+export function formatPostLocation(
+  post: {
+    region?: PostRegion;
+    country?: string;
+    city?: string;
+    district?: string;
+  },
+  locale: Locale
+): string {
+  const region = post.region ?? (post.country && post.country !== TR_COUNTRY ? "eu" : "tr");
+  const country = post.country ?? (region === "eu" ? "" : TR_COUNTRY);
+  const countryLabel = getCountryLabel(country || TR_COUNTRY, locale);
+  const city = post.city ?? "";
 
   if (region === "eu") {
-    return `${countryLabel} · ${post.city}`;
+    return `${countryLabel} · ${city}`;
   }
 
   if (post.district) {
-    return `${post.city} · ${post.district}`;
+    return `${city} · ${post.district}`;
   }
-  return `${countryLabel} · ${post.city}`;
+  return `${countryLabel} · ${city}`;
 }
 
 export function getAllFilterCities(region: PostRegion | "", country: string): string[] {
