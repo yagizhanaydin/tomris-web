@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { sendEmailVerification, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import { AuthLayout } from "@/components/AuthLayout";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
+import { sendTomrisEmailVerification } from "@/lib/auth/email-verification";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { getPostAuthRedirect, needsEmailVerification } from "@/lib/auth-routing";
 
@@ -35,10 +36,7 @@ export default function VerifyEmailPage() {
     setError("");
     setMessage("");
     try {
-      await sendEmailVerification(user, {
-        url: `${window.location.origin}/dashboard`,
-        handleCodeInApp: false,
-      });
+      await sendTomrisEmailVerification(user);
       setMessage(t.auth.verifyEmail.resent);
     } catch {
       setError(t.common.error);

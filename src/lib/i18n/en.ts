@@ -86,17 +86,19 @@ export const en: TranslationDictionary = {
       error: "Google sign-in failed.",
     },
     verifyEmail: {
-      title: "Verify Your Email",
-      subtitle: "Click the link in your inbox to continue",
-      sentTo: "Verification link sent to:",
-      checkSpam: "The verification email may land in spam or junk — check there if you don't see it in your inbox.",
+      title: "Verify your email",
+      subtitle: "Click the link in your inbox — it may take a few minutes.",
+      sentTo: "We sent a verification link to:",
+      checkSpam:
+        "The email may land in spam or junk. If it's not in your inbox, check there too — that's common and nothing to worry about.",
       resend: "Resend verification email",
-      resending: "Sending...",
+      resending: "Sending…",
       resent: "Verification email sent again.",
       confirm: "I've verified my email, continue",
-      confirming: "Checking...",
-      stillUnverified: "Email not verified yet. Check your inbox.",
-      backToLogin: "Sign out and return to login",
+      confirming: "Checking…",
+      stillUnverified:
+        "Your email doesn't look verified yet. Please check your inbox and spam folder.",
+      backToLogin: "Sign out",
     },
     forgot: {
       title: "Forgot Password",

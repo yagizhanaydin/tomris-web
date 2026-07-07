@@ -1,11 +1,11 @@
 import {
   createUserWithEmailAndPassword,
   deleteUser,
-  sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
 import { doc, setDoc, updateDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
+import { sendTomrisEmailVerification } from "@/lib/auth/email-verification";
 import { getVerificationPhotoId } from "@/lib/verification/paths";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
 import { findBannedTerm } from "@/lib/security/content-filter";
@@ -82,10 +82,7 @@ export async function registerWithEmail(
 
   try {
     await updateProfile(user, { displayName: username });
-    await sendEmailVerification(user, {
-      url: `${window.location.origin}/dashboard`,
-      handleCodeInApp: false,
-    });
+    await sendTomrisEmailVerification(user);
 
     const normalized = await reserveUsername(user.uid, username);
 

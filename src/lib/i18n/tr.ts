@@ -86,17 +86,19 @@ export const tr: TranslationDictionary = {
       error: "Google girişi başarısız oldu.",
     },
     verifyEmail: {
-      title: "E-postanı Doğrula",
-      subtitle: "Devam etmek için gelen kutundaki linke tıkla",
-      sentTo: "Doğrulama linki şu adrese gönderildi:",
-      checkSpam: "Doğrulama e-postası spam veya gereksiz klasörüne düşebilir — gelen kutusunda yoksa oraya da bak.",
+      title: "E-postanı doğrula",
+      subtitle: "Gelen kutundaki bağlantıya tıklaman yeterli — birkaç dakika sürebilir.",
+      sentTo: "Doğrulama bağlantısını şu adrese gönderdik:",
+      checkSpam:
+        "E-posta bazen spam veya gereksiz klasörüne düşebilir. Gelen kutusunda yoksa oraya da bak — endişelenme, sık görülen bir durum.",
       resend: "Doğrulama e-postasını tekrar gönder",
-      resending: "Gönderiliyor...",
+      resending: "Gönderiliyor…",
       resent: "Doğrulama e-postası tekrar gönderildi.",
       confirm: "E-postamı doğruladım, devam et",
-      confirming: "Kontrol ediliyor...",
-      stillUnverified: "E-posta henüz doğrulanmamış. Gelen kutunu kontrol et.",
-      backToLogin: "Çıkış yap ve giriş sayfasına dön",
+      confirming: "Kontrol ediliyor…",
+      stillUnverified:
+        "E-posta henüz doğrulanmamış görünüyor. Gelen kutunu ve spam klasörünü kontrol edebilir misin?",
+      backToLogin: "Çıkış yap",
     },
     forgot: {
       title: "Şifremi Unuttum",
