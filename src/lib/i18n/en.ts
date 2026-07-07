@@ -17,7 +17,7 @@ export const en: TranslationDictionary = {
   },
   brand: {
     name: "Tomris",
-    tagline: "A safe solidarity platform where women support each other",
+    tagline: "Women's solidarity platform — a safe space where women support each other",
     footer: "Purple is the color of solidarity.",
     solidarity: "Women's solidarity platform",
   },
@@ -28,7 +28,7 @@ export const en: TranslationDictionary = {
   auth: {
     login: {
       title: "Sign In",
-      subtitle: "Welcome back to the solidarity community",
+      subtitle: "Welcome back to the women's solidarity community",
       email: "Email",
       password: "Password",
       submit: "Sign In",

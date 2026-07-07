@@ -23,7 +23,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
   },
   brand: {
     name: "Tomris",
-    tagline: "Plataforma segura de solidaridad entre mujeres",
+    tagline: "Plataforma de solidaridad femenina — espacio seguro entre mujeres",
     footer: "El morado es el color de la solidaridad.",
     solidarity: "Plataforma de solidaridad de mujeres",
   },
@@ -34,7 +34,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
   auth: {
     login: {
       title: "Iniciar sesión",
-      subtitle: "Bienvenida de nuevo a la comunidad de solidaridad",
+      subtitle: "Bienvenida de nuevo a la comunidad de solidaridad femenina",
       email: "Correo electrónico",
       password: "Contraseña",
       submit: "Iniciar sesión",
@@ -50,7 +50,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     },
     register: {
       title: "Registrarse",
-      subtitle: "Únete a la comunidad de solidaridad — un espacio seguro",
+      subtitle: "Únete a la comunidad de solidaridad femenina — un espacio seguro",
       username: "Nombre de usuario",
       email: "Correo electrónico (Gmail)",
       password: "Contraseña",

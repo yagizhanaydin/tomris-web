@@ -17,7 +17,7 @@ export const tr: TranslationDictionary = {
   },
   brand: {
     name: "Tomris",
-    tagline: "Kadınların birbirini duyduğu güvenli dayanışma platformu",
+    tagline: "Kadın dayanışma platformu — kadınların birbirini duyduğu güvenli alan",
     footer: "Mor, dayanışmanın rengidir.",
     solidarity: "Kadın dayanışma platformu",
   },
@@ -28,7 +28,7 @@ export const tr: TranslationDictionary = {
   auth: {
     login: {
       title: "Giriş Yap",
-      subtitle: "Dayanışma ailesine tekrar hoş geldin",
+      subtitle: "Kadın dayanışma ailesine tekrar hoş geldin",
       email: "E-posta",
       password: "Şifre",
       submit: "Giriş Yap",
@@ -132,7 +132,7 @@ export const tr: TranslationDictionary = {
   },
   friends: {
     title: "Arkadaşlarım",
-    subtitle: "Dayanışma ağınızı oluşturun",
+    subtitle: "Kadın dayanışma ağını oluştur",
     addFriend: "Arkadaş Ekle",
     usernamePlaceholder: "Kullanıcı adı ara (ör. papa)",
     searchHint: "Yazdıkça eşleşen kullanıcılar önerilir",

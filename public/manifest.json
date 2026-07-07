@@ -1,7 +1,7 @@
 {
   "name": "Tomris — Kadın Dayanışma",
   "short_name": "Tomris",
-  "description": "Kadınların birbirini duyduğu güvenli dayanışma platformu",
+  "description": "Kadın dayanışma platformu — kadınların birbirini duyduğu güvenli alan",
   "start_url": "/dashboard",
   "scope": "/",
   "display": "standalone",

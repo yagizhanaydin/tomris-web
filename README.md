@@ -11,7 +11,7 @@
 
 **Tomris Web**, kadınların birbirine destek olduğu bir **güvenli dayanışma platformudur**.
 
-**Marka mesajı (5 dil):** *“Kadınların birbirini duyduğu güvenli dayanışma platformu”* — vitrin ve giriş/kayıt ekranlarında; şiddet odaklı slogan kaldırıldı. Güvenlik (doğrulama, sinyal, 112) arka planda kalır.
+**Marka mesajı (5 dil):** *“Kadın dayanışma platformu — kadınların birbirini duyduğu güvenli alan”* — giriş/kayıt, tagline ve logo altı; **kadın** vurgusu açık.
 
 | Katman | Teknoloji |
 |--------|-----------|
@@ -752,7 +752,7 @@ Repodaki [`firestore.rules`](firestore.rules) = güncel. İçermesi gerekenler:
 ## Oturum Notu — 7 Temmuz 2026 (marka dili)
 
 ### Yapılanlar
-- **Marka repositioning** — “kadına şiddet” sloganı kaldırıldı; vitrin: **kadın dayanışma + güvenli alan**
+- **Marka repositioning** — “kadına şiddet” sloganı kaldırıldı; vitrin: **kadın dayanışma platformu** (kadın vurgusu açık)
 - **5 dil** — `brand.tagline`, giriş/kayıt `subtitle`, içerik filtresi kullanıcı mesajları (TR/EN/DE/FR/ES)
 - **manifest.json** + `layout.tsx` meta description güncellendi
 - Instagram / sosyal medya ile hizalı ton: korku değil dayanışma
