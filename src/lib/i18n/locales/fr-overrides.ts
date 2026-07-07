@@ -304,7 +304,7 @@ export const frOverrides: DeepPartial<TranslationDictionary> = {
     registerAcceptRequired: "Vous devez accepter les conditions pour continuer.",
     terms: {
       title: "Conditions d'utilisation",
-      updated: "Dernière mise à jour : 6 juillet 2026",
+      updated: "Dernière mise à jour : 7 juillet 2026",
       sections: [
         {
           title: "1. Service",
@@ -314,29 +314,42 @@ export const frOverrides: DeepPartial<TranslationDictionary> = {
           ],
         },
         {
-          title: "2. Compte et vérification",
+          title: "2. Compte, identité et vérification",
           body: [
-            "Vous devez fournir des informations exactes. Les photos de vérification sont examinées uniquement par des représentantes femmes et supprimées après approbation, rejet ou bannissement.",
-            "Les comptes peuvent être bannis définitivement pour trolling, discours haineux, harcèlement ou faux profils.",
+            "L'identité de genre et les informations déclarées doivent être exactes. Photos d'autrui, images IA ou usurpation d'identité féminine sont interdites.",
+            "Les photos sont examinées par des représentantes femmes puis supprimées. La vérification protège la communauté mais n'est pas infaillible.",
+            "Fausse identité = bannissement permanent. Tomris se réserve le droit de signaler aux autorités si la loi l'exige.",
+            "Trolling, haine, harcèlement ou faux profils = bannissement permanent.",
           ],
         },
         {
           title: "3. Règles de contenu",
           body: [
-            "Les contenus violents, sexistes, racistes ou harcelants sont interdits. Des filtres automatiques et une modération s'appliquent.",
-            "Vous êtes responsable des publications et messages que vous partagez.",
+            "Contenus violents, sexistes, racistes ou harcelants interdits.",
+            "Vous êtes responsable de vos publications et messages.",
           ],
         },
         {
-          title: "4. Suppression du compte",
+          title: "4. Signal d'urgence",
           body: [
-            "Vous pouvez supprimer définitivement votre compte depuis les Paramètres. Les données supprimées ne peuvent pas être récupérées.",
+            "Le signal d'urgence ne remplace pas les services d'urgence officiels (ex. 112). En danger, appelez d'abord les secours.",
+            "Le signal notifie uniquement vos amies acceptées sur Tomris. Tomris n'envoie personne sur place.",
+            "Les destinataires évaluent leur propre sécurité et ne doivent pas se rendre seules en lieu inconnu.",
+            "Signaux volontairement faux = bannissement permanent.",
           ],
         },
         {
-          title: "5. Limitation de responsabilité",
+          title: "5. Suppression du compte",
           body: [
-            "Tomris facilite les interactions entre utilisatrices. Le service est fourni « tel quel » sans garantie de disponibilité.",
+            "Suppression définitive possible depuis les Paramètres.",
+          ],
+        },
+        {
+          title: "6. Limitation de responsabilité",
+          body: [
+            "Tomris est un intermédiaire entre utilisatrices. Service fourni « tel quel ».",
+            "Responsabilité limitée dans les limites légales applicables.",
+            "Mesures de sécurité raisonnables ; tout usage malveillant ne peut être empêché à 100 %.",
           ],
         },
       ],
@@ -453,6 +466,13 @@ export const frOverrides: DeepPartial<TranslationDictionary> = {
     intro:
       "Si tu es en danger ou as besoin d'aide urgente, Tomris envoie un signal à toutes tes amies. Cette fonctionnalité est en bêta.",
     note: "Le signal est enregistré pour les personnes de ta liste d'amies. Les notifications push arriveront dans la prochaine mise à jour PWA.",
+    safetyWarningTitle: "Avertissement de sécurité important",
+    safetyWarningBody:
+      "Le signal d'urgence ne remplace pas les secours officiels (112). En danger, appelez d'abord le 112. Tomris n'envoie personne sur place. Les amies ne doivent pas s'y rendre seules — appelez la police ou les secours.",
+    incomingSafetyWarning:
+      "Ce n'est pas une intervention Tomris. N'allez pas sur le lieu du signal. Appelez le 112 ou la police.",
+    emergencyCall: "Appeler le 112",
+    mapViewOnly: "Voir sur la carte (ne pas s'y rendre)",
     messageLabel: "Message court (facultatif)",
     messagePlaceholder: "Décris brièvement ta situation ou ta position...",
     send: "Envoyer le signal",

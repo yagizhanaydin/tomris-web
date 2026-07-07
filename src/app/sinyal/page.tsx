@@ -12,6 +12,7 @@ import { AppShell } from "@/components/AppShell";
 import { VerificationGate } from "@/components/VerificationGate";
 import { getCurrentPosition } from "@/lib/geolocation";
 import { IncomingSignalsBanner } from "@/components/IncomingSignalsBanner";
+import { SignalSafetyNotice } from "@/components/SignalSafetyNotice";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function SignalPage() {
@@ -91,6 +92,7 @@ export default function SignalPage() {
 
   const form = (
     <div className="space-y-4">
+      <SignalSafetyNotice variant="send" />
       <p className="text-sm text-[var(--muted)] leading-relaxed">{t.signal.intro}</p>
       <p className="text-xs text-tomris/80 bg-primary-light/40 border border-[var(--border)] rounded-xl p-3">
         {t.signal.note}

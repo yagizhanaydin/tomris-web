@@ -302,7 +302,7 @@ export const tr: TranslationDictionary = {
     registerAcceptRequired: "Devam etmek için sözleşmeyi kabul etmelisiniz.",
     terms: {
       title: "Kullanım Koşulları",
-      updated: "Son güncelleme: 6 Temmuz 2026",
+      updated: "Son güncelleme: 7 Temmuz 2026",
       sections: [
         {
           title: "1. Hizmet",
@@ -312,10 +312,12 @@ export const tr: TranslationDictionary = {
           ],
         },
         {
-          title: "2. Hesap ve doğrulama",
+          title: "2. Hesap, kimlik beyanı ve doğrulama",
           body: [
-            "Kayıt için doğru bilgi vermekle yükümlüsünüz. Doğrulama fotoğrafı yalnızca kadın temsilciler tarafından incelenir; onay veya red sonrası silinir.",
-            "Troll, nefret söylemi, taciz veya sahte hesap tespitinde hesabınız kalıcı olarak yasaklanabilir.",
+            "Kayıt sırasında beyan ettiğin cinsiyet kimliğin ve profil bilgilerin doğru olmalıdır. Başka bir kişinin fotoğrafını, yapay zeka (AI) ile üretilmiş görseli veya internetten alınmış görseli kullanmak; erkek veya başka bir kişi olarak kadın kimliğiyle kayıt olmak kesinlikle yasaktır.",
+            "Doğrulama fotoğrafı yalnızca kadın temsilciler tarafından incelenir; onay, red veya yasak sonrası silinir. İnceleme, topluluğu korumak için yapılan iyi niyetli bir kontroldür; %100 hatasız olduğu garanti edilmez.",
+            "Sahte kimlik, cinsiyet sahteciliği veya kötü niyetli profil tespitinde hesabınız kalıcı yasaklanır; aynı e-posta ile yeniden kayıt engellenebilir. Tomris, yasal yükümlülükleri kapsamında yetkili mercilere bildirimde bulunma hakkını saklı tutar.",
+            "Troll, nefret söylemi, taciz veya sahte hesap kullanımı kalıcı yasak sebebidir.",
           ],
         },
         {
@@ -326,15 +328,26 @@ export const tr: TranslationDictionary = {
           ],
         },
         {
-          title: "4. Hesap silme",
+          title: "4. Acil sinyal",
+          body: [
+            "Acil sinyal özelliği resmî acil yardım hattı (112) veya güvenlik güçlerinin yerine geçmez. Tehlike anında öncelikle 112'yi aramalısınız.",
+            "Sinyal yalnızca Tomris'teki kabul edilmiş arkadaşlarınıza bildirim gönderir. Tomris hiçbir kullanıcıyı fiziksel olarak bir adrese yönlendirmez veya göndermez.",
+            "Sinyal alan kişiler kendi güvenliklerini değerlendirmekle yükümlüdür; tanımadığı veya güvenmediği bir yere tek başına gitmemelidir.",
+            "Kasıtlı sahte sinyal, yanıltıcı konum veya başkalarını tuzağa düşürmek amacıyla sinyal kullanımı kalıcı yasak sebebidir.",
+          ],
+        },
+        {
+          title: "5. Hesap silme",
           body: [
             "Ayarlar sayfasından hesabınızı kalıcı olarak silebilirsiniz. Silme sonrası verileriniz geri getirilemez.",
           ],
         },
         {
-          title: "5. Sorumluluk sınırı",
+          title: "6. Sorumluluk sınırı",
           body: [
-            "Tomris, kullanıcılar arası etkileşimlerde aracıdır. Hizmet 'olduğu gibi' sunulur; kesintisiz çalışma garanti edilmez.",
+            "Tomris, kullanıcılar arası etkileşimlerde aracı hizmet sağlayıcıdır. Hizmet 'olduğu gibi' sunulur; kesintisiz çalışma garanti edilmez.",
+            "Kullanıcıların birbirine karşı eylem veya ihmallerinden Tomris'in sorumluluğu, yürürlükteki hukuk ve bu koşullarda kabul edilen sınırlar dahilindedir.",
+            "Tomris makul güvenlik, moderasyon ve doğrulama önlemleri uygular; buna rağmen tüm kötü niyetli kullanımın önlenemeyeceğini kabul edersiniz.",
           ],
         },
       ],
@@ -450,6 +463,13 @@ export const tr: TranslationDictionary = {
     intro:
       "Tehlikede veya acil desteğe ihtiyacın varsa, Tomris'teki tüm arkadaşlarına anında sinyal gönderilir. Bu özellik beta aşamasındadır.",
     note: "Sinyal arkadaş listendeki kişilere anlık kaydedilir; konum izni verirsen harita linki de gider. Telefon bildirimi (push) bir sonraki güncellemede eklenecek.",
+    safetyWarningTitle: "Önemli güvenlik uyarısı",
+    safetyWarningBody:
+      "Acil sinyal resmî acil yardım hattının (112) yerine geçmez. Tehlike anında önce 112'yi arayın. Tomris hiç kimseyi sinyalin gönderildiği yere yönlendirmez veya göndermez. Sinyal alan arkadaşlarınız konuma tek başına gitmemeli; güvenliğiniz için polisi veya acil servisleri aramalıdır.",
+    incomingSafetyWarning:
+      "Bu bir acil yardım çağrısı değildir. Sinyalin gönderildiği yere gitmeyin. Önce 112'yi arayın veya güvenliğinizden emin değilseniz polise haber verin.",
+    emergencyCall: "112'yi ara",
+    mapViewOnly: "Konumu haritada gör (gitmeyin)",
     messageLabel: "Kısa mesaj (isteğe bağlı)",
     messagePlaceholder: "Konum veya durumunu kısaca yaz...",
     send: "Sinyal Gönder",

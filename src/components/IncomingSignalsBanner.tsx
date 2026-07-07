@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useLanguage } from "@/context/LanguageProvider";
 import { useAuth } from "@/context/AuthProvider";
 import { subscribeToIncomingSignals } from "@/lib/signals/client";
+import { SignalSafetyNotice } from "@/components/SignalSafetyNotice";
 import { mapsUrl } from "@/lib/geolocation";
 import { isPlatformUnlocked } from "@/lib/auth-routing";
 import type { EmergencySignal } from "@/types/signal";
@@ -57,7 +58,8 @@ export function IncomingSignalsBanner() {
   if (signals.length === 0) return null;
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 mb-4">
+      <SignalSafetyNotice variant="receive" />
       <h2 className="text-sm font-semibold text-red-700">{t.signal.incomingTitle}</h2>
       {signals.map((signal) => (
         <div
@@ -78,7 +80,7 @@ export function IncomingSignalsBanner() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm font-medium text-red-700 underline"
             >
-              📍 {t.signal.openMap}
+              📍 {t.signal.mapViewOnly}
             </a>
           ) : (
             <p className="text-xs text-red-700/70">{t.signal.noLocation}</p>

@@ -361,6 +361,11 @@ export interface TranslationDictionary {
     subtitle: string;
     intro: string;
     note: string;
+    safetyWarningTitle: string;
+    safetyWarningBody: string;
+    incomingSafetyWarning: string;
+    emergencyCall: string;
+    mapViewOnly: string;
     messageLabel: string;
     messagePlaceholder: string;
     send: string;

@@ -302,7 +302,7 @@ export const en: TranslationDictionary = {
     registerAcceptRequired: "You must accept the terms to continue.",
     terms: {
       title: "Terms of Service",
-      updated: "Last updated: 6 July 2026",
+      updated: "Last updated: 7 July 2026",
       sections: [
         {
           title: "1. Service",
@@ -312,10 +312,12 @@ export const en: TranslationDictionary = {
           ],
         },
         {
-          title: "2. Account & verification",
+          title: "2. Account, identity declaration & verification",
           body: [
-            "You must provide accurate information. Verification photos are reviewed only by female representatives and deleted after approval, rejection, or ban.",
-            "Accounts may be permanently banned for trolling, hate speech, harassment, or fake profiles.",
+            "The gender identity and profile information you declare at registration must be truthful. Using another person's photo, AI-generated images, or images taken from the internet; or registering as a woman while you are not, is strictly prohibited.",
+            "Verification photos are reviewed only by female representatives and deleted after approval, rejection, or ban. Review is a good-faith check to protect the community; it is not guaranteed to be error-free.",
+            "Fake identity, gender misrepresentation, or malicious profiles result in permanent bans and may block re-registration with the same email. Tomris reserves the right to notify authorities where legally required.",
+            "Trolling, hate speech, harassment, or fake accounts are grounds for permanent bans.",
           ],
         },
         {
@@ -326,15 +328,26 @@ export const en: TranslationDictionary = {
           ],
         },
         {
-          title: "4. Account deletion",
+          title: "4. Emergency signal",
+          body: [
+            "The emergency signal feature is not a substitute for official emergency services (e.g. 112). In danger, call emergency services first.",
+            "Signals notify only your accepted friends on Tomris. Tomris does not dispatch anyone to a physical location.",
+            "Recipients must assess their own safety and must not go alone to places or people they do not trust.",
+            "Deliberate fake signals, misleading locations, or using signals to lure others are grounds for permanent bans.",
+          ],
+        },
+        {
+          title: "5. Account deletion",
           body: [
             "You may permanently delete your account from Settings. Deleted data cannot be recovered.",
           ],
         },
         {
-          title: "5. Limitation of liability",
+          title: "6. Limitation of liability",
           body: [
-            "Tomris facilitates interaction between users. The service is provided 'as is' without uptime guarantees.",
+            "Tomris is an intermediary service provider for user interactions. The service is provided 'as is' without uptime guarantees.",
+            "Tomris's liability for users' actions or omissions toward each other is limited to the extent permitted by applicable law and these terms.",
+            "Tomris applies reasonable security, moderation, and verification measures; you accept that not all malicious use can be prevented.",
           ],
         },
       ],
@@ -450,6 +463,13 @@ export const en: TranslationDictionary = {
     intro:
       "If you are in danger or need urgent support, Tomris sends a signal to all your friends. This feature is in beta.",
     note: "The signal is saved instantly for friends on your list; if you allow location, a map link is included. Phone push notifications will arrive in the next PWA update.",
+    safetyWarningTitle: "Important safety notice",
+    safetyWarningBody:
+      "Emergency signal is not a substitute for official emergency services (112). In danger, call 112 first. Tomris does not send anyone to the signal location. Friends who receive a signal must not go there alone — call police or emergency services instead.",
+    incomingSafetyWarning:
+      "This is not an emergency dispatch. Do not go to the signal location. Call 112 first, or contact the police if you are unsure it is safe.",
+    emergencyCall: "Call 112",
+    mapViewOnly: "View location on map (do not go there)",
     messageLabel: "Short message (optional)",
     messagePlaceholder: "Briefly describe your situation or location...",
     send: "Send Signal",

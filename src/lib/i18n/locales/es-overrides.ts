@@ -304,7 +304,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     registerAcceptRequired: "Debes aceptar los términos para continuar.",
     terms: {
       title: "Términos de servicio",
-      updated: "Última actualización: 6 de julio de 2026",
+      updated: "Última actualización: 7 de julio de 2026",
       sections: [
         {
           title: "1. Servicio",
@@ -314,29 +314,42 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
           ],
         },
         {
-          title: "2. Cuenta y verificación",
+          title: "2. Cuenta, identidad y verificación",
           body: [
-            "Debes proporcionar información exacta. Las fotos de verificación las revisan solo representantes mujeres y se eliminan tras aprobación, rechazo o baneo.",
-            "Las cuentas pueden ser baneadas permanentemente por trolling, discurso de odio, acoso o perfiles falsos.",
+            "La identidad de género y los datos declarados deben ser veraces. Prohibidas fotos ajenas, imágenes IA o suplantación de identidad femenina.",
+            "Las fotos las revisan representantes mujeres y se eliminan después. La verificación protege la comunidad pero no es infalible.",
+            "Identidad falsa = baneo permanente. Tomris puede notificar a autoridades cuando la ley lo exija.",
+            "Trolling, odio, acoso o perfiles falsos = baneo permanente.",
           ],
         },
         {
           title: "3. Normas de contenido",
           body: [
-            "Está prohibido el contenido violento, sexista, racista o acosador. Se aplican filtros automáticos y moderación.",
-            "Eres responsable de las publicaciones y mensajes que compartes.",
+            "Prohibido contenido violento, sexista, racista o acosador.",
+            "Eres responsable de tus publicaciones y mensajes.",
           ],
         },
         {
-          title: "4. Eliminación de cuenta",
+          title: "4. Señal de emergencia",
           body: [
-            "Puedes eliminar permanentemente tu cuenta desde Ajustes. Los datos eliminados no se pueden recuperar.",
+            "La señal no sustituye servicios de emergencia oficiales (p. ej. 112). En peligro, llama primero a emergencias.",
+            "La señal notifica solo a amigas aceptadas en Tomris. Tomris no envía a nadie físicamente.",
+            "Las receptoras evalúan su seguridad y no deben ir solas a lugares desconocidos.",
+            "Señales falsas deliberadas = baneo permanente.",
           ],
         },
         {
-          title: "5. Limitación de responsabilidad",
+          title: "5. Eliminación de cuenta",
           body: [
-            "Tomris facilita la interacción entre usuarias. El servicio se proporciona «tal cual» sin garantías de disponibilidad.",
+            "Eliminación permanente desde Ajustes.",
+          ],
+        },
+        {
+          title: "6. Limitación de responsabilidad",
+          body: [
+            "Tomris es intermediaria entre usuarias. Servicio «tal cual».",
+            "Responsabilidad limitada según la ley aplicable.",
+            "Medidas de seguridad razonables; no todo uso malicioso puede prevenirse.",
           ],
         },
       ],
@@ -453,6 +466,13 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     intro:
       "Si estás en peligro o necesitas ayuda urgente, Tomris envía una señal a todas tus amigas. Esta función está en beta.",
     note: "La señal se guarda para las personas de tu lista de amigas. Las notificaciones push llegarán en la próxima actualización PWA.",
+    safetyWarningTitle: "Aviso de seguridad importante",
+    safetyWarningBody:
+      "La señal de emergencia no sustituye servicios oficiales (112). En peligro, llama primero al 112. Tomris no envía a nadie al lugar. Las amigas no deben ir solas — llama a la policía o emergencias.",
+    incomingSafetyWarning:
+      "No es un envío de Tomris. No vayas al lugar de la señal. Llama al 112 o a la policía.",
+    emergencyCall: "Llamar al 112",
+    mapViewOnly: "Ver en mapa (no ir allí)",
     messageLabel: "Mensaje breve (opcional)",
     messagePlaceholder: "Describe brevemente tu situación o ubicación...",
     send: "Enviar señal",
