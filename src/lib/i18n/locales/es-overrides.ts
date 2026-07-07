@@ -16,14 +16,14 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     or: "o",
     error: "Se produjo un error",
     contentBlocked:
-      "Tu texto contiene lenguaje violento, sexista o racista. Tomris es un espacio seguro.",
+      "Tu texto contiene lenguaje inapropiado, de odio o acoso. Tomris es un espacio seguro de solidaridad.",
     showPassword: "Mostrar contraseña",
     hidePassword: "Ocultar contraseña",
     selectLanguage: "Idioma",
   },
   brand: {
     name: "Tomris",
-    tagline: "Plataforma de solidaridad contra toda violencia hacia las mujeres",
+    tagline: "Plataforma segura de solidaridad entre mujeres",
     footer: "El morado es el color de la solidaridad.",
     solidarity: "Plataforma de solidaridad de mujeres",
   },
@@ -34,7 +34,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
   auth: {
     login: {
       title: "Iniciar sesión",
-      subtitle: "Inicia sesión en tu cuenta",
+      subtitle: "Bienvenida de nuevo a la comunidad de solidaridad",
       email: "Correo electrónico",
       password: "Contraseña",
       submit: "Iniciar sesión",
@@ -50,7 +50,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     },
     register: {
       title: "Registrarse",
-      subtitle: "Crea una cuenta nueva",
+      subtitle: "Únete a la comunidad de solidaridad — un espacio seguro",
       username: "Nombre de usuario",
       email: "Correo electrónico (Gmail)",
       password: "Contraseña",
@@ -231,7 +231,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     errorLocationEu: "Selecciona país y ciudad.",
     errorGeneric: "Algo salió mal.",
     errorBannedContent:
-      "Tu publicación contiene lenguaje violento, sexista o racista y no puede publicarse.",
+      "Tu publicación contiene lenguaje inapropiado, de odio o acoso y no puede publicarse.",
     gateHint: "Se requiere verificación para publicar y comentar.",
   },
   chat: {

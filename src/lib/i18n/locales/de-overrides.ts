@@ -16,14 +16,14 @@ export const deOverrides: DeepPartial<TranslationDictionary> = {
     or: "oder",
     error: "Ein Fehler ist aufgetreten",
     contentBlocked:
-      "Dein Text enthält gewalttätige, sexistische oder rassistische Sprache. Tomris ist ein sicherer Raum.",
+      "Dein Text enthält unangemessene, beleidigende oder hasserfüllte Sprache. Tomris ist ein sicherer Solidaritätsraum.",
     showPassword: "Passwort anzeigen",
     hidePassword: "Passwort verbergen",
     selectLanguage: "Sprache",
   },
   brand: {
     name: "Tomris",
-    tagline: "Solidaritätsplattform gegen jede Form von Gewalt an Frauen",
+    tagline: "Sicherer Solidaritätsraum — Frauen unterstützen Frauen",
     footer: "Lila ist die Farbe der Solidarität.",
     solidarity: "Solidaritätsplattform für Frauen",
   },
@@ -34,7 +34,7 @@ export const deOverrides: DeepPartial<TranslationDictionary> = {
   auth: {
     login: {
       title: "Anmelden",
-      subtitle: "Melde dich bei deinem Konto an",
+      subtitle: "Willkommen zurück in der Solidaritätsgemeinschaft",
       email: "E-Mail",
       password: "Passwort",
       submit: "Anmelden",
@@ -50,7 +50,7 @@ export const deOverrides: DeepPartial<TranslationDictionary> = {
     },
     register: {
       title: "Registrieren",
-      subtitle: "Erstelle ein neues Konto",
+      subtitle: "Tritt der Solidaritätsgemeinschaft bei — ein sicherer Raum",
       username: "Benutzername",
       email: "E-Mail (Gmail)",
       password: "Passwort",
@@ -231,7 +231,7 @@ export const deOverrides: DeepPartial<TranslationDictionary> = {
     errorLocationEu: "Bitte wähle Land und Stadt.",
     errorGeneric: "Etwas ist schiefgelaufen.",
     errorBannedContent:
-      "Dein Beitrag enthält gewalttätige, sexistische oder rassistische Sprache und kann nicht veröffentlicht werden.",
+      "Dein Beitrag enthält unangemessene, beleidigende oder hasserfüllte Sprache und kann nicht veröffentlicht werden.",
     gateHint: "Verifizierung erforderlich, um Beiträge zu veröffentlichen und zu kommentieren.",
   },
   chat: {

@@ -10,14 +10,14 @@ export const tr: TranslationDictionary = {
     or: "veya",
     error: "Bir hata oluştu",
     contentBlocked:
-      "Metniniz şiddet, cinsiyetçi veya ırkçı ifadeler içeriyor. Tomris güvenli bir alandır.",
+      "Metniniz uygunsuz, aşağılayıcı veya nefret içeren ifadeler barındırıyor. Tomris güvenli bir dayanışma alanıdır.",
     showPassword: "Şifreyi göster",
     hidePassword: "Şifreyi gizle",
     selectLanguage: "Dil seçimi",
   },
   brand: {
     name: "Tomris",
-    tagline: "Kadına karşı her türlü şiddete karşı dayanışma platformu",
+    tagline: "Kadınların birbirini duyduğu güvenli dayanışma platformu",
     footer: "Mor, dayanışmanın rengidir.",
     solidarity: "Kadın dayanışma platformu",
   },
@@ -28,7 +28,7 @@ export const tr: TranslationDictionary = {
   auth: {
     login: {
       title: "Giriş Yap",
-      subtitle: "Hesabınıza giriş yapın",
+      subtitle: "Dayanışma ailesine tekrar hoş geldin",
       email: "E-posta",
       password: "Şifre",
       submit: "Giriş Yap",
@@ -44,7 +44,7 @@ export const tr: TranslationDictionary = {
     },
     register: {
       title: "Kayıt Ol",
-      subtitle: "Yeni hesap oluşturun",
+      subtitle: "Kadın dayanışma ailesine katıl — güvenli topluluk",
       username: "Kullanıcı Adı",
       email: "E-posta (Gmail)",
       password: "Şifre",
@@ -226,7 +226,7 @@ export const tr: TranslationDictionary = {
     errorLocationEu: "Ülke ve şehir seçmelisin.",
     errorGeneric: "Bir hata oluştu.",
     errorBannedContent:
-      "Gönderiniz şiddet, cinsiyetçi veya ırkçı ifadeler içeriyor ve paylaşılamaz.",
+      "Gönderiniz uygunsuz, aşağılayıcı veya nefret içeren ifadeler barındırıyor ve paylaşılamaz.",
     gateHint: "Gönderi paylaşmak ve yorum yapmak için doğrulama gerekli.",
   },
   chat: {

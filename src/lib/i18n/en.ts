@@ -10,14 +10,14 @@ export const en: TranslationDictionary = {
     or: "or",
     error: "An error occurred",
     contentBlocked:
-      "Your text contains violent, sexist, or racist language. Tomris is a safe space.",
+      "Your text contains inappropriate, hateful, or harassing language. Tomris is a safe solidarity space.",
     showPassword: "Show password",
     hidePassword: "Hide password",
     selectLanguage: "Language",
   },
   brand: {
     name: "Tomris",
-    tagline: "Solidarity platform against all forms of violence against women",
+    tagline: "A safe solidarity platform where women support each other",
     footer: "Purple is the color of solidarity.",
     solidarity: "Women's solidarity platform",
   },
@@ -28,7 +28,7 @@ export const en: TranslationDictionary = {
   auth: {
     login: {
       title: "Sign In",
-      subtitle: "Sign in to your account",
+      subtitle: "Welcome back to the solidarity community",
       email: "Email",
       password: "Password",
       submit: "Sign In",
@@ -44,7 +44,7 @@ export const en: TranslationDictionary = {
     },
     register: {
       title: "Register",
-      subtitle: "Create a new account",
+      subtitle: "Join the women's solidarity community — a safe space",
       username: "Username",
       email: "Email (Gmail)",
       password: "Password",
@@ -226,7 +226,7 @@ export const en: TranslationDictionary = {
     errorLocationEu: "Please select country and city.",
     errorGeneric: "Something went wrong.",
     errorBannedContent:
-      "Your post contains violent, sexist, or racist language and cannot be published.",
+      "Your post contains inappropriate, hateful, or harassing language and cannot be published.",
     gateHint: "Verification required to post and comment.",
   },
   chat: {

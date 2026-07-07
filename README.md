@@ -9,7 +9,9 @@
 
 ## Proje Özeti
 
-**Tomris Web**, kadınların birbirine destek olduğu bir dayanışma platformudur.
+**Tomris Web**, kadınların birbirine destek olduğu bir **güvenli dayanışma platformudur**.
+
+**Marka mesajı (5 dil):** *“Kadınların birbirini duyduğu güvenli dayanışma platformu”* — vitrin ve giriş/kayıt ekranlarında; şiddet odaklı slogan kaldırıldı. Güvenlik (doğrulama, sinyal, 112) arka planda kalır.
 
 | Katman | Teknoloji |
 |--------|-----------|
@@ -56,6 +58,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | Doğrulama fotoğrafı (local) | ✅ Disk → `data/verifications/{uid}.jpg` |
 | Doğrulama fotoğrafı (Vercel) | ✅ Firestore `verification_photos/{uid}` — **Spark, kart gerekmez** |
 | 5 dil (TR / EN / DE / FR / ES) | ✅ Tam — arama, sinyal, konum metinleri dahil |
+| Marka dili (dayanışma vitrin) | ✅ Giriş/kayıt + tagline — 5 dil; şiddet sloganı kaldırıldı |
 | Dil seçici | ✅ Header 🌐 → alttan sheet · Ayarlar'da da var |
 | Kullanıcı adı arama (öneriler) | ✅ `papa` → `papatyakız` — Arkadaşlar + Yeni DM |
 | Türkçe kullanıcı adı | ✅ ç, ğ, ı, ö, ş, ü destekli |
@@ -743,4 +746,18 @@ Repodaki [`firestore.rules`](firestore.rules) = güncel. İçermesi gerekenler:
 - Push: mesaj, arkadaş isteği, yorum
 - Üç parmak selfie UI (i18n hazır, component bağlanmadı)
 - Bildirim merkezi (🔔)
-4. Local test → Vercel deploy
+
+---
+
+## Oturum Notu — 7 Temmuz 2026 (marka dili)
+
+### Yapılanlar
+- **Marka repositioning** — “kadına şiddet” sloganı kaldırıldı; vitrin: **kadın dayanışma + güvenli alan**
+- **5 dil** — `brand.tagline`, giriş/kayıt `subtitle`, içerik filtresi kullanıcı mesajları (TR/EN/DE/FR/ES)
+- **manifest.json** + `layout.tsx` meta description güncellendi
+- Instagram / sosyal medya ile hizalı ton: korku değil dayanışma
+
+### Dokunulmayanlar
+- Kullanım koşulları / gizlilik (hukuki metinler)
+- Sinyal, 112, doğrulama güvenlik katmanı
+- `content-filter.ts` kelime listesi (sadece UI mesajları yumuşatıldı)

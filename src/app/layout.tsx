@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Tomris — Kadın Dayanışma Platformu",
-  description: "Tomris — Kadına karşı her türlü şiddete karşı dayanışma platformu",
+  description: "Tomris — Kadınların birbirini duyduğu güvenli dayanışma platformu",
   manifest: "/manifest.json",
   applicationName: "Tomris",
   icons: {
