@@ -28,8 +28,8 @@
 | Authentication — E-posta/Şifre | ✅ |
 | Authentication — Google | ✅ |
 | Firestore Database | ✅ |
-| Firestore Security Rules (`firestore.rules`) | ✅ Yayında — `verification_photos` dahil (Publish görünmüyorsa normal: zaten aktif) |
-| Firestore Indexes (2× `conversations` + 1× `signals`) | ✅ Repoda — Console'da `signals` index'i etkinleştir |
+| Firestore Security Rules (`firestore.rules`) | ✅ Güncel sürüm — Console'da **Publish** et |
+| Firestore Indexes (2× `conversations` + 1× `signals`) | ⏳ Console'da `signals` index'ini ekle |
 | Service Account JSON (`.env.local`) | ✅ |
 | Firebase Storage | ⚪ Opsiyonel (Blaze) — varsayılan Vercel yolu **Firestore** — [`DEPLOY.md`](DEPLOY.md) |
 | GitHub (`master`) | ✅ Push edildi — son commit: güncel `master` |
@@ -47,7 +47,12 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | Alan | Durum |
 |------|--------|
 | Kod (GitHub) | ✅ master ile senkron |
-| Firestore rules | ✅ Güncel — Console'da **Publish** gerekebilir (`signals` okuma kuralı) |
+| Firestore rules | ✅ Güncel — `canReadAudienceContent`, `usernames`, `reports`, `signals` |
+| Audience okuma (onaysız) | ✅ Yalnızca `all` gönderiler; kadın/erkek içerik onay şart |
+| Kullanıcı adı benzersizliği | ✅ `usernames/{username}` koleksiyonu |
+| Şikayet / raporlama | ✅ Gönderilerde "Şikayet et" (`reports`) |
+| Sinyal nav + rozet + kapat | ✅ Ana nav'da Sinyal; "Gördüm — kapat" API |
+| Engelleme → akış filtresi | ✅ Engellenen kullanıcı gönderileri gizlenir |
 | Doğrulama fotoğrafı (local) | ✅ Disk → `data/verifications/{uid}.jpg` |
 | Doğrulama fotoğrafı (Vercel) | ✅ Firestore `verification_photos/{uid}` — **Spark, kart gerekmez** |
 | 5 dil (TR / EN / DE / FR / ES) | ✅ Tam — arama, sinyal, konum metinleri dahil |
@@ -102,6 +107,9 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] Arkadaş ekleme / kabul / red / çıkarma / engelleme (`/arkadaslar`)
 - [x] **Kullanıcı adı arama + öneriler** — yazdıkça eşleşen isimler (`UsernameSearchInput`, `searchUsersByUsernamePrefix`)
 - [x] **Türkçe kullanıcı adı** — `papatyakız`, `gülkız` vb. (`src/lib/security/username.ts`, `tr-TR` normalizasyon)
+- [x] **Kullanıcı adı benzersizliği** — `usernames/{username}` rezervasyonu; çakışmada `USERNAME_TAKEN`
+- [x] **Şikayet et** — gönderilerde raporlama (`ReportButton` → `reports` koleksiyonu)
+- [x] **Engellenen kullanıcı** gönderileri akışta gizlenir
 - [x] Doğrulanmamış kullanıcılar sayfayı görür, etkileşim kilitli (`VerificationGate`)
 - [x] **Akış / gönderi paylaşma** (`/akis`) — Instagram tarzı metin gönderileri
 - [x] Gönderiye yorum (doğrulama gerekli)
@@ -127,7 +135,9 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### Güvenlik
 - [x] Firestore: kullanıcı `verificationStatus` self-approve **engellendi**
-- [x] **Audience kuralları** — kadın/erkek hedef kitle SDK ile bypass edilemez (`canViewAudience`)
+- [x] **`canReadAudienceContent`** — onaysız kullanıcı yalnızca `audience: all` okur; sahte cinsiyetle kadın içeriği **okuyamaz**
+- [x] **Audience kuralları** — onaylı kullanıcıda kadın/erkek hedef kitle SDK bypass edilemez
+- [x] **Profil gizliliği** — `users` okuma: yalnızca kendi profil veya onaylı kullanıcılar
 - [x] **Yazar bütünlüğü** — `authorGender` / `authorUsername` profille eşleşmek zorunda (`authorIntegrity`)
 - [x] **E-posta KVKK** — yeni kayıtlarda email Firestore'a yazılmaz (yalnızca Firebase Auth)
 - [x] Gmail ban normalizasyonu (`+alias`, nokta stripping)
@@ -138,7 +148,10 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] İmzalı admin/temsilci oturum çerezleri (`SESSION_SECRET`)
 - [x] API rate limiting (login, upload, check-ban, genel API)
 - [x] Middleware güvenlik başlıkları + temsilci API koruması
-- [x] `signals` — arkadaşlar **okuyabilir** (`notifyUids` içindekiler); yazma kapalı · `verification_photos` / `platform_bans` client kapalı
+- [x] `signals` — arkadaşlar **okuyabilir** (`notifyUids`); yazma kapalı (resolve API Admin SDK)
+- [x] `reports` — onaylı kullanıcı yazabilir; okuma kapalı (moderasyon ileride)
+- [x] `usernames` — benzersiz isim indeksi; client create, update/delete kapalı
+- [x] `verification_photos` / `platform_bans` client kapalı
 
 ### UI / UX
 - [x] Mobil uyumlu Tailwind tasarım
@@ -160,7 +173,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 |---------|-----|
 | **Vercel deploy** | GitHub hazır — env + deploy adımları: [`DEPLOY.md`](DEPLOY.md) |
 | Push bildirimleri | [`PWA.md`](PWA.md) Faz 2 |
-| Bildirim merkezi | Planlanmış |
+| Bildirim merkezi | Planlanmış (uygulama içi sinyal banner + nav rozeti var) |
 | Profil fotoğrafı | Planlanmış |
 | Analytics | Yok |
 
@@ -176,6 +189,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] Sinyal gönderme (beta) — `/sinyal`, tüm arkadaşlara kayıt
 - [x] **Konum paylaşımı** — tarayıcı GPS izni → lat/lng arkadaşlara kaydedilir (`src/lib/geolocation.ts`)
 - [x] **Anlık alıcı bildirimi** — Dashboard / Arkadaşlar / Sinyal sayfasında kırmızı kutu (`IncomingSignalsBanner`, Firestore `onSnapshot`)
+- [x] **Sinyal ana navigasyonda** — kırmızı vurgu + gelen sinyal rozeti
+- [x] **Sinyal kapatma** — alıcı "Gördüm — kapat" / API `POST /api/signals/[id]/resolve`
 - [x] **Harita linki** — alıcı 📍 Haritada aç → Google Maps
 - [ ] Push ile arkadaşlara anlık bildirim → [`PWA.md`](PWA.md) Faz 2
 
@@ -628,6 +643,9 @@ VERIFICATION_PHOTO_STORAGE=local
 
 ```bash
 npm run dev                    # local
+npm run backfill:usernames     # mevcut hesaplar için isim indeksi (bir kez)
+npm run strip:emails           # eski Firestore email temizliği (bir kez)
+npm run test:rules             # Firestore rules test (emulator)
 # Vercel: DEPLOY.md oku
 ```
 
@@ -664,3 +682,28 @@ npm run dev                    # local
 1. Firebase Console → **Rules Publish** (`signals` okuma kuralı)
 2. Firebase Console → **Indexes** — `signals` (notifyUids + status + createdAt) etkinleştir
 3. İki hesapla test: arkadaş ol → sinyal gönder → konum izni ver → diğer hesapta banner + harita
+
+---
+
+## Oturum Notu — 7 Temmuz 2026 (güvenlik denetimi düzeltmeleri)
+
+### Yapılanlar (kritik güvenlik + UX)
+1. **`canReadAudienceContent`** — onaysız kullanıcı kadın/erkek gönderileri okuyamaz (sahte cinsiyet açığı kapatıldı)
+2. **`usernames` koleksiyonu** — benzersiz kullanıcı adı; `npm run backfill:usernames`
+3. **`users` okuma kısıtı** — yalnızca kendi profil veya onaylı kullanıcılar
+4. **Şikayet/raporlama** — `ReportButton`, `reports` rules
+5. **Sinyal UX** — ana nav, rozet, kapatma API'si
+6. **Engelleme** — engellenen kullanıcı gönderileri akıştan filtrelenir
+
+### Firestore rules — Console'a yapıştırılacak tam sürüm
+Repodaki [`firestore.rules`](firestore.rules) = güncel. İçermesi gerekenler:
+- `canReadAudienceContent()`
+- `match /usernames/{username}`
+- `match /reports/{reportId}`
+- `match /signals` → okuma `notifyUids`, yazma kapalı
+
+### Senin yapman gereken
+1. Firebase Console → **Rules Publish** (tam sürüm)
+2. Firebase Console → **Indexes** — `signals`: notifyUids + status + createdAt
+3. `npm run backfill:usernames`
+4. Local test → Vercel deploy

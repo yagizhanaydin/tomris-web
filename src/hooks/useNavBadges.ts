@@ -4,13 +4,15 @@ import { useEffect, useState } from "react";
 import { subscribeFriendships } from "@/lib/friends/subscribe";
 import { getIncomingRequests } from "@/lib/friends/service";
 import { subscribeToMyConversations } from "@/lib/chat/service";
+import { subscribeToIncomingSignals } from "@/lib/signals/client";
 
 export interface NavBadges {
   friends: number;
   messages: number;
+  signals: number;
 }
 
-const EMPTY: NavBadges = { friends: 0, messages: 0 };
+const EMPTY: NavBadges = { friends: 0, messages: 0, signals: 0 };
 
 /** Uygulama içi rozetler — push bildirim öncesi */
 export function useNavBadges(uid: string | undefined): NavBadges {
@@ -24,9 +26,10 @@ export function useNavBadges(uid: string | undefined): NavBadges {
 
     let friendCount = 0;
     let messageCount = 0;
+    let signalCount = 0;
 
     const sync = () => {
-      setBadges({ friends: friendCount, messages: messageCount });
+      setBadges({ friends: friendCount, messages: messageCount, signals: signalCount });
     };
 
     const unsubFriends = subscribeFriendships(uid, (list) => {
@@ -44,9 +47,15 @@ export function useNavBadges(uid: string | undefined): NavBadges {
       sync();
     });
 
+    const unsubSignals = subscribeToIncomingSignals(uid, (signals) => {
+      signalCount = signals.length;
+      sync();
+    });
+
     return () => {
       unsubFriends();
       unsubInbox();
+      unsubSignals();
     };
   }, [uid]);
 

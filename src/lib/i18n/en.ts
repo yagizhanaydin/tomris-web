@@ -158,6 +158,7 @@ export const en: TranslationDictionary = {
     invalidUsername: "Invalid username (3-20 chars; letters, numbers, _ and Turkish characters).",
     message: "Message",
     errorNetwork: "Connection error. Please try again.",
+    usernameTaken: "This username is already taken.",
   },
   nav: {
     dashboard: "Home",
@@ -165,6 +166,7 @@ export const en: TranslationDictionary = {
     friends: "Friends",
     messages: "Messages",
     settings: "Settings",
+    signal: "Signal",
   },
   posts: {
     title: "Feed",
@@ -458,5 +460,18 @@ export const en: TranslationDictionary = {
     incomingFrom: "@{username} sent an emergency signal",
     openMap: "Open location on map",
     noLocation: "No location shared",
+    markSeen: "Seen — dismiss",
+    resolving: "Dismissing…",
+    markSafe: "I'm safe — dismiss signal",
+  },
+  report: {
+    action: "Report",
+    title: "Report content",
+    hint: "Briefly describe why this is inappropriate. It will be sent to moderation.",
+    placeholder: "E.g. harassment, hate speech, fake profile…",
+    send: "Submit",
+    sending: "Submitting…",
+    success: "Report received. Thank you.",
+    error: "Could not submit report. Try again.",
   },
 };

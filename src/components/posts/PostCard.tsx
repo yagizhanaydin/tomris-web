@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageProvider";
 import { AuthorGenderBadge } from "@/components/AuthorGenderBadge";
+import { ReportButton } from "@/components/ReportButton";
 import { localeToIntl } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n/types";
 import { fetchComments, addComment } from "@/lib/posts/service";
@@ -117,14 +118,25 @@ export function PostCard({
         </span>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setShowComments((v) => !v)}
-        className="text-sm link-tomris"
-      >
-        {showComments ? t.posts.hideComments : t.posts.showComments}
-        {comments.length > 0 && ` (${comments.length})`}
-      </button>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <button
+          type="button"
+          onClick={() => setShowComments((v) => !v)}
+          className="text-sm link-tomris"
+        >
+          {showComments ? t.posts.hideComments : t.posts.showComments}
+          {comments.length > 0 && ` (${comments.length})`}
+        </button>
+        {canInteract && (
+          <ReportButton
+            reporterUid={profile.uid}
+            reporterUsername={profile.username}
+            targetType="post"
+            targetId={post.id}
+            targetAuthorUid={post.authorUid}
+          />
+        )}
+      </div>
 
       {showComments && (
         <div className="border-t border-[var(--border)] pt-3 space-y-3">

@@ -8,7 +8,10 @@ import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
 import { getVerificationPhotoId } from "@/lib/verification/paths";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
 import { findBannedTerm } from "@/lib/security/content-filter";
+import { reserveUsername, UsernameTakenError, lookupUidByUsername } from "@/lib/users/usernames";
 import type { Gender, UserProfile } from "@/types/user";
+
+export { UsernameTakenError };
 
 export async function checkEmailNotBanned(email: string): Promise<void> {
   const res = await fetch(`/api/auth/check-ban?email=${encodeURIComponent(email)}`);
@@ -69,6 +72,10 @@ export async function registerWithEmail(
     );
   }
 
+  if (await lookupUidByUsername(normalizedUsername)) {
+    throw new UsernameTakenError();
+  }
+
   const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   const { user } = credential;
 
@@ -78,8 +85,10 @@ export async function registerWithEmail(
     handleCodeInApp: false,
   });
 
+  const normalized = await reserveUsername(user.uid, username);
+
   await saveUserProfile(user.uid, {
-    username: normalizeUsername(username),
+    username: normalized,
     gender,
     verificationPhotoPath: "",
     verificationStatus: "unverified",
@@ -106,8 +115,14 @@ export async function createGoogleProfile(
     );
   }
 
+  if (await lookupUidByUsername(normalizedUsername)) {
+    throw new UsernameTakenError();
+  }
+
+  const normalized = await reserveUsername(uid, username);
+
   await saveUserProfile(uid, {
-    username: normalizedUsername,
+    username: normalized,
     gender,
     verificationPhotoPath: "",
     verificationStatus: "unverified",

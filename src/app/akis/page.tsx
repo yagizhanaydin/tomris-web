@@ -24,6 +24,7 @@ import {
 } from "@/lib/posts/service";
 import { DEFAULT_POST_FILTERS } from "@/types/post";
 import type { Post, PostAudience, PostLocationInput } from "@/types/post";
+import { getBlockedAuthorUids } from "@/lib/friends/service";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function FeedPage() {
@@ -36,6 +37,7 @@ export default function FeedPage() {
   const [filters, setFilters] = useState(DEFAULT_POST_FILTERS);
   const [fetching, setFetching] = useState(true);
   const [error, setError] = useState("");
+  const [blockedUids, setBlockedUids] = useState<Set<string>>(new Set());
 
   const unlocked = isPlatformUnlocked(profile);
 
@@ -64,13 +66,18 @@ export default function FeedPage() {
   }, [user, profile, loading, router]);
 
   useEffect(() => {
+    if (!user) return;
+    getBlockedAuthorUids(user.uid).then(setBlockedUids).catch(() => setBlockedUids(new Set()));
+  }, [user]);
+
+  useEffect(() => {
     if (profile) loadPosts();
   }, [profile, loadPosts]);
 
   const visiblePosts = useMemo(() => {
     if (!profile) return [];
-    return filterPosts(posts, filters, profile.gender);
-  }, [posts, filters, profile]);
+    return filterPosts(posts, filters, profile, blockedUids);
+  }, [posts, filters, profile, blockedUids]);
 
   const handleLogout = async () => {
     await signOut(getFirebaseAuth());

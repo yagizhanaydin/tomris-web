@@ -234,6 +234,37 @@ async function runSuite() {
     await assertSucceeds(db.collection("posts").doc("pw1").get());
   });
 
+  await test("pending user CANNOT read kadin-only post (fake gender)", async () => {
+    const db = env.authenticatedContext("user-pending").firestore();
+    await assertFails(db.collection("posts").doc("pw1").get());
+  });
+
+  await test("pending user CAN read all-audience post", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("posts").doc("pa1").set({ ...postPayload, audience: "all" });
+    });
+    const db = env.authenticatedContext("user-pending").firestore();
+    await assertSucceeds(db.collection("posts").doc("pa1").get());
+  });
+
+  await test("unverified user CANNOT read kadin-only post", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("users").doc("user-unv").set({
+        uid: "user-unv",
+        username: "unverified1",
+        gender: "kadin",
+        verificationPhotoPath: "",
+        verificationStatus: "unverified",
+        genderVerified: false,
+        authProvider: "email",
+        chatVisibility: "friends",
+        createdAt: "2026-07-06T10:00:00.000Z",
+      });
+    });
+    const db = env.authenticatedContext("user-unv").firestore();
+    await assertFails(db.collection("posts").doc("pw1").get());
+  });
+
   await test("approved user CAN send friend request with valid usernames", async () => {
     const db = env.authenticatedContext("user-a").firestore();
     await assertSucceeds(db.collection("friendships").add(friendshipPayload));

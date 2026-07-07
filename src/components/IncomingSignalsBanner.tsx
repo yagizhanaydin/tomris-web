@@ -24,6 +24,8 @@ function formatTime(iso: string, locale: string): string {
 export function IncomingSignalsBanner() {
   const { user, profile } = useAuth();
   const { t, locale, ti } = useLanguage();
+  const [resolvingId, setResolvingId] = useState<string | null>(null);
+
   const [signals, setSignals] = useState<EmergencySignal[]>([]);
 
   useEffect(() => {
@@ -34,6 +36,23 @@ export function IncomingSignalsBanner() {
 
     return subscribeToIncomingSignals(user.uid, setSignals);
   }, [user, profile]);
+
+  const handleResolve = async (signalId: string) => {
+    if (!user || resolvingId) return;
+    setResolvingId(signalId);
+    try {
+      const token = await user.getIdToken();
+      const res = await fetch(`/api/signals/${signalId}/resolve`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) throw new Error("resolve_failed");
+    } catch {
+      // kullanıcı tekrar deneyebilir
+    } finally {
+      setResolvingId(null);
+    }
+  };
 
   if (signals.length === 0) return null;
 
@@ -64,6 +83,14 @@ export function IncomingSignalsBanner() {
           ) : (
             <p className="text-xs text-red-700/70">{t.signal.noLocation}</p>
           )}
+          <button
+            type="button"
+            onClick={() => handleResolve(signal.id)}
+            disabled={resolvingId === signal.id}
+            className="text-sm font-medium text-red-800 underline disabled:opacity-50"
+          >
+            {resolvingId === signal.id ? t.signal.resolving : t.signal.markSeen}
+          </button>
         </div>
       ))}
     </div>

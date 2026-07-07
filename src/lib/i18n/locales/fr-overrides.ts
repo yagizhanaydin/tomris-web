@@ -165,6 +165,7 @@ export const frOverrides: DeepPartial<TranslationDictionary> = {
     invalidUsername: "Nom invalide (3–20 caractères ; lettres, chiffres, _ et caractères turcs).",
     message: "Message",
     errorNetwork: "Erreur de connexion. Veuillez réessayer.",
+    usernameTaken: "Ce nom d'utilisateur est déjà pris.",
   },
   nav: {
     dashboard: "Accueil",
@@ -172,6 +173,7 @@ export const frOverrides: DeepPartial<TranslationDictionary> = {
     friends: "Amies",
     messages: "Messages",
     settings: "Paramètres",
+    signal: "Signal",
   },
   posts: {
     title: "Fil",
@@ -467,5 +469,18 @@ export const frOverrides: DeepPartial<TranslationDictionary> = {
     incomingFrom: "@{username} a envoyé un signal d'urgence",
     openMap: "Ouvrir la position sur la carte",
     noLocation: "Aucune position partagée",
+    markSeen: "Vu — fermer",
+    resolving: "Fermeture…",
+    markSafe: "Je suis en sécurité — fermer le signal",
+  },
+  report: {
+    action: "Signaler",
+    title: "Signaler un contenu",
+    hint: "Décris brièvement pourquoi c'est inapproprié.",
+    placeholder: "Ex. harcèlement, haine, faux profil…",
+    send: "Envoyer",
+    sending: "Envoi…",
+    success: "Signalement reçu. Merci.",
+    error: "Échec de l'envoi. Réessaie.",
   },
 };

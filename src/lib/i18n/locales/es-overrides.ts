@@ -165,6 +165,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     invalidUsername: "Nombre no válido (3–20 caracteres; letras, números, _ y caracteres turcos).",
     message: "Mensaje",
     errorNetwork: "Error de conexión. Inténtalo de nuevo.",
+    usernameTaken: "Este nombre de usuario ya está en uso.",
   },
   nav: {
     dashboard: "Inicio",
@@ -172,6 +173,7 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     friends: "Amigas",
     messages: "Mensajes",
     settings: "Ajustes",
+    signal: "Señal",
   },
   posts: {
     title: "Feed",
@@ -467,5 +469,18 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
     incomingFrom: "@{username} envió una señal de emergencia",
     openMap: "Abrir ubicación en el mapa",
     noLocation: "Sin ubicación compartida",
+    markSeen: "Visto — cerrar",
+    resolving: "Cerrando…",
+    markSafe: "Estoy a salvo — cerrar señal",
+  },
+  report: {
+    action: "Reportar",
+    title: "Reportar contenido",
+    hint: "Describe brevemente por qué es inapropiado.",
+    placeholder: "Ej. acoso, odio, perfil falso…",
+    send: "Enviar",
+    sending: "Enviando…",
+    success: "Reporte recibido. Gracias.",
+    error: "No se pudo enviar. Inténtalo de nuevo.",
   },
 };

@@ -158,6 +158,7 @@ export const tr: TranslationDictionary = {
     invalidUsername: "Geçersiz kullanıcı adı (3-20 karakter; harf, rakam, _ ve Türkçe karakter).",
     message: "Mesaj",
     errorNetwork: "Bağlantı hatası. Lütfen tekrar deneyin.",
+    usernameTaken: "Bu kullanıcı adı zaten alınmış.",
   },
   nav: {
     dashboard: "Ana Sayfa",
@@ -165,6 +166,7 @@ export const tr: TranslationDictionary = {
     friends: "Arkadaşlar",
     messages: "Mesajlar",
     settings: "Ayarlar",
+    signal: "Sinyal",
   },
   posts: {
     title: "Akış",
@@ -458,5 +460,18 @@ export const tr: TranslationDictionary = {
     incomingFrom: "@{username} acil sinyal gönderdi",
     openMap: "Haritada konumu aç",
     noLocation: "Konum paylaşılmadı",
+    markSeen: "Gördüm — kapat",
+    resolving: "Kapatılıyor…",
+    markSafe: "Güvendeyim — sinyali kapat",
+  },
+  report: {
+    action: "Şikayet et",
+    title: "İçerik şikayeti",
+    hint: "Neden uygunsuz olduğunu kısaca yaz. Moderasyon ekibine iletilir.",
+    placeholder: "Örn. taciz, nefret söylemi, sahte profil…",
+    send: "Gönder",
+    sending: "Gönderiliyor…",
+    success: "Şikayetin alındı. Teşekkürler.",
+    error: "Şikayet gönderilemedi. Tekrar dene.",
   },
 };

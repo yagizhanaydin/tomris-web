@@ -61,6 +61,8 @@ export default function RegisterPage() {
         setError(t.common.contentBlocked);
       } else if (message === "INVALID_USERNAME") {
         setError(t.friends.invalidUsername);
+      } else if (message === "USERNAME_TAKEN") {
+        setError(t.friends.usernameTaken);
       } else if (message.includes("email-already-in-use")) {
         setError(t.auth.register.errorEmailInUse);
       } else {
@@ -119,6 +121,9 @@ export default function RegisterPage() {
       } else if (message === "INVALID_USERNAME") {
         await getFirebaseAuth().signOut();
         setError(t.friends.invalidUsername);
+      } else if (message === "USERNAME_TAKEN") {
+        await getFirebaseAuth().signOut();
+        setError(t.friends.usernameTaken);
       } else if (message === "GOOGLE_SESSION") {
         setError(t.auth.register.errorGoogleSession);
       } else if (!message.includes("popup-closed")) {

@@ -31,6 +31,7 @@ export function AppShell({ children, onLogout }: AppShellProps) {
   const navItems = [
     { href: "/dashboard", label: t.nav.dashboard, badge: 0 },
     { href: "/akis", label: t.nav.feed, badge: 0 },
+    { href: "/sinyal", label: t.nav.signal, badge: badges.signals, urgent: true },
     { href: "/mesajlar", label: t.nav.messages, badge: badges.messages },
     { href: "/arkadaslar", label: t.nav.friends, badge: badges.friends },
     { href: "/ayarlar", label: t.nav.settings, badge: 0 },
@@ -62,8 +63,12 @@ export function AppShell({ children, onLogout }: AppShellProps) {
                 href={item.href}
                 className={`relative text-sm px-4 py-2 rounded-xl whitespace-nowrap transition-colors ${
                   pathname === item.href || pathname.startsWith(`${item.href}/`)
-                    ? "bg-primary text-white font-medium"
-                    : "text-tomris hover:bg-primary-light"
+                    ? item.urgent
+                      ? "bg-red-600 text-white font-medium"
+                      : "bg-primary text-white font-medium"
+                    : item.urgent
+                      ? "text-red-700 hover:bg-red-50 border border-red-200"
+                      : "text-tomris hover:bg-primary-light"
                 }`}
               >
                 {item.label}

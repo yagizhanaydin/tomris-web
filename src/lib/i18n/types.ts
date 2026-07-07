@@ -157,6 +157,7 @@ export interface TranslationDictionary {
     invalidUsername: string;
     message: string;
     errorNetwork: string;
+    usernameTaken: string;
   };
   nav: {
     dashboard: string;
@@ -164,6 +165,7 @@ export interface TranslationDictionary {
     friends: string;
     messages: string;
     settings: string;
+    signal: string;
   };
   posts: {
     title: string;
@@ -372,5 +374,18 @@ export interface TranslationDictionary {
     incomingFrom: string;
     openMap: string;
     noLocation: string;
+    markSeen: string;
+    resolving: string;
+    markSafe: string;
+  };
+  report: {
+    action: string;
+    title: string;
+    hint: string;
+    placeholder: string;
+    send: string;
+    sending: string;
+    success: string;
+    error: string;
   };
 }

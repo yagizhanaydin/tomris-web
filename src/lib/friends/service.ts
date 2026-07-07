@@ -16,6 +16,7 @@ import { getFirebaseDb } from "@/lib/firebase";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
 import { isValidUsernameSearchQuery } from "@/lib/security/username";
 import { isSafeContent } from "@/lib/security/content-filter";
+import { lookupUidByUsername } from "@/lib/users/usernames";
 import type { Friendship, Block, FriendProfile } from "@/types/friendship";
 
 const USERNAME_SEARCH_MIN = 2;
@@ -30,6 +31,13 @@ export async function findUserByUsername(
 ): Promise<FriendProfile | null> {
   const normalized = normalizeUsername(username);
   if (!validateUsername(normalized)) return null;
+
+  const indexed = await lookupUidByUsername(normalized);
+  if (indexed) {
+    const userSnap = await getDoc(doc(db(), "users", indexed.uid));
+    if (userSnap.exists() && userSnap.data().verificationStatus === "banned") return null;
+    return indexed;
+  }
 
   const q = query(
     collection(db(), "users"),
@@ -107,6 +115,15 @@ export async function isBlocked(
   ]);
 
   return !snapA.empty || !snapB.empty;
+}
+
+export async function getBlockedAuthorUids(blockerUid: string): Promise<Set<string>> {
+  const q = query(
+    collection(db(), "blocks"),
+    where("blockerUid", "==", blockerUid)
+  );
+  const snap = await getDocs(q);
+  return new Set(snap.docs.map((d) => d.data().blockedUid as string));
 }
 
 export async function getFriendships(uid: string): Promise<Friendship[]> {

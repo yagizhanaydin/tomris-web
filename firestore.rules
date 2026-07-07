@@ -31,6 +31,11 @@ service cloud.firestore {
       return audience == 'all' || audience == myGender();
     }
 
+    /** Onaylı olmayan kullanıcı yalnızca `all` gönderileri okuyabilir */
+    function canReadAudienceContent(audience) {
+      return audience == 'all' || (isApproved() && canViewAudience(audience));
+    }
+
     function authorIntegrity(data) {
       return data.authorUid == request.auth.uid &&
         data.authorGender == myGender() &&
@@ -59,7 +64,10 @@ service cloud.firestore {
     }
 
     match /users/{userId} {
-      allow read: if isSignedIn();
+      allow read: if isSignedIn() && (
+        isOwner(userId) ||
+        resource.data.verificationStatus == 'approved'
+      );
       allow create: if isOwner(userId) &&
         request.resource.data.verificationStatus == 'unverified' &&
         request.resource.data.genderVerified == false &&
@@ -73,6 +81,17 @@ service cloud.firestore {
         request.resource.data.username.size() <= 20;
       allow update: if isOwner(userId) && userSelfUpdateAllowed();
       allow delete: if false;
+    }
+
+    match /usernames/{username} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn() &&
+        request.resource.data.uid == request.auth.uid &&
+        request.resource.data.username == username &&
+        username.size() >= 3 &&
+        username.size() <= 20 &&
+        !exists(/databases/$(database)/documents/usernames/$(username));
+      allow update, delete: if false;
     }
 
     match /friendships/{friendshipId} {
@@ -119,7 +138,7 @@ service cloud.firestore {
     }
 
     match /posts/{postId} {
-      allow read: if isSignedIn() && canViewAudience(resource.data.audience);
+      allow read: if isSignedIn() && canReadAudienceContent(resource.data.audience);
 
       allow create: if isApproved() &&
         authorIntegrity(request.resource.data) &&
@@ -138,7 +157,7 @@ service cloud.firestore {
     match /comments/{commentId} {
       allow read: if isSignedIn() &&
         exists(/databases/$(database)/documents/posts/$(resource.data.postId)) &&
-        canViewAudience(
+        canReadAudienceContent(
           get(/databases/$(database)/documents/posts/$(resource.data.postId)).data.audience
         );
 
@@ -146,7 +165,7 @@ service cloud.firestore {
         authorIntegrity(request.resource.data) &&
         textLen(request.resource.data.content, 500) &&
         exists(/databases/$(database)/documents/posts/$(request.resource.data.postId)) &&
-        canViewAudience(
+        canReadAudienceContent(
           get(/databases/$(database)/documents/posts/$(request.resource.data.postId)).data.audience
         ) &&
         request.resource.data.keys().hasAll([
@@ -223,6 +242,20 @@ service cloud.firestore {
 
         allow update, delete: if false;
       }
+    }
+
+    match /reports/{reportId} {
+      allow create: if isApproved() &&
+        request.resource.data.reporterUid == request.auth.uid &&
+        request.resource.data.reporterUsername == myUsername() &&
+        request.resource.data.targetType in ['post', 'comment', 'user'] &&
+        request.resource.data.targetId is string &&
+        request.resource.data.reason.size() >= 5 &&
+        textLen(request.resource.data.reason, 500) &&
+        request.resource.data.keys().hasAll([
+          'reporterUid', 'reporterUsername', 'targetType', 'targetId', 'reason', 'createdAt'
+        ]);
+      allow read, update, delete: if false;
     }
 
     match /signals/{signalId} {

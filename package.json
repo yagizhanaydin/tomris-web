@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:rules": "firebase emulators:exec --only firestore \"node scripts/test-firestore-rules.mjs\"",
-    "strip:emails": "node scripts/strip-public-emails.mjs"
+    "strip:emails": "node scripts/strip-public-emails.mjs",
+    "backfill:usernames": "node scripts/backfill-usernames.mjs"
   },
   "dependencies": {
     "firebase": "^12.15.0",

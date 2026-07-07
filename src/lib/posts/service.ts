@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase";
 import { sanitizeText } from "@/lib/security/validate";
-import type { Gender } from "@/types/user";
+import type { Gender, UserProfile } from "@/types/user";
 import type {
   Post,
   Comment,
@@ -27,10 +27,13 @@ function db() {
   return getFirebaseDb();
 }
 
-/** İzleyici bu gönderiyi görebilir mi? (hedef kitle) */
-export function canViewPost(post: Post, viewerGender: Gender): boolean {
+/** İzleyici bu gönderiyi görebilir mi? (hedef kitle + doğrulama) */
+export function canViewPost(post: Post, viewer: Pick<UserProfile, "gender" | "verificationStatus">): boolean {
+  if (viewer.verificationStatus !== "approved") {
+    return post.audience === "all";
+  }
   if (post.audience === "all") return true;
-  return post.audience === viewerGender;
+  return post.audience === viewer.gender;
 }
 
 function inDateRange(createdAt: string, range: DateFilter): boolean {
@@ -47,10 +50,12 @@ function inDateRange(createdAt: string, range: DateFilter): boolean {
 export function filterPosts(
   posts: Post[],
   filters: PostFilters,
-  viewerGender: Gender
+  viewer: Pick<UserProfile, "gender" | "verificationStatus">,
+  blockedAuthorUids: ReadonlySet<string> = new Set()
 ): Post[] {
   return posts.filter((post) => {
-    if (!canViewPost(post, viewerGender)) return false;
+    if (blockedAuthorUids.has(post.authorUid)) return false;
+    if (!canViewPost(post, viewer)) return false;
 
     const region = normalizePostRegion(post);
     const country = normalizePostCountry(post);

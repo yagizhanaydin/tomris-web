@@ -56,6 +56,8 @@ export default function CompleteRegistrationPage() {
         setError(t.common.contentBlocked);
       } else if (message === "INVALID_USERNAME") {
         setError(t.friends.invalidUsername);
+      } else if (message === "USERNAME_TAKEN") {
+        setError(t.friends.usernameTaken);
       } else {
         setError(message || t.auth.completeProfile.errorFailed);
       }
