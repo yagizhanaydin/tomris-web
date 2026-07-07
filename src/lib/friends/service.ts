@@ -10,10 +10,16 @@ import {
   where,
   or,
   limit,
+  orderBy,
 } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
+import { isValidUsernameSearchQuery } from "@/lib/security/username";
+import { isSafeContent } from "@/lib/security/content-filter";
 import type { Friendship, Block, FriendProfile } from "@/types/friendship";
+
+const USERNAME_SEARCH_MIN = 2;
+const USERNAME_SEARCH_DEFAULT_LIMIT = 8;
 
 function db() {
   return getFirebaseDb();
@@ -34,7 +40,45 @@ export async function findUserByUsername(
   if (snap.empty) return null;
 
   const data = snap.docs[0].data();
+  if (data.verificationStatus === "banned") return null;
+
   return { uid: snap.docs[0].id, username: data.username as string };
+}
+
+/** Kullanıcı adı öneki ile arama — örn. "papa" → papatyakiz */
+export async function searchUsersByUsernamePrefix(
+  rawQuery: string,
+  options?: { excludeUid?: string; limit?: number }
+): Promise<FriendProfile[]> {
+  const normalized = normalizeUsername(rawQuery);
+  if (normalized.length < USERNAME_SEARCH_MIN) return [];
+  if (!isValidUsernameSearchQuery(normalized)) return [];
+
+  const maxResults = options?.limit ?? USERNAME_SEARCH_DEFAULT_LIMIT;
+  const q = query(
+    collection(db(), "users"),
+    where("username", ">=", normalized),
+    where("username", "<=", normalized + "\uf8ff"),
+    orderBy("username"),
+    limit(maxResults + 4)
+  );
+
+  const snap = await getDocs(q);
+  const results: FriendProfile[] = [];
+
+  for (const docSnap of snap.docs) {
+    if (options?.excludeUid && docSnap.id === options.excludeUid) continue;
+
+    const data = docSnap.data();
+    const username = data.username as string;
+    if (data.verificationStatus === "banned") continue;
+    if (!isSafeContent(username)) continue;
+
+    results.push({ uid: docSnap.id, username });
+    if (results.length >= maxResults) break;
+  }
+
+  return results;
 }
 
 export async function isBlocked(

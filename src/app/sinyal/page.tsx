@@ -10,6 +10,8 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { isPlatformUnlocked, needsProfileCompletion } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
 import { VerificationGate } from "@/components/VerificationGate";
+import { getCurrentPosition } from "@/lib/geolocation";
+import { IncomingSignalsBanner } from "@/components/IncomingSignalsBanner";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function SignalPage() {
@@ -22,6 +24,7 @@ export default function SignalPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [locationStatus, setLocationStatus] = useState<"" | "loading" | "attached" | "denied">("");
 
   useEffect(() => {
     if (!loading && !user) router.replace("/giris");
@@ -43,8 +46,14 @@ export default function SignalPage() {
     if (!user || !profile || submitting) return;
     setError("");
     setSuccess(false);
+    setLocationStatus("");
     setSubmitting(true);
+    setLocationStatus("loading");
+    let sentLocationStatus: "attached" | "denied" = "denied";
     try {
+      const location = await getCurrentPosition();
+      sentLocationStatus = location ? "attached" : "denied";
+
       const token = await user.getIdToken();
       const res = await fetch("/api/signals/send", {
         method: "POST",
@@ -52,7 +61,7 @@ export default function SignalPage() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message }),
+        body: JSON.stringify({ message, location }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -60,9 +69,11 @@ export default function SignalPage() {
         return;
       }
       setSuccess(true);
+      setLocationStatus(sentLocationStatus);
       setMessage("");
     } catch {
       setError(t.common.error);
+      setLocationStatus("");
     } finally {
       setSubmitting(false);
     }
@@ -85,6 +96,17 @@ export default function SignalPage() {
         {t.signal.note}
       </p>
       <p className="text-xs text-[var(--muted)]">{t.signal.pushSoon}</p>
+      <p className="text-xs text-tomris/80">{t.signal.shareLocationHint}</p>
+
+      {locationStatus === "loading" && (
+        <p className="text-xs text-[var(--muted)]">{t.signal.locationLoading}</p>
+      )}
+      {success && locationStatus === "attached" && (
+        <p className="text-xs text-green-700">{t.signal.locationAttached}</p>
+      )}
+      {success && locationStatus === "denied" && (
+        <p className="text-xs text-[var(--muted)]">{t.signal.locationDenied}</p>
+      )}
 
       {success && <div className="alert-success">{t.signal.success}</div>}
       {error && <div className="alert-error">{error}</div>}
@@ -126,6 +148,7 @@ export default function SignalPage() {
         </div>
 
         <div className="card">
+          <IncomingSignalsBanner />
           {unlocked ? (
             form
           ) : (

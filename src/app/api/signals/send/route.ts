@@ -5,6 +5,7 @@ import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
 import { createEmergencySignal } from "@/lib/signals/service";
 import { assertSafeContent } from "@/lib/security/content-filter";
+import { isValidSignalLocation } from "@/lib/geolocation";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Doğrulama gerekli." }, { status: 403 });
   }
 
-  let body: { message?: string } = {};
+  let body: { message?: string; location?: unknown } = {};
   try {
     body = await request.json();
   } catch {
@@ -52,6 +53,8 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Mesaj uygunsuz içerik içeriyor." }, { status: 400 });
     }
   }
+
+  const location = isValidSignalLocation(body.location) ? body.location : null;
 
   const friendships = await getAdminDb()
     .collection("friendships")
@@ -86,6 +89,7 @@ export async function POST(request: NextRequest) {
     uid: auth.uid,
     username: userData.username as string,
     message,
+    location,
     notifyUids: [...notifyUids],
   });
 
@@ -93,5 +97,6 @@ export async function POST(request: NextRequest) {
     success: true,
     signalId,
     friendCount: notifyUids.size,
+    hasLocation: Boolean(location),
   });
 }

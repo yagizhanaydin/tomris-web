@@ -13,6 +13,7 @@ import { VerificationStatusBanner } from "@/components/VerificationStatusBanner"
 import { VerificationGate } from "@/components/VerificationGate";
 import { GroupFiltersBar, GroupLocationFields, defaultGroupLocation } from "@/components/chat/GroupLocationFields";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
+import { UsernameSearchInput } from "@/components/UsernameSearchInput";
 import {
   fetchPublicGroups,
   filterGroups,
@@ -385,16 +386,16 @@ function MessagesPageContent() {
               <>
                 {dmError && <div className="alert-error text-sm">{dmError}</div>}
                 <form onSubmit={handleStartDm} className="flex flex-col sm:flex-row gap-3">
-                  <input
-                    type="text"
-                    value={dmUsername}
-                    onChange={(e) => setDmUsername(e.target.value)}
-                    placeholder={t.chat.newDmPlaceholder}
-                    maxLength={20}
-                    autoComplete="off"
-                    className="input-field flex-1"
-                  />
-                  <button type="submit" disabled={dmSubmitting} className="btn-primary sm:w-auto sm:px-8">
+                  <div className="flex-1 space-y-1">
+                    <UsernameSearchInput
+                      value={dmUsername}
+                      onChange={setDmUsername}
+                      excludeUid={user.uid}
+                      disabled={dmSubmitting}
+                    />
+                    <p className="text-xs text-[var(--muted)] px-1">{t.friends.searchHint}</p>
+                  </div>
+                  <button type="submit" disabled={dmSubmitting} className="btn-primary sm:w-auto sm:px-8 sm:self-start">
                     {dmSubmitting ? t.common.loading : t.chat.startDm}
                   </button>
                 </form>

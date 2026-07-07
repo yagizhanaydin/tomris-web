@@ -226,7 +226,9 @@ service cloud.firestore {
     }
 
     match /signals/{signalId} {
-      allow read, write: if false;
+      allow read: if isSignedIn() &&
+        request.auth.uid in resource.data.notifyUids;
+      allow write: if false;
     }
 
     match /platform_bans/{banId} {

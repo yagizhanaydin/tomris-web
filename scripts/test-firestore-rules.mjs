@@ -256,6 +256,34 @@ async function runSuite() {
     );
   });
 
+  await test("notified friend CAN read active signal", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("signals").doc("sig-1").set({
+        uid: "user-b",
+        username: "friend",
+        notifyUids: ["user-a"],
+        status: "active",
+        createdAt: "2026-07-06T12:00:00.000Z",
+      });
+    });
+    const db = env.authenticatedContext("user-a").firestore();
+    await assertSucceeds(db.collection("signals").doc("sig-1").get());
+  });
+
+  await test("non-notified user CANNOT read signal", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("signals").doc("sig-2").set({
+        uid: "user-b",
+        username: "friend",
+        notifyUids: ["user-a"],
+        status: "active",
+        createdAt: "2026-07-06T12:00:00.000Z",
+      });
+    });
+    const db = env.authenticatedContext("user-c").firestore();
+    await assertFails(db.collection("signals").doc("sig-2").get());
+  });
+
   await test("client CANNOT read verification_photos", async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
       await ctx.firestore().collection("verification_photos").doc("user-a").set({ x: 1 });

@@ -1,21 +1,20 @@
 import { assertSafeContent, ContentBlockedError } from "./content-filter";
+import {
+  isValidUsernameChars,
+  normalizeUsername,
+} from "./username";
 
 export { ContentBlockedError, isSafeContent } from "./content-filter";
-
-const USERNAME_REGEX = /^[a-zA-Z0-9_]{3,20}$/;
+export { normalizeUsername, isValidUsernameChars } from "./username";
 
 export function validateUsername(username: string): boolean {
-  if (!USERNAME_REGEX.test(username.trim())) return false;
+  if (!isValidUsernameChars(username)) return false;
   try {
     assertSafeContent(username);
     return true;
   } catch {
     return false;
   }
-}
-
-export function normalizeUsername(username: string): string {
-  return username.trim().toLowerCase();
 }
 
 export function validateEmail(email: string): boolean {

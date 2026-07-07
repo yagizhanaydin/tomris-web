@@ -1,10 +1,11 @@
 import { getAdminDb } from "@/lib/firebase-admin";
-import type { EmergencySignal } from "@/types/signal";
+import type { EmergencySignal, SignalLocation } from "@/types/signal";
 
 export async function createEmergencySignal(input: {
   uid: string;
   username: string;
   message?: string;
+  location?: SignalLocation | null;
   notifyUids: string[];
 }): Promise<string> {
   const ref = getAdminDb().collection("signals").doc();
@@ -13,6 +14,7 @@ export async function createEmergencySignal(input: {
     uid: input.uid,
     username: input.username,
     message: input.message?.trim() || null,
+    location: input.location ?? null,
     notifyUids: input.notifyUids,
     status: "active",
     createdAt: now,

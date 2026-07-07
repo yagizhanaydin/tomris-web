@@ -132,6 +132,10 @@ export interface TranslationDictionary {
     subtitle: string;
     addFriend: string;
     usernamePlaceholder: string;
+    searchHint: string;
+    suggestions: string;
+    searchingSuggestions: string;
+    noSuggestions: string;
     search: string;
     searching: string;
     myFriends: string;
@@ -360,5 +364,13 @@ export interface TranslationDictionary {
     noFriends: string;
     gateHint: string;
     pushSoon: string;
+    shareLocationHint: string;
+    locationLoading: string;
+    locationAttached: string;
+    locationDenied: string;
+    incomingTitle: string;
+    incomingFrom: string;
+    openMap: string;
+    noLocation: string;
   };
 }

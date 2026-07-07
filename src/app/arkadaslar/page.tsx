@@ -11,6 +11,7 @@ import { AppShell } from "@/components/AppShell";
 import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { VerificationGate } from "@/components/VerificationGate";
 import { validateUsername, normalizeUsername } from "@/lib/security/validate";
+import { UsernameSearchInput } from "@/components/UsernameSearchInput";
 import {
   findUserByUsername,
   getFriendships,
@@ -23,6 +24,7 @@ import {
 } from "@/lib/friends/service";
 import { getOrCreateDm } from "@/lib/chat/service";
 import type { Friendship } from "@/types/friendship";
+import { IncomingSignalsBanner } from "@/components/IncomingSignalsBanner";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 type FriendErrorKey =
@@ -174,6 +176,8 @@ export default function FriendsPage() {
   return (
     <AppShell onLogout={handleLogout}>
       <div className="space-y-6">
+        <IncomingSignalsBanner />
+
         <div>
           <h1 className="text-xl sm:text-2xl font-bold text-tomris">{t.friends.title}</h1>
           <p className="text-sm text-[var(--muted)] mt-1">{t.friends.subtitle}</p>
@@ -188,16 +192,16 @@ export default function FriendsPage() {
               {message && <div className="alert-success">{message}</div>}
               {error && <div className="alert-error">{t.friends[error]}</div>}
               <form onSubmit={handleAddFriend} className="flex flex-col sm:flex-row gap-3">
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder={t.friends.usernamePlaceholder}
-                  maxLength={20}
-                  autoComplete="off"
-                  className="input-field flex-1"
-                />
-                <button type="submit" disabled={submitting} className="btn-primary sm:w-auto sm:px-8">
+                <div className="flex-1 space-y-1">
+                  <UsernameSearchInput
+                    value={username}
+                    onChange={setUsername}
+                    excludeUid={user.uid}
+                    disabled={submitting}
+                  />
+                  <p className="text-xs text-[var(--muted)] px-1">{t.friends.searchHint}</p>
+                </div>
+                <button type="submit" disabled={submitting} className="btn-primary sm:w-auto sm:px-8 sm:self-start">
                   {submitting ? t.friends.searching : t.friends.search}
                 </button>
               </form>

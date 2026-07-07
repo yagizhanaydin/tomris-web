@@ -29,10 +29,10 @@
 | Authentication — Google | ✅ |
 | Firestore Database | ✅ |
 | Firestore Security Rules (`firestore.rules`) | ✅ Yayında — `verification_photos` dahil (Publish görünmüyorsa normal: zaten aktif) |
-| Firestore Indexes (2× `conversations`) | ✅ Enabled |
+| Firestore Indexes (2× `conversations` + 1× `signals`) | ✅ Repoda — Console'da `signals` index'i etkinleştir |
 | Service Account JSON (`.env.local`) | ✅ |
 | Firebase Storage | ⚪ Opsiyonel (Blaze) — varsayılan Vercel yolu **Firestore** — [`DEPLOY.md`](DEPLOY.md) |
-| GitHub (`master`) | ✅ Push edildi — son commit: `5b5b9ff` |
+| GitHub (`master`) | ✅ Push edildi — son commit: güncel `master` |
 | Canlı site (Vercel) | ⏳ Henüz deploy edilmedi |
 | Local test (`npm run dev`) | ✅ Hazır |
 
@@ -46,12 +46,15 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 | Alan | Durum |
 |------|--------|
-| Kod (GitHub) | ✅ `5b5b9ff` — master ile senkron |
-| Firestore rules | ✅ Güncel, Console'da yayında |
+| Kod (GitHub) | ✅ master ile senkron |
+| Firestore rules | ✅ Güncel — Console'da **Publish** gerekebilir (`signals` okuma kuralı) |
 | Doğrulama fotoğrafı (local) | ✅ Disk → `data/verifications/{uid}.jpg` |
 | Doğrulama fotoğrafı (Vercel) | ✅ Firestore `verification_photos/{uid}` — **Spark, kart gerekmez** |
-| 5 dil (TR / EN / DE / FR / ES) | ✅ |
+| 5 dil (TR / EN / DE / FR / ES) | ✅ Tam — arama, sinyal, konum metinleri dahil |
 | Dil seçici | ✅ Header 🌐 → alttan sheet · Ayarlar'da da var |
+| Kullanıcı adı arama (öneriler) | ✅ `papa` → `papatyakız` — Arkadaşlar + Yeni DM |
+| Türkçe kullanıcı adı | ✅ ç, ğ, ı, ö, ş, ü destekli |
+| Acil sinyal + konum | ✅ GPS → arkadaşlara anlık (onSnapshot) |
 | Akış cinsiyet gösterimi | ✅ ♀ / ♂ rozeti (metin yerine) |
 | Vercel deploy | ❌ Sırada — local test devam |
 
@@ -97,6 +100,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### Sosyal
 - [x] Arkadaş ekleme / kabul / red / çıkarma / engelleme (`/arkadaslar`)
+- [x] **Kullanıcı adı arama + öneriler** — yazdıkça eşleşen isimler (`UsernameSearchInput`, `searchUsersByUsernamePrefix`)
+- [x] **Türkçe kullanıcı adı** — `papatyakız`, `gülkız` vb. (`src/lib/security/username.ts`, `tr-TR` normalizasyon)
 - [x] Doğrulanmamış kullanıcılar sayfayı görür, etkileşim kilitli (`VerificationGate`)
 - [x] **Akış / gönderi paylaşma** (`/akis`) — Instagram tarzı metin gönderileri
 - [x] Gönderiye yorum (doğrulama gerekli)
@@ -133,7 +138,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] İmzalı admin/temsilci oturum çerezleri (`SESSION_SECRET`)
 - [x] API rate limiting (login, upload, check-ban, genel API)
 - [x] Middleware güvenlik başlıkları + temsilci API koruması
-- [x] `signals` / `verification_photos` / `platform_bans` client erişime kapalı
+- [x] `signals` — arkadaşlar **okuyabilir** (`notifyUids` içindekiler); yazma kapalı · `verification_photos` / `platform_bans` client kapalı
 
 ### UI / UX
 - [x] Mobil uyumlu Tailwind tasarım
@@ -168,7 +173,10 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [ ] Beğeni / etkileşim sayacı
 
 ### Acil Durum
-- [x] Sinyal gönderme (beta) — `/sinyal`, arkadaş listesine kayıt
+- [x] Sinyal gönderme (beta) — `/sinyal`, tüm arkadaşlara kayıt
+- [x] **Konum paylaşımı** — tarayıcı GPS izni → lat/lng arkadaşlara kaydedilir (`src/lib/geolocation.ts`)
+- [x] **Anlık alıcı bildirimi** — Dashboard / Arkadaşlar / Sinyal sayfasında kırmızı kutu (`IncomingSignalsBanner`, Firestore `onSnapshot`)
+- [x] **Harita linki** — alıcı 📍 Haritada aç → Google Maps
 - [ ] Push ile arkadaşlara anlık bildirim → [`PWA.md`](PWA.md) Faz 2
 
 ### Panel / Yönetim
@@ -613,7 +621,7 @@ VERIFICATION_PHOTO_STORAGE=local
 
 - Push bildirimleri, tam PWA, bildirim merkezi
 - Profil fotoğrafı, gönderiye fotoğraf, beğeni
-- `signals` Firestore rules hâlâ kapalı (beta sayfa var)
+- Sinyal push bildirimi (uygulama içi anlık banner var)
 - Admin moderasyon araçları genişletme
 
 ### Hızlı komutlar
@@ -640,3 +648,19 @@ npm run dev                    # local
 1. Firebase Console → **Rules Publish** (yeni `firestore.rules`)
 2. `npm run strip:emails` (eski kullanıcılar varsa)
 3. Local test → Vercel deploy
+
+---
+
+## Oturum Notu — 7 Temmuz 2026 (arama, Türkçe, sinyal konumu)
+
+### Yapılanlar
+- **Kullanıcı arama önerileri** — `UsernameSearchInput`, prefix sorgusu; Arkadaşlar + Yeni DM
+- **Türkçe kullanıcı adı** — ç/ğ/ı/ö/ş/ü + `toLocaleLowerCase('tr-TR')`
+- **Acil sinyal konumu** — GPS ile gönderim; arkadaşlarda anlık kırmızı banner + harita linki
+- **5 dil** — arama, sinyal ve konum metinleri TR/EN/DE/FR/ES
+- Firestore: `signals` okuma (`notifyUids`), `signals` composite index
+
+### Senin yapman gereken
+1. Firebase Console → **Rules Publish** (`signals` okuma kuralı)
+2. Firebase Console → **Indexes** — `signals` (notifyUids + status + createdAt) etkinleştir
+3. İki hesapla test: arkadaş ol → sinyal gönder → konum izni ver → diğer hesapta banner + harita
