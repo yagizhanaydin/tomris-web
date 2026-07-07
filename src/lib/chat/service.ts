@@ -100,7 +100,7 @@ export async function createGroup(
   title: string,
   location: PostLocationInput
 ): Promise<string> {
-  const trimmedTitle = title.trim().slice(0, 80);
+  const trimmedTitle = sanitizeText(title, 80);
   if (!trimmedTitle) throw new Error("empty_title");
   if (!location.city) throw new Error("location_required");
   if (location.region === "tr" && !location.district) throw new Error("location_required");

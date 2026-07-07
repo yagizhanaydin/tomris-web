@@ -6,7 +6,8 @@ export type ChatVisibility = "friends" | "everyone";
 export interface UserProfile {
   uid: string;
   username: string;
-  email: string;
+  /** Yalnızca Firebase Auth — Firestore'a yazılmaz (KVKK) */
+  email?: string;
   gender: Gender;
   /** Sunucudaki geçici dosya referansı (uid) — onay/red sonrası silinir */
   verificationPhotoPath: string;

@@ -4,7 +4,11 @@ export const ADMIN_COOKIE = "tomris_admin_session";
 export const REP_COOKIE = "tomris_rep_session";
 
 function secret(): string {
-  return process.env.SESSION_SECRET || "tomris-dev-only-change-me";
+  const s = process.env.SESSION_SECRET;
+  if (process.env.NODE_ENV === "production" && (!s || s.length < 32)) {
+    return "";
+  }
+  return s || "tomris-dev-only-change-me";
 }
 
 function toHex(buffer: ArrayBuffer): string {
@@ -27,6 +31,7 @@ async function hmacHex(message: string): Promise<string> {
 }
 
 async function verifyToken(token: string | undefined, role: string): Promise<boolean> {
+  if (!secret()) return false;
   if (!token) return false;
   const dot = token.lastIndexOf(".");
   if (dot <= 0) return false;

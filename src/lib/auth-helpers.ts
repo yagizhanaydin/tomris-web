@@ -14,7 +14,7 @@ export async function checkEmailNotBanned(email: string): Promise<void> {
   const res = await fetch(`/api/auth/check-ban?email=${encodeURIComponent(email)}`);
   if (!res.ok) return;
   const data = await res.json();
-  if (data.banned) {
+  if (data.allowed === false) {
     throw new Error("BANNED_EMAIL");
   }
 }
@@ -43,7 +43,7 @@ async function uploadVerificationPhotoToServer(photoBlob: Blob): Promise<string>
 
 export async function saveUserProfile(
   uid: string,
-  data: Omit<UserProfile, "uid" | "createdAt">
+  data: Omit<UserProfile, "uid" | "createdAt" | "email">
 ) {
   const profile: UserProfile = {
     uid,
@@ -80,7 +80,6 @@ export async function registerWithEmail(
 
   await saveUserProfile(user.uid, {
     username: normalizeUsername(username),
-    email,
     gender,
     verificationPhotoPath: "",
     verificationStatus: "unverified",
@@ -109,7 +108,6 @@ export async function createGoogleProfile(
 
   await saveUserProfile(uid, {
     username: normalizedUsername,
-    email,
     gender,
     verificationPhotoPath: "",
     verificationStatus: "unverified",

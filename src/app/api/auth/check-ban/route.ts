@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
 
   if (!isAdminConfigured()) {
-    return NextResponse.json({ banned: false });
+    return NextResponse.json({ allowed: false });
   }
 
   const email = request.nextUrl.searchParams.get("email");
@@ -19,5 +19,5 @@ export async function GET(request: NextRequest) {
   }
 
   const banned = await isEmailBanned(email);
-  return NextResponse.json({ banned });
+  return NextResponse.json({ allowed: !banned });
 }

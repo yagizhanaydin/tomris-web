@@ -55,6 +55,8 @@ export async function deleteUserAccount(uid: string): Promise<void> {
     db.collection("comments").where("authorUid", "==", uid)
   );
 
+  await deleteQueryBatch(db.collection("signals").where("uid", "==", uid));
+
   const convSnap = await db
     .collection("conversations")
     .where("participantUids", "array-contains", uid)

@@ -4,6 +4,7 @@ import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
 import { createEmergencySignal } from "@/lib/signals/service";
+import { assertSafeContent } from "@/lib/security/content-filter";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -41,7 +42,16 @@ export async function POST(request: NextRequest) {
     body = {};
   }
 
-  const message = typeof body.message === "string" ? body.message.slice(0, 280) : undefined;
+  let message: string | undefined;
+  if (typeof body.message === "string" && body.message.trim()) {
+    try {
+      const trimmed = body.message.trim().slice(0, 280);
+      assertSafeContent(trimmed);
+      message = trimmed;
+    } catch {
+      return NextResponse.json({ error: "Mesaj uygunsuz içerik içeriyor." }, { status: 400 });
+    }
+  }
 
   const friendships = await getAdminDb()
     .collection("friendships")

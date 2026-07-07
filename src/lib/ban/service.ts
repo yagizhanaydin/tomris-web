@@ -7,7 +7,32 @@ import type { PlatformBan } from "@/types/ban";
 export type { PlatformBan };
 
 function normalizeEmail(email: string): string {
-  return email.toLowerCase().trim();
+  const trimmed = email.toLowerCase().trim();
+  const at = trimmed.indexOf("@");
+  if (at <= 0) return trimmed;
+
+  let local = trimmed.slice(0, at);
+  let domain = trimmed.slice(at + 1);
+
+  if (domain === "googlemail.com") domain = "gmail.com";
+
+  if (domain === "gmail.com") {
+    const plus = local.indexOf("+");
+    if (plus >= 0) local = local.slice(0, plus);
+    local = local.replace(/\./g, "");
+  }
+
+  return `${local}@${domain}`;
+}
+
+async function resolveUserEmail(uid: string, profileEmail?: string): Promise<string> {
+  try {
+    const authUser = await getAuth(getAdminApp()).getUser(uid);
+    if (authUser.email) return normalizeEmail(authUser.email);
+  } catch {
+    // Auth kaydı yoksa Firestore yedek (eski hesaplar)
+  }
+  return normalizeEmail(profileEmail ?? "");
 }
 
 export async function isEmailBanned(email: string): Promise<boolean> {
@@ -53,7 +78,7 @@ export async function banUser(
 
   await deleteVerificationPhoto(profile.verificationPhotoPath || uid);
 
-  const email = normalizeEmail(profile.email);
+  const email = await resolveUserEmail(uid, profile.email);
   const now = new Date().toISOString();
   const banRecord: PlatformBan = {
     uid,

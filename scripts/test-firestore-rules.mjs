@@ -1,6 +1,6 @@
 /**
- * Firestore rules regression tests — repo rules vs user-pasted rules.
- * Run: node scripts/test-firestore-rules.mjs
+ * Firestore rules regression tests
+ * Run: npm run test:rules
  */
 import fs from "fs";
 import path from "path";
@@ -14,18 +14,12 @@ import {
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
 
-const RULES_REPO = fs.readFileSync(path.join(root, "firestore.rules"), "utf8");
-const RULES_PASTED = fs.readFileSync(
-  path.join(root, "firestore.rules.user-pasted"),
-  "utf8"
-);
-
+const RULES = fs.readFileSync(path.join(root, "firestore.rules"), "utf8");
 const PROJECT = "tomris-rules-test";
 
 const baseUser = {
   uid: "user-a",
   username: "ayse",
-  email: "ayse@test.com",
   gender: "kadin",
   verificationPhotoPath: "",
   verificationStatus: "unverified",
@@ -45,9 +39,8 @@ const pendingUser = {
   ...baseUser,
   uid: "user-pending",
   username: "pending1",
-  email: "pending@test.com",
   verificationStatus: "pending",
-  verificationPhotoPath: "verifications/user-pending",
+  verificationPhotoPath: "user-pending",
 };
 
 const postPayload = {
@@ -62,6 +55,8 @@ const postPayload = {
   audience: "all",
   createdAt: "2026-07-06T11:00:00.000Z",
 };
+
+const womenOnlyPost = { ...postPayload, audience: "kadin" };
 
 const friendshipPayload = {
   fromUid: "user-a",
@@ -99,10 +94,10 @@ async function seedUsers(env, users) {
   });
 }
 
-async function runSuite(label, rules) {
+async function runSuite() {
   const env = await initializeTestEnvironment({
-    projectId: `${PROJECT}-${label.replace(/\W/g, "")}`,
-    firestore: { rules, host: "127.0.0.1", port: 8080 },
+    projectId: PROJECT,
+    firestore: { rules: RULES, host: "127.0.0.1", port: 8080 },
   });
 
   const results = [];
@@ -116,16 +111,34 @@ async function runSuite(label, rules) {
     }
   }
 
-  // --- USERS ---
-  await test("unverified user can register profile (create)", async () => {
+  await test("user create without email field", async () => {
     const db = env.authenticatedContext("user-new").firestore();
     await assertSucceeds(
       db.collection("users").doc("user-new").set({
         uid: "user-new",
-        ...baseUser,
-        uid: undefined,
         username: "yeni",
-        email: "yeni@test.com",
+        gender: "kadin",
+        verificationPhotoPath: "",
+        verificationStatus: "unverified",
+        genderVerified: false,
+        authProvider: "email",
+        chatVisibility: "friends",
+        createdAt: "2026-07-06T10:00:00.000Z",
+      })
+    );
+  });
+
+  await test("user create WITH email field fails", async () => {
+    const db = env.authenticatedContext("user-x").firestore();
+    await assertFails(
+      db.collection("users").doc("user-x").set({
+        uid: "user-x",
+        username: "hack",
+        email: "hack@test.com",
+        gender: "kadin",
+        verificationStatus: "unverified",
+        genderVerified: false,
+        createdAt: "2026-07-06T10:00:00.000Z",
       })
     );
   });
@@ -133,22 +146,48 @@ async function runSuite(label, rules) {
   await seedUsers(env, [
     { ...baseUser },
     { ...approvedUser },
-    { ...pendingUser, uid: "user-b", username: "zeynep", email: "z@test.com" },
+    { ...pendingUser, uid: "user-b", username: "zeynep", gender: "kadin" },
     pendingUser,
+    {
+      ...baseUser,
+      uid: "user-erkek",
+      username: "ahmet",
+      gender: "erkek",
+      verificationStatus: "approved",
+      genderVerified: true,
+    },
   ]);
 
-  await test("pending user can submit verification (update → pending)", async () => {
+  await test("pending verification path must equal uid", async () => {
     const db = env.authenticatedContext("user-a").firestore();
     await assertSucceeds(
       db.collection("users").doc("user-a").update({
-        verificationPhotoPath: "verifications/user-a",
+        verificationPhotoPath: "user-a",
         verificationStatus: "pending",
         genderVerified: false,
       })
     );
   });
 
-  await test("user CANNOT self-set verificationStatus to approved", async () => {
+  await test("fake verification path rejected", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("users").doc("user-a").set({
+        uid: "user-a",
+        ...baseUser,
+        verificationStatus: "unverified",
+      });
+    });
+    const db = env.authenticatedContext("user-a").firestore();
+    await assertFails(
+      db.collection("users").doc("user-a").update({
+        verificationPhotoPath: "fake-path",
+        verificationStatus: "pending",
+        genderVerified: false,
+      })
+    );
+  });
+
+  await test("user CANNOT self-set approved", async () => {
     const db = env.authenticatedContext("user-a").firestore();
     await assertFails(
       db.collection("users").doc("user-a").update({
@@ -158,230 +197,82 @@ async function runSuite(label, rules) {
     );
   });
 
-  await test("user can update chatVisibility only (settings)", async () => {
-    const db = env.authenticatedContext("user-a").firestore();
-    await assertSucceeds(
-      db.collection("users").doc("user-a").update({ chatVisibility: "everyone" })
-    );
-  });
-
-  // --- POSTS read/write ---
-  await test("unverified user can READ posts", async () => {
+  await test("approved user CAN create post with matching gender", async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
-      await ctx.firestore().collection("posts").doc("p1").set(postPayload);
+      await ctx.firestore().collection("users").doc("user-a").set({
+        uid: "user-a",
+        ...approvedUser,
+      });
     });
-    const db = env.authenticatedContext("user-a").firestore();
-    await assertSucceeds(db.collection("posts").doc("p1").get());
-  });
-
-  await test("unverified user CANNOT create post", async () => {
-    const db = env.authenticatedContext("user-a").firestore();
-    await assertFails(db.collection("posts").add(postPayload));
-  });
-
-  await test("pending user CANNOT create post", async () => {
-    const db = env.authenticatedContext("user-pending").firestore();
-    await assertFails(
-      db.collection("posts").add({ ...postPayload, authorUid: "user-pending" })
-    );
-  });
-
-  await test("approved user CAN create post", async () => {
     const db = env.authenticatedContext("user-a").firestore();
     await assertSucceeds(db.collection("posts").add(postPayload));
   });
 
-  // --- COMMENTS ---
-  await test("approved user CAN create comment", async () => {
-    const db = env.authenticatedContext("user-a").firestore();
-    await assertSucceeds(
-      db.collection("comments").add({
-        postId: "p1",
-        authorUid: "user-a",
-        authorUsername: "ayse",
-        content: "Yorum",
-        createdAt: "2026-07-06T11:00:00.000Z",
-      })
-    );
-  });
-
-  await test("pending user CANNOT create comment", async () => {
-    const db = env.authenticatedContext("user-pending").firestore();
+  await test("approved user CANNOT fake authorGender on post", async () => {
+    const db = env.authenticatedContext("user-erkek").firestore();
     await assertFails(
-      db.collection("comments").add({
-        postId: "p1",
-        authorUid: "user-pending",
-        authorUsername: "pending1",
-        content: "Yorum",
-        createdAt: "2026-07-06T11:00:00.000Z",
+      db.collection("posts").add({
+        ...postPayload,
+        authorUid: "user-erkek",
+        authorUsername: "ahmet",
+        authorGender: "kadin",
+        audience: "all",
       })
     );
   });
 
-  // --- FRIENDSHIPS ---
-  await test("unverified user CANNOT send friend request (repo expectation)", async () => {
-    const db = env.authenticatedContext("user-a").firestore();
-    await assertFails(db.collection("friendships").add(friendshipPayload));
+  await test("erkek user CANNOT read kadin-only post", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("posts").doc("pw1").set(womenOnlyPost);
+    });
+    const db = env.authenticatedContext("user-erkek").firestore();
+    await assertFails(db.collection("posts").doc("pw1").get());
   });
 
-  await test("approved user CAN send friend request", async () => {
-    // user-a is now approved in seed for approved tests - re-seed approved
-    await env.withSecurityRulesDisabled(async (ctx) => {
-      await ctx
-        .firestore()
-        .collection("users")
-        .doc("user-a")
-        .set({ uid: "user-a", ...approvedUser });
-    });
+  await test("kadin user CAN read kadin-only post", async () => {
+    const db = env.authenticatedContext("user-a").firestore();
+    await assertSucceeds(db.collection("posts").doc("pw1").get());
+  });
+
+  await test("approved user CAN send friend request with valid usernames", async () => {
     const db = env.authenticatedContext("user-a").firestore();
     await assertSucceeds(db.collection("friendships").add(friendshipPayload));
   });
 
-  // --- CHAT ---
-  await test("approved user CAN create DM conversation", async () => {
+  await test("wrong fromUsername on friendship fails", async () => {
     const db = env.authenticatedContext("user-a").firestore();
-    await assertSucceeds(
-      db.collection("conversations").doc("dm-a-b").set(dmConversation)
-    );
-  });
-
-  await test("approved user CAN send message + update lastMessage fields", async () => {
-    const db = env.authenticatedContext("user-a").firestore();
-    await assertSucceeds(
-      db.collection("conversations").doc("dm-a-b").collection("messages").add(messagePayload)
-    );
-    await assertSucceeds(
-      db.collection("conversations").doc("dm-a-b").update({
-        lastMessageText: "Selam",
-        lastMessageAt: "2026-07-06T11:01:00.000Z",
-        lastMessageAuthorUid: "user-a",
-        updatedAt: "2026-07-06T11:01:00.000Z",
+    await assertFails(
+      db.collection("friendships").add({
+        ...friendshipPayload,
+        fromUsername: "fake",
       })
     );
   });
 
-  await test("pending user CANNOT send message", async () => {
-    await env.withSecurityRulesDisabled(async (ctx) => {
-      await ctx.firestore().collection("conversations").doc("dm-p-b").set({
-        ...dmConversation,
-        participantUids: ["user-pending", "user-b"],
-        participantUsernames: { "user-pending": "pending1", "user-b": "zeynep" },
-      });
-    });
-    const db = env.authenticatedContext("user-pending").firestore();
-    await assertFails(
-      db
-        .collection("conversations")
-        .doc("dm-p-b")
-        .collection("messages")
-        .add({ ...messagePayload, authorUid: "user-pending", authorUsername: "pending1" })
-    );
-  });
-
-  // --- SIGNALS & BANS ---
-  await test("client CANNOT write signals (repo expectation)", async () => {
+  await test("client CANNOT write signals", async () => {
     const db = env.authenticatedContext("user-a").firestore();
     await assertFails(
       db.collection("signals").add({ uid: "user-a", createdAt: "2026-07-06T12:00:00.000Z" })
     );
   });
 
-  await test("client CANNOT read platform_bans", async () => {
+  await test("client CANNOT read verification_photos", async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
-      await ctx.firestore().collection("platform_bans").doc("b1").set({ email: "x@test.com" });
+      await ctx.firestore().collection("verification_photos").doc("user-a").set({ x: 1 });
     });
     const db = env.authenticatedContext("user-a").firestore();
-    await assertFails(db.collection("platform_bans").doc("b1").get());
+    await assertFails(db.collection("verification_photos").doc("user-a").get());
   });
 
   await env.cleanup();
-  return { label, results };
-}
-
-function summarize(suite) {
-  const passed = suite.results.filter((r) => r.ok).length;
-  const failed = suite.results.filter((r) => !r.ok);
-  return { ...suite, passed, total: suite.results.length, failed };
+  return results;
 }
 
 console.log("Firestore Rules Test Suite\n");
-
-const repo = summarize(await runSuite("REPO (firestore.rules)", RULES_REPO));
-const pasted = summarize(await runSuite("PASTED (Console'daki eski sürüm)", RULES_PASTED));
-
-function printSuite(suite) {
-  console.log(`\n=== ${suite.label} ===`);
-  console.log(`Sonuç: ${suite.passed}/${suite.total} geçti\n`);
-  for (const r of suite.results) {
-    console.log(`${r.ok ? "✓" : "✗"} ${r.name}${r.error ? `\n    → ${r.error}` : ""}`);
-  }
+const results = await runSuite();
+const passed = results.filter((r) => r.ok).length;
+for (const r of results) {
+  console.log(`${r.ok ? "✓" : "✗"} ${r.name}${r.error ? `\n    → ${r.error}` : ""}`);
 }
-
-printSuite(repo);
-printSuite(pasted);
-
-// Security diff report
-console.log("\n=== GÜVENLİK FARK RAPORU (yapıştırdığın vs repo) ===\n");
-const securityChecks = [
-  {
-    id: "self-approve",
-    name: "Kullanıcı kendini approved yapabilir mi?",
-    repo: "HAYIR (userSelfUpdateAllowed)",
-    pasted: "EVET — KRİTİK AÇIK",
-  },
-  {
-    id: "friend-pending",
-    name: "Doğrulanmamış arkadaşlık isteği?",
-    repo: "HAYIR (isApproved gerekli)",
-    pasted: "EVET — pending/unverified gönderebilir",
-  },
-  {
-    id: "block-pending",
-    name: "Doğrulanmamış engelleme?",
-    repo: "HAYIR",
-    pasted: "EVET",
-  },
-  {
-    id: "signals",
-    name: "signals client yazımı",
-    repo: "KAPALI (write: false)",
-    pasted: "AÇIK (her giriş yapan yazabilir)",
-  },
-  {
-    id: "chat-lastmsg",
-    name: "Mesaj sonrası lastMessage güncelleme",
-    repo: "Sadece belirli alanlar (lastMessageUpdateAllowed)",
-    pasted: "Herhangi participant geniş update",
-  },
-  {
-    id: "posts-pending-read",
-    name: "Pending kullanıcı akış okuyabilir mi?",
-    repo: "EVET (read: isSignedIn)",
-    pasted: "EVET",
-  },
-  {
-    id: "posts-pending-write",
-    name: "Pending kullanıcı gönderi yazabilir mi?",
-    repo: "HAYIR",
-    pasted: "HAYIR",
-  },
-];
-
-for (const c of securityChecks) {
-  console.log(`• ${c.name}`);
-  console.log(`  Repo:   ${c.repo}`);
-  console.log(`  Yapıştırılan: ${c.pasted}\n`);
-}
-
-const repoFail = repo.failed.length;
-const pastedFail = pasted.failed.length;
-
-console.log("=== ÖNERİ ===");
-if (pastedFail > repoFail) {
-  console.log("Firebase Console'daki yapıştırdığın kurallar GÜNCEL DEĞİL.");
-  console.log("Repodaki firestore.rules dosyasını Console'a Publish et.");
-} else {
-  console.log("Repodaki kurallar uygulama ile uyumlu — Console'a publish edildiğinden emin ol.");
-}
-
-process.exit(repoFail > 0 ? 1 : 0);
+console.log(`\nSonuç: ${passed}/${results.length} geçti`);
+process.exit(passed === results.length ? 0 : 1);

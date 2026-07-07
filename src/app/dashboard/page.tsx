@@ -68,7 +68,7 @@ export default function DashboardPage() {
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <InfoCard label={t.dashboard.email} value={profile.email} />
+            <InfoCard label={t.dashboard.email} value={user.email ?? "—"} />
             <InfoCard
               label={t.dashboard.gender}
               value={profile.gender === "kadin" ? t.dashboard.female : t.dashboard.male}

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
-import { isAdminConfigured } from "@/lib/firebase-admin";
+import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
 import { saveVerificationPhoto, getVerificationPhotoBackend } from "@/lib/verification/photo-storage";
 import { prepareVerificationPhoto } from "@/lib/verification/compress-verification-photo";
@@ -29,6 +29,15 @@ export async function POST(request: NextRequest) {
   if (await isUidBanned(auth.uid)) {
     return NextResponse.json(
       { error: "Hesabınız platformdan yasaklanmıştır." },
+      { status: 403 }
+    );
+  }
+
+  const userSnap = await getAdminDb().collection("users").doc(auth.uid).get();
+  const status = userSnap.data()?.verificationStatus as string | undefined;
+  if (status === "approved" || status === "banned") {
+    return NextResponse.json(
+      { error: "Bu hesap için doğrulama fotoğrafı yüklenemez." },
       { status: 403 }
     );
   }

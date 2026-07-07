@@ -11,9 +11,38 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
+    function me() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
     function isApproved() {
-      return isSignedIn() &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.verificationStatus == 'approved';
+      return isSignedIn() && me().verificationStatus == 'approved';
+    }
+
+    function myGender() {
+      return me().gender;
+    }
+
+    function myUsername() {
+      return me().username;
+    }
+
+    function canViewAudience(audience) {
+      return audience == 'all' || audience == myGender();
+    }
+
+    function authorIntegrity(data) {
+      return data.authorUid == request.auth.uid &&
+        data.authorGender == myGender() &&
+        data.authorUsername == myUsername();
+    }
+
+    function textLen(text, max) {
+      return text is string && text.size() > 0 && text.size() <= max;
+    }
+
+    function userExists(uid) {
+      return exists(/databases/$(database)/documents/users/$(uid));
     }
 
     function userSelfUpdateAllowed() {
@@ -25,8 +54,7 @@ service cloud.firestore {
           resource.data.verificationStatus in ['unverified', 'rejected'] &&
           request.resource.data.verificationStatus == 'pending' &&
           request.resource.data.genderVerified == false &&
-          request.resource.data.verificationPhotoPath is string &&
-          request.resource.data.verificationPhotoPath.size() > 0
+          request.resource.data.verificationPhotoPath == request.auth.uid
         );
     }
 
@@ -37,7 +65,12 @@ service cloud.firestore {
         request.resource.data.genderVerified == false &&
         !('bannedAt' in request.resource.data) &&
         !('banReason' in request.resource.data) &&
-        !('reviewedAt' in request.resource.data);
+        !('reviewedAt' in request.resource.data) &&
+        !('email' in request.resource.data) &&
+        request.resource.data.gender in ['kadin', 'erkek'] &&
+        request.resource.data.username is string &&
+        request.resource.data.username.size() >= 3 &&
+        request.resource.data.username.size() <= 20;
       allow update: if isOwner(userId) && userSelfUpdateAllowed();
       allow delete: if false;
     }
@@ -49,9 +82,15 @@ service cloud.firestore {
 
       allow create: if isApproved() &&
         request.resource.data.fromUid == request.auth.uid &&
+        request.resource.data.fromUsername == myUsername() &&
         request.resource.data.fromUid != request.resource.data.toUid &&
+        userExists(request.resource.data.toUid) &&
+        get(/databases/$(database)/documents/users/$(request.resource.data.toUid)).data.username ==
+          request.resource.data.toUsername &&
         request.resource.data.status == 'pending' &&
-        request.resource.data.keys().hasAll(['fromUid', 'toUid', 'fromUsername', 'toUsername', 'status', 'createdAt', 'updatedAt']);
+        request.resource.data.keys().hasAll([
+          'fromUid', 'toUid', 'fromUsername', 'toUsername', 'status', 'createdAt', 'updatedAt'
+        ]);
 
       allow update: if isApproved() &&
         resource.data.toUid == request.auth.uid &&
@@ -70,7 +109,8 @@ service cloud.firestore {
 
       allow create: if isApproved() &&
         request.resource.data.blockerUid == request.auth.uid &&
-        request.resource.data.blockerUid != request.resource.data.blockedUid;
+        request.resource.data.blockerUid != request.resource.data.blockedUid &&
+        userExists(request.resource.data.blockedUid);
 
       allow delete: if isApproved() &&
         resource.data.blockerUid == request.auth.uid;
@@ -79,13 +119,13 @@ service cloud.firestore {
     }
 
     match /posts/{postId} {
-      allow read: if isSignedIn();
+      allow read: if isSignedIn() && canViewAudience(resource.data.audience);
 
       allow create: if isApproved() &&
-        request.resource.data.authorUid == request.auth.uid &&
+        authorIntegrity(request.resource.data) &&
+        textLen(request.resource.data.content, 2000) &&
         request.resource.data.region in ['tr', 'eu'] &&
         request.resource.data.audience in ['all', 'kadin', 'erkek'] &&
-        request.resource.data.authorGender in ['kadin', 'erkek'] &&
         request.resource.data.keys().hasAll([
           'authorUid', 'authorUsername', 'authorGender', 'content',
           'region', 'country', 'city', 'district', 'audience', 'createdAt'
@@ -96,10 +136,19 @@ service cloud.firestore {
     }
 
     match /comments/{commentId} {
-      allow read: if isSignedIn();
+      allow read: if isSignedIn() &&
+        exists(/databases/$(database)/documents/posts/$(resource.data.postId)) &&
+        canViewAudience(
+          get(/databases/$(database)/documents/posts/$(resource.data.postId)).data.audience
+        );
 
       allow create: if isApproved() &&
-        request.resource.data.authorUid == request.auth.uid &&
+        authorIntegrity(request.resource.data) &&
+        textLen(request.resource.data.content, 500) &&
+        exists(/databases/$(database)/documents/posts/$(request.resource.data.postId)) &&
+        canViewAudience(
+          get(/databases/$(database)/documents/posts/$(request.resource.data.postId)).data.audience
+        ) &&
         request.resource.data.keys().hasAll([
           'postId', 'authorUid', 'authorUsername', 'content', 'createdAt'
         ]);
@@ -144,7 +193,10 @@ service cloud.firestore {
            request.resource.data.participantUids.size() == 2) ||
           (request.resource.data.type == 'group' &&
            request.resource.data.adminUid == request.auth.uid &&
-           request.resource.data.keys().hasAll(['title', 'region', 'country', 'city', 'district', 'adminUid']))
+           textLen(request.resource.data.title, 80) &&
+           request.resource.data.keys().hasAll([
+             'title', 'region', 'country', 'city', 'district', 'adminUid'
+           ]))
         );
 
       allow update: if isApproved() && (
@@ -163,7 +215,8 @@ service cloud.firestore {
 
         allow create: if isApproved() &&
           isConversationParticipant(conversationId) &&
-          request.resource.data.authorUid == request.auth.uid &&
+          authorIntegrity(request.resource.data) &&
+          textLen(request.resource.data.content, 2000) &&
           request.resource.data.keys().hasAll([
             'authorUid', 'authorUsername', 'content', 'createdAt'
           ]);
@@ -172,7 +225,6 @@ service cloud.firestore {
       }
     }
 
-    // Henüz uygulanmadı — client erişimi kapalı
     match /signals/{signalId} {
       allow read, write: if false;
     }
@@ -181,7 +233,6 @@ service cloud.firestore {
       allow read, write: if false;
     }
 
-    // Doğrulama fotoğrafları — yalnızca Admin SDK (Vercel API)
     match /verification_photos/{uid} {
       allow read, write: if false;
     }
