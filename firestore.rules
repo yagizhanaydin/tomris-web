@@ -267,7 +267,8 @@ service cloud.firestore {
 
     match /signals/{signalId} {
       allow read: if isSignedIn() &&
-        request.auth.uid in resource.data.notifyUids;
+        (request.auth.uid in resource.data.notifyUids ||
+         resource.data.uid == request.auth.uid);
       allow write: if false;
     }
 
@@ -276,6 +277,10 @@ service cloud.firestore {
     }
 
     match /verification_photos/{uid} {
+      allow read, write: if false;
+    }
+
+    match /fcm_tokens/{tokenId} {
       allow read, write: if false;
     }
   }

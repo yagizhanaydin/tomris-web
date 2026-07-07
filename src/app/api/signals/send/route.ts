@@ -4,6 +4,8 @@ import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
 import { createEmergencySignal } from "@/lib/signals/service";
+import { SIGNAL_SAFETY_ACK_VERSION } from "@/lib/signals/safety";
+import { sendSignalPush } from "@/lib/push/service";
 import { assertSafeContent } from "@/lib/security/content-filter";
 import { isValidSignalLocation } from "@/lib/geolocation";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
@@ -36,12 +38,28 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Doğrulama gerekli." }, { status: 403 });
   }
 
-  let body: { message?: string; location?: unknown } = {};
+  if (userData.signalSafetyIntroVersion !== SIGNAL_SAFETY_ACK_VERSION) {
+    return NextResponse.json(
+      { error: "Acil sinyal güvenlik bilgisini onaylamanız gerekir." },
+      { status: 403 }
+    );
+  }
+
+  let body: { message?: string; location?: unknown; safetyAcknowledged?: boolean; safetyAckVersion?: string } = {};
   try {
     body = await request.json();
   } catch {
     body = {};
   }
+
+  if (body.safetyAcknowledged !== true || body.safetyAckVersion !== SIGNAL_SAFETY_ACK_VERSION) {
+    return NextResponse.json(
+      { error: "Sinyal göndermeden önce güvenlik onayını vermelisiniz." },
+      { status: 400 }
+    );
+  }
+
+  const ackAt = new Date().toISOString();
 
   let message: string | undefined;
   if (typeof body.message === "string" && body.message.trim()) {
@@ -91,7 +109,17 @@ export async function POST(request: NextRequest) {
     message,
     location,
     notifyUids: [...notifyUids],
+    senderSafetyAck: {
+      version: SIGNAL_SAFETY_ACK_VERSION,
+      acknowledgedAt: ackAt,
+    },
   });
+
+  void sendSignalPush({
+    notifyUids: [...notifyUids],
+    senderUsername: userData.username as string,
+    signalId,
+  }).catch(() => undefined);
 
   return NextResponse.json({
     success: true,

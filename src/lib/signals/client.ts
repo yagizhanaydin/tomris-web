@@ -33,3 +33,27 @@ export function subscribeToIncomingSignals(
     (err) => onError?.(err)
   );
 }
+
+export function subscribeToOutgoingActiveSignals(
+  uid: string,
+  onUpdate: (signals: EmergencySignal[]) => void,
+  onError?: (error: Error) => void
+): Unsubscribe {
+  const q = query(
+    collection(getFirebaseDb(), "signals"),
+    where("uid", "==", uid),
+    where("status", "==", "active"),
+    orderBy("createdAt", "desc"),
+    limit(5)
+  );
+
+  return onSnapshot(
+    q,
+    (snap) => {
+      onUpdate(
+        snap.docs.map((d) => ({ id: d.id, ...d.data() } as EmergencySignal))
+      );
+    },
+    (err) => onError?.(err)
+  );
+}

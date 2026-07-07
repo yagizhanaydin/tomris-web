@@ -12,7 +12,10 @@ import { AppShell } from "@/components/AppShell";
 import { VerificationGate } from "@/components/VerificationGate";
 import { getCurrentPosition } from "@/lib/geolocation";
 import { IncomingSignalsBanner } from "@/components/IncomingSignalsBanner";
-import { SignalSafetyNotice } from "@/components/SignalSafetyNotice";
+import { SignalIntroAck } from "@/components/SignalIntroAck";
+import { SignalSendConsentModal } from "@/components/SignalSendConsentModal";
+import { ActiveSignalReminder } from "@/components/ActiveSignalReminder";
+import { SIGNAL_SAFETY_ACK_VERSION } from "@/lib/signals/safety";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function SignalPage() {
@@ -26,6 +29,9 @@ export default function SignalPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [locationStatus, setLocationStatus] = useState<"" | "loading" | "attached" | "denied">("");
+  const [consentOpen, setConsentOpen] = useState(false);
+
+  const introAcked = profile?.signalSafetyIntroVersion === SIGNAL_SAFETY_ACK_VERSION;
 
   useEffect(() => {
     if (!loading && !user) router.replace("/giris");
@@ -44,7 +50,7 @@ export default function SignalPage() {
   };
 
   const handleSend = async () => {
-    if (!user || !profile || submitting) return;
+    if (!user || !profile || submitting || !introAcked) return;
     setError("");
     setSuccess(false);
     setLocationStatus("");
@@ -62,7 +68,12 @@ export default function SignalPage() {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ message, location }),
+        body: JSON.stringify({
+          message,
+          location,
+          safetyAcknowledged: true,
+          safetyAckVersion: SIGNAL_SAFETY_ACK_VERSION,
+        }),
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
@@ -72,6 +83,7 @@ export default function SignalPage() {
       setSuccess(true);
       setLocationStatus(sentLocationStatus);
       setMessage("");
+      setConsentOpen(false);
     } catch {
       setError(t.common.error);
       setLocationStatus("");
@@ -92,7 +104,8 @@ export default function SignalPage() {
 
   const form = (
     <div className="space-y-4">
-      <SignalSafetyNotice variant="send" />
+      <SignalIntroAck />
+      <ActiveSignalReminder />
       <p className="text-sm text-[var(--muted)] leading-relaxed">{t.signal.intro}</p>
       <p className="text-xs text-tomris/80 bg-primary-light/40 border border-[var(--border)] rounded-xl p-3">
         {t.signal.note}
@@ -121,23 +134,30 @@ export default function SignalPage() {
           placeholder={t.signal.messagePlaceholder}
           maxLength={280}
           rows={3}
-          disabled={submitting}
+          disabled={submitting || !introAcked}
           className="input-field text-sm resize-none"
         />
       </label>
 
       <button
         type="button"
-        onClick={handleSend}
-        disabled={submitting}
+        onClick={() => setConsentOpen(true)}
+        disabled={submitting || !introAcked}
         className="w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-colors disabled:opacity-50"
       >
-        {submitting ? t.signal.sending : t.signal.send}
+        {t.signal.send}
       </button>
 
       <Link href="/arkadaslar" className="block text-center text-sm link-tomris">
         {t.nav.friends} →
       </Link>
+
+      <SignalSendConsentModal
+        open={consentOpen}
+        onClose={() => !submitting && setConsentOpen(false)}
+        onConfirm={handleSend}
+        submitting={submitting}
+      />
     </div>
   );
 

@@ -7,6 +7,7 @@ export async function createEmergencySignal(input: {
   message?: string;
   location?: SignalLocation | null;
   notifyUids: string[];
+  senderSafetyAck: { version: string; acknowledgedAt: string };
 }): Promise<string> {
   const ref = getAdminDb().collection("signals").doc();
   const now = new Date().toISOString();
@@ -18,6 +19,7 @@ export async function createEmergencySignal(input: {
     notifyUids: input.notifyUids,
     status: "active",
     createdAt: now,
+    senderSafetyAck: input.senderSafetyAck,
   });
   return ref.id;
 }

@@ -347,6 +347,10 @@ export interface TranslationDictionary {
       title: string;
       selectedGender: string;
       hint: string;
+      gestureTitle?: string;
+      gestureInstruction?: string;
+      gestureSteps?: string[];
+      gestureConfirmLabel?: string;
       previewAlt: string;
       back: string;
       capture: string;
@@ -385,6 +389,18 @@ export interface TranslationDictionary {
     markSeen: string;
     resolving: string;
     markSafe: string;
+    introAckTitle: string;
+    introAckBody: string;
+    introAckPoints: string[];
+    introAckButton: string;
+    introAckSubmitting: string;
+    sendConsentTitle: string;
+    sendConsentPoints: string[];
+    sendConsentCheckbox: string;
+    sendConsentConfirm: string;
+    sendConsentCancel: string;
+    activeReminderTitle: string;
+    activeReminderBody: string;
   };
   permissions: {
     title: string;
@@ -413,5 +429,21 @@ export interface TranslationDictionary {
     sending: string;
     success: string;
     error: string;
+  };
+  pwa: {
+    offlineTitle: string;
+    offlineBody: string;
+    offlineRetry: string;
+    installTitle: string;
+    installBody: string;
+    installAction: string;
+    installDismiss: string;
+    pushTitle: string;
+    pushBody: string;
+    pushPoints: string[];
+    pushNote: string;
+    pushEnable: string;
+    pushEnabling: string;
+    pushLater: string;
   };
 }

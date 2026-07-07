@@ -22,4 +22,7 @@ export interface UserProfile {
   bannedAt?: string;
   bannedBy?: string;
   banReason?: string;
+  /** İlk /sinyal ziyaretinde güvenlik bilgisi onayı (sunucu kaydı) */
+  signalSafetyIntroAckAt?: string;
+  signalSafetyIntroVersion?: string;
 }

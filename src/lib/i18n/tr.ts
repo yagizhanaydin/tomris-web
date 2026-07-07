@@ -317,6 +317,7 @@ export const tr: TranslationDictionary = {
             "Kayıt sırasında beyan ettiğin cinsiyet kimliğin ve profil bilgilerin doğru olmalıdır. Başka bir kişinin fotoğrafını, yapay zeka (AI) ile üretilmiş görseli veya internetten alınmış görseli kullanmak; erkek veya başka bir kişi olarak kadın kimliğiyle kayıt olmak kesinlikle yasaktır.",
             "Doğrulama fotoğrafı yalnızca kadın temsilciler tarafından incelenir; onay, red veya yasak sonrası silinir. İnceleme, topluluğu korumak için yapılan iyi niyetli bir kontroldür; %100 hatasız olduğu garanti edilmez.",
             "Sahte kimlik, cinsiyet sahteciliği veya kötü niyetli profil tespitinde hesabınız kalıcı yasaklanır; aynı e-posta ile yeniden kayıt engellenebilir. Tomris, yasal yükümlülükleri kapsamında yetkili mercilere bildirimde bulunma hakkını saklı tutar.",
+            "Platformu kullanmak için ülkenizde dijital hizmetler için geçerli asgari yaş şartını karşılamanız gerekir (Türkiye'de genellikle 13). 18 yaşından küçükseniz yalnızca ebeveyn veya vasi izniyle kullanabilirsiniz.",
             "Troll, nefret söylemi, taciz veya sahte hesap kullanımı kalıcı yasak sebebidir.",
           ],
         },
@@ -406,8 +407,9 @@ export const tr: TranslationDictionary = {
     introNote:
       "İnceleme biter bitmez fotoğrafın kalıcı olarak silinir. Erkek adminler ve genel yönetim panelinin bu görsellere erişimi yoktur. Onay gelene kadar akışı okuyabilirsin; yazma ve mesajlaşma onay sonrası açılır.",
     introPoints: [
-      "Görselin yapay zeka (AI) ile üretilmediğinden emin olunur",
-      "Başka bir hesaptan veya internetten alınmadığı kontrol edilir",
+      "Canlı çekim — ekrandan fotoğraf veya AI görseli kabul edilmez",
+      "Yüzünün yanında üç parmağın net görünmeli (canlılık kontrolü)",
+      "Başka bir hesaptan veya internetten alınmış görsel kabul edilmez",
       "Kötü niyetli sahte profillerin önüne geçilir",
     ],
     gateTitle: "Bu özellik doğrulama sonrası açılır",
@@ -439,7 +441,17 @@ export const tr: TranslationDictionary = {
     camera: {
       title: "Cinsiyet Doğrulama",
       selectedGender: "Seçilen cinsiyet",
-      hint: "Yüzünüz net görünecek şekilde kameraya bakın. 5 saniye geri sayım sonrası fotoğraf çekilecektir.",
+      hint: "Yüzün net görünsün. Geri sayım bitince fotoğraf çekilir.",
+      gestureTitle: "Canlılık kontrolü — üç parmak",
+      gestureInstruction:
+        "Fotoğraf çekilirken yüzünün yanında üç parmağını (✌️ veya 🤟) net şekilde göster. Başkasının fotoğrafı veya ekran görüntüsü kabul edilmez.",
+      gestureSteps: [
+        "Kameraya bak, yüzün tam görünsün",
+        "Yüzünün yanında üç parmağını kaldır",
+        "Geri sayım bitince fotoğraf otomatik çekilir",
+      ],
+      gestureConfirmLabel:
+        "Bu fotoğrafı az önce canlı çektim; yüzüm ve üç parmağım net görünüyor.",
       previewAlt: "Doğrulama fotoğrafı",
       back: "Geri",
       capture: "Fotoğraf Çek",
@@ -462,7 +474,7 @@ export const tr: TranslationDictionary = {
     subtitle: "Arkadaşlarına hızlıca haber ver",
     intro:
       "Tehlikede veya acil desteğe ihtiyacın varsa, Tomris'teki tüm arkadaşlarına anında sinyal gönderilir. Bu özellik beta aşamasındadır.",
-    note: "Sinyal arkadaş listendeki kişilere anlık kaydedilir; konum izni verirsen harita linki de gider. Telefon bildirimi (push) bir sonraki güncellemede eklenecek.",
+    note: "Sinyal arkadaş listendeki kişilere anlık kaydedilir; konum izni verirsen harita linki de gider. Bildirim izni verirsen push da gider (PWA veya tarayıcı).",
     safetyWarningTitle: "Önemli güvenlik uyarısı",
     safetyWarningBody:
       "Acil sinyal resmî acil yardım hattının (112) yerine geçmez. Tehlike anında önce 112'yi arayın. Tomris hiç kimseyi sinyalin gönderildiği yere yönlendirmez veya göndermez. Sinyal alan arkadaşlarınız konuma tek başına gitmemeli; güvenliğiniz için polisi veya acil servisleri aramalıdır.",
@@ -477,7 +489,7 @@ export const tr: TranslationDictionary = {
     success: "Sinyalin arkadaşlarına iletildi. Güvende kal.",
     noFriends: "Önce en az bir arkadaş eklemen gerekiyor.",
     gateHint: "Sinyal göndermek için doğrulama gerekli.",
-    pushSoon: "Push bildirimleri PWA güncellemesiyle gelecek.",
+    pushSoon: "Bildirimler için izin ver — acil sinyalde haberdar olursun.",
     shareLocationHint: "Konumun (izin verirsen) arkadaşlarına anlık iletilir.",
     locationLoading: "Konum alınıyor…",
     locationAttached: "Konumun arkadaşlarına iletildi.",
@@ -489,6 +501,31 @@ export const tr: TranslationDictionary = {
     markSeen: "Gördüm — kapat",
     resolving: "Kapatılıyor…",
     markSafe: "Güvendeyim — sinyali kapat",
+    introAckTitle: "Acil sinyal — kısaca bilmen gerekenler",
+    introAckBody:
+      "Tomris’te rahat hissetmen önemli. Acil sinyal, arkadaşlarına hızlı haber vermek içindir; panik yaratmak için değil.",
+    introAckPoints: [
+      "Sinyal yalnızca Tomris’teki arkadaşlarına gider — resmî acil yardım (112) değildir.",
+      "Gerçek tehlike anında önce 112’yi araman en doğrusu.",
+      "Tomris kimseyi bir adrese yönlendirmez; arkadaşlarının konuma gelmesini beklemek zorunda değilsin.",
+      "Özellik beta aşamasındadır; acil durumda her zaman resmî hatlara güven.",
+    ],
+    introAckButton: "Anladım",
+    introAckSubmitting: "Kaydediliyor…",
+    sendConsentTitle: "Sinyal göndermeden önce",
+    sendConsentPoints: [
+      "Acil sinyal 112 veya polisin yerine geçmez.",
+      "Tehlike devam ediyorsa önce 112’yi aramalısın.",
+      "Tomris arkadaşlarını konuma göndermez; onların gitmesi gerekmez.",
+      "Sahte veya şaka sinyal kalıcı yasak sebebidir.",
+    ],
+    sendConsentCheckbox:
+      "Yukarıdakileri okudum ve anladım. Tehlike anında önce resmî acil hattını (112) arayacağım; sinyalin resmî acil yardım olmadığını kabul ediyorum.",
+    sendConsentConfirm: "Sinyali gönder",
+    sendConsentCancel: "Vazgeç",
+    activeReminderTitle: "Sinyalin arkadaşlarına iletildi",
+    activeReminderBody:
+      "Tehlike devam ediyorsa Tomris’e güvenme — önce 112’yi ara. Arkadaşların konuma gelmek zorunda değil.",
   },
   permissions: {
     title: "Tomris için izinler",
@@ -518,5 +555,25 @@ export const tr: TranslationDictionary = {
     sending: "Gönderiliyor…",
     success: "Şikayetin alındı. Teşekkürler.",
     error: "Şikayet gönderilemedi. Tekrar dene.",
+  },
+  pwa: {
+    offlineTitle: "İnternet bağlantısı yok",
+    offlineBody:
+      "Tomris şu an çevrimdışı. Bağlantın gelince sayfayı yenile; acil durumda 112’yi ara.",
+    offlineRetry: "Tekrar dene",
+    installTitle: "Tomris’i telefona ekle",
+    installBody: "Ana ekrandan açı — uygulama gibi, daha hızlı erişim ve bildirimler.",
+    installAction: "Ekle",
+    installDismiss: "Sonra",
+    pushTitle: "Bildirimler",
+    pushBody: "Acil sinyal ve önemli olaylarda haberdar olmak ister misin?",
+    pushPoints: [
+      "Arkadaşlarından acil sinyal",
+      "Yeni mesaj ve arkadaş isteği (yakında)",
+    ],
+    pushNote: "İstediğin zaman tarayıcı ayarlarından kapatabilirsin.",
+    pushEnable: "Bildirimleri aç",
+    pushEnabling: "Açılıyor…",
+    pushLater: "Sonra",
   },
 };

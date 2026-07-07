@@ -17,6 +17,14 @@ export const metadata: Metadata = {
   title: "Tomris — Kadın Dayanışma Platformu",
   description: "Tomris — Kadına karşı her türlü şiddete karşı dayanışma platformu",
   manifest: "/manifest.json",
+  applicationName: "Tomris",
+  icons: {
+    icon: [
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" }],
+  },
   appleWebApp: {
     capable: true,
     title: "Tomris",

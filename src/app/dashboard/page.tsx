@@ -15,6 +15,7 @@ import { AppShell } from "@/components/AppShell";
 import { AtaturkQuote } from "@/components/AtaturkQuote";
 import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { IncomingSignalsBanner } from "@/components/IncomingSignalsBanner";
+import { PwaInstallHint } from "@/components/PwaInstallHint";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function DashboardPage() {
@@ -57,6 +58,7 @@ export default function DashboardPage() {
     <AppShell onLogout={handleLogout}>
       <div className="space-y-6">
         <IncomingSignalsBanner />
+        <PwaInstallHint />
 
         {!isPlatformUnlocked(profile) && <VerificationStatusBanner />}
 

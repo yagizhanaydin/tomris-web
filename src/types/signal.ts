@@ -16,4 +16,9 @@ export interface EmergencySignal {
   notifyUids: string[];
   status: SignalStatus;
   createdAt: string;
+  /** Gönderim anında kullanıcının güvenlik onayı (hukuki kayıt) */
+  senderSafetyAck?: {
+    version: string;
+    acknowledgedAt: string;
+  };
 }

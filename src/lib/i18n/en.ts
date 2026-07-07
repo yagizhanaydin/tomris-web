@@ -317,6 +317,7 @@ export const en: TranslationDictionary = {
             "The gender identity and profile information you declare at registration must be truthful. Using another person's photo, AI-generated images, or images taken from the internet; or registering as a woman while you are not, is strictly prohibited.",
             "Verification photos are reviewed only by female representatives and deleted after approval, rejection, or ban. Review is a good-faith check to protect the community; it is not guaranteed to be error-free.",
             "Fake identity, gender misrepresentation, or malicious profiles result in permanent bans and may block re-registration with the same email. Tomris reserves the right to notify authorities where legally required.",
+            "You must meet the minimum age for digital services in your country (generally 13 in Türkiye). If under 18, you may only use the platform with parent or guardian consent.",
             "Trolling, hate speech, harassment, or fake accounts are grounds for permanent bans.",
           ],
         },
@@ -462,7 +463,7 @@ export const en: TranslationDictionary = {
     subtitle: "Quickly alert your friends",
     intro:
       "If you are in danger or need urgent support, Tomris sends a signal to all your friends. This feature is in beta.",
-    note: "The signal is saved instantly for friends on your list; if you allow location, a map link is included. Phone push notifications will arrive in the next PWA update.",
+    note: "The signal is saved instantly for friends on your list; if you allow location, a map link is included. If you enable notifications, they'll also get a push (PWA or browser).",
     safetyWarningTitle: "Important safety notice",
     safetyWarningBody:
       "Emergency signal is not a substitute for official emergency services (112). In danger, call 112 first. Tomris does not send anyone to the signal location. Friends who receive a signal must not go there alone — call police or emergency services instead.",
@@ -477,7 +478,7 @@ export const en: TranslationDictionary = {
     success: "Your signal was sent to your friends. Stay safe.",
     noFriends: "You need at least one friend first.",
     gateHint: "Verification required to send a signal.",
-    pushSoon: "Push notifications will come with the PWA update.",
+    pushSoon: "Enable notifications to get alerts for emergency signals.",
     shareLocationHint: "Your location (if you allow) is sent to friends instantly.",
     locationLoading: "Getting location…",
     locationAttached: "Your location was sent to your friends.",
@@ -489,6 +490,31 @@ export const en: TranslationDictionary = {
     markSeen: "Seen — dismiss",
     resolving: "Dismissing…",
     markSafe: "I'm safe — dismiss signal",
+    introAckTitle: "Emergency signal — good to know",
+    introAckBody:
+      "We want you to feel comfortable on Tomris. The signal is a quick way to alert friends — not to create panic.",
+    introAckPoints: [
+      "The signal only reaches friends on Tomris — it is not official emergency services (112).",
+      "In real danger, calling 112 first is the right step.",
+      "Tomris does not send anyone to a location; you don't have to wait for friends to arrive.",
+      "This feature is in beta — always rely on official emergency lines in a crisis.",
+    ],
+    introAckButton: "Got it",
+    introAckSubmitting: "Saving…",
+    sendConsentTitle: "Before sending a signal",
+    sendConsentPoints: [
+      "Emergency signal is not a substitute for 112 or the police.",
+      "If danger continues, call 112 first.",
+      "Tomris does not dispatch friends to a location; they don't have to go.",
+      "Fake or prank signals are grounds for a permanent ban.",
+    ],
+    sendConsentCheckbox:
+      "I have read and understand the above. In danger I will call official emergency services (112) first; I accept that this signal is not official emergency dispatch.",
+    sendConsentConfirm: "Send signal",
+    sendConsentCancel: "Cancel",
+    activeReminderTitle: "Your signal was sent to friends",
+    activeReminderBody:
+      "If danger continues, don't rely on Tomris alone — call 112 first. Friends don't have to go to the location.",
   },
   permissions: {
     title: "Permissions for Tomris",
@@ -518,5 +544,25 @@ export const en: TranslationDictionary = {
     sending: "Submitting…",
     success: "Report received. Thank you.",
     error: "Could not submit report. Try again.",
+  },
+  pwa: {
+    offlineTitle: "You're offline",
+    offlineBody:
+      "Tomris can't reach the network right now. Refresh when you're back online; in an emergency, call 112.",
+    offlineRetry: "Try again",
+    installTitle: "Add Tomris to your home screen",
+    installBody: "Open from your home screen — app-like access and notifications.",
+    installAction: "Install",
+    installDismiss: "Later",
+    pushTitle: "Notifications",
+    pushBody: "Want to be notified about emergency signals and important events?",
+    pushPoints: [
+      "Emergency signals from friends",
+      "New messages and friend requests (coming soon)",
+    ],
+    pushNote: "You can turn this off anytime in browser settings.",
+    pushEnable: "Enable notifications",
+    pushEnabling: "Enabling…",
+    pushLater: "Later",
   },
 };
