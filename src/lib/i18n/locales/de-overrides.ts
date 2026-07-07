@@ -137,7 +137,7 @@ export const deOverrides: DeepPartial<TranslationDictionary> = {
   },
   friends: {
     title: "Meine Freundinnen",
-    subtitle: "Baue dein Solidaritätsnetzwerk auf",
+    subtitle: "Baue dein Solidaritätsnetzwerk für Frauen auf",
     addFriend: "Freundin hinzufügen",
     usernamePlaceholder: "Benutzername suchen (z. B. papa)",
     searchHint: "Passende Nutzerinnen erscheinen beim Tippen",

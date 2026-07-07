@@ -132,7 +132,7 @@ export const en: TranslationDictionary = {
   },
   friends: {
     title: "My Friends",
-    subtitle: "Build your solidarity network",
+    subtitle: "Build your women's solidarity network",
     addFriend: "Add Friend",
     usernamePlaceholder: "Search username (e.g. papa)",
     searchHint: "Matching users appear as you type",
