@@ -1,4 +1,4 @@
-import { doc, getDoc, setDoc } from "firebase/firestore";
+import { doc, getDoc, runTransaction } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
 
@@ -17,17 +17,16 @@ export async function reserveUsername(uid: string, username: string): Promise<st
   }
 
   const ref = doc(getFirebaseDb(), "usernames", normalized);
-  const existing = await getDoc(ref);
-  if (existing.exists() && existing.data()?.uid !== uid) {
-    throw new UsernameTakenError();
-  }
-  if (existing.exists()) return normalized;
 
-  try {
-    await setDoc(ref, { uid, username: normalized });
-  } catch {
-    throw new UsernameTakenError();
-  }
+  await runTransaction(getFirebaseDb(), async (transaction) => {
+    const snap = await transaction.get(ref);
+    if (snap.exists() && snap.data()?.uid !== uid) {
+      throw new UsernameTakenError();
+    }
+    if (!snap.exists()) {
+      transaction.set(ref, { uid, username: normalized });
+    }
+  });
 
   return normalized;
 }

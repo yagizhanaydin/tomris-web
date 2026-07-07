@@ -1,7 +1,20 @@
-import { addDoc, collection } from "firebase/firestore";
-import { getFirebaseDb } from "@/lib/firebase";
-import { sanitizeText } from "@/lib/security/validate";
+import { getFirebaseAuth } from "@/lib/firebase";
 import type { ReportTargetType } from "@/types/report";
+
+async function authFetch(path: string, init?: RequestInit): Promise<Response> {
+  const user = getFirebaseAuth().currentUser;
+  if (!user) throw new Error("not_authenticated");
+
+  const token = await user.getIdToken();
+  return fetch(path, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      ...(init?.headers ?? {}),
+    },
+  });
+}
 
 export async function submitReport(input: {
   reporterUid: string;
@@ -11,16 +24,21 @@ export async function submitReport(input: {
   targetAuthorUid?: string;
   reason: string;
 }): Promise<void> {
-  const reason = sanitizeText(input.reason.trim(), 500);
+  const reason = input.reason.trim();
   if (reason.length < 5) throw new Error("reason_too_short");
 
-  await addDoc(collection(getFirebaseDb(), "reports"), {
-    reporterUid: input.reporterUid,
-    reporterUsername: input.reporterUsername,
-    targetType: input.targetType,
-    targetId: input.targetId,
-    targetAuthorUid: input.targetAuthorUid ?? null,
-    reason,
-    createdAt: new Date().toISOString(),
+  const res = await authFetch("/api/reports", {
+    method: "POST",
+    body: JSON.stringify({
+      targetType: input.targetType,
+      targetId: input.targetId,
+      targetAuthorUid: input.targetAuthorUid,
+      reason,
+    }),
   });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || "report_failed");
+  }
 }

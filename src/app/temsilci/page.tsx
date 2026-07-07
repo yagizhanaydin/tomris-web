@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { UserProfile } from "@/types/user";
 import type { PlatformBan } from "@/types/ban";
+import type { Report } from "@/types/report";
 
 const BAN_REASONS = [
   "Uygunsuz içerik (troll)",
@@ -21,6 +22,9 @@ export default function RepPanelPage() {
   const [banModalUid, setBanModalUid] = useState<string | null>(null);
   const [banReason, setBanReason] = useState<string>(BAN_REASONS[0]);
   const [showBans, setShowBans] = useState(false);
+  const [reports, setReports] = useState<Report[]>([]);
+  const [showReports, setShowReports] = useState(true);
+  const [reportActionId, setReportActionId] = useState<string | null>(null);
 
   const loadPending = useCallback(async () => {
     setLoading(true);
@@ -50,10 +54,21 @@ export default function RepPanelPage() {
     }
   }, []);
 
+  const loadReports = useCallback(async () => {
+    try {
+      const res = await fetch("/api/temsilci/reports");
+      const data = await res.json();
+      if (res.ok) setReports(data.reports ?? []);
+    } catch {
+      // sessiz
+    }
+  }, []);
+
   useEffect(() => {
     loadPending();
     loadBans();
-  }, [loadPending, loadBans]);
+    loadReports();
+  }, [loadPending, loadBans, loadReports]);
 
   const handleAction = async (uid: string, action: "approve" | "reject") => {
     setActionUid(uid);
@@ -93,6 +108,21 @@ export default function RepPanelPage() {
     } finally {
       setActionUid(null);
       setBanReason(BAN_REASONS[0]);
+    }
+  };
+
+  const handleResolveReport = async (reportId: string) => {
+    setReportActionId(reportId);
+    try {
+      const res = await fetch(`/api/temsilci/reports/${reportId}/resolve`, { method: "POST" });
+      if (!res.ok) {
+        const data = await res.json();
+        alert(data.error || "İşlem başarısız.");
+        return;
+      }
+      await loadReports();
+    } finally {
+      setReportActionId(null);
     }
   };
 
@@ -139,15 +169,66 @@ export default function RepPanelPage() {
           </div>
         )}
 
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-3 flex-wrap">
           <h2 className="text-lg font-semibold text-purple-200">Bekleyen doğrulamalar</h2>
-          <button
-            onClick={() => setShowBans((v) => !v)}
-            className="text-sm px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700"
-          >
-            {showBans ? "Listeyi Gizle" : `Yasaklılar (${bans.length})`}
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => setShowReports((v) => !v)}
+              className="text-sm px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700"
+            >
+              {showReports ? "Şikayetleri Gizle" : `Şikayetler (${reports.length})`}
+            </button>
+            <button
+              onClick={() => setShowBans((v) => !v)}
+              className="text-sm px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700"
+            >
+              {showBans ? "Listeyi Gizle" : `Yasaklılar (${bans.length})`}
+            </button>
+          </div>
         </div>
+
+        {showReports && (
+          <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-3">
+            <h3 className="text-sm font-semibold text-purple-200">Açık şikayetler ({reports.length})</h3>
+            {reports.length === 0 ? (
+              <p className="text-sm text-gray-500">Açık şikayet yok.</p>
+            ) : (
+              reports.map((report) => (
+                <div
+                  key={report.id}
+                  className="rounded-xl border border-gray-800 bg-gray-950/50 p-4 space-y-2 text-sm"
+                >
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-gray-400">
+                    <span className="px-2 py-0.5 rounded bg-purple-900/50 text-purple-200">
+                      {report.targetType}
+                    </span>
+                    <span>@{report.reporterUsername} → {report.targetId.slice(0, 12)}…</span>
+                    <span>{new Date(report.createdAt).toLocaleString("tr-TR")}</span>
+                  </div>
+                  <p className="text-gray-200">{report.reason}</p>
+                  {report.messageContext && report.messageContext.length > 0 && (
+                    <div className="rounded-lg bg-gray-900 border border-gray-800 p-3 space-y-2">
+                      <p className="text-xs text-gray-500">Son mesajlar (bağlam):</p>
+                      {report.messageContext.map((msg) => (
+                        <div key={msg.messageId} className="text-xs text-gray-300">
+                          <span className="text-purple-300">@{msg.authorUsername}</span>:{" "}
+                          {msg.content}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  <button
+                    onClick={() => handleResolveReport(report.id)}
+                    disabled={reportActionId === report.id}
+                    className="text-xs px-3 py-1.5 rounded-lg bg-gray-800 hover:bg-gray-700 disabled:opacity-50"
+                  >
+                    Görüldü — kapat
+                  </button>
+                </div>
+              ))
+            )}
+          </div>
+        )}
 
         {showBans && (
           <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4 space-y-2">

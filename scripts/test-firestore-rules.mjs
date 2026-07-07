@@ -265,6 +265,59 @@ async function runSuite() {
     await assertFails(db.collection("posts").doc("pw1").get());
   });
 
+  await test("pending user CANNOT read approved user profile", async () => {
+    const db = env.authenticatedContext("user-pending").firestore();
+    await assertFails(db.collection("users").doc("user-a").get());
+  });
+
+  await test("usernames list is forbidden", async () => {
+    const db = env.authenticatedContext("user-a").firestore();
+    await assertFails(db.collection("usernames").get());
+  });
+
+  await test("usernames get by id allowed", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("usernames").doc("ayse").set({
+        uid: "user-a",
+        username: "ayse",
+      });
+    });
+    const db = env.authenticatedContext("user-a").firestore();
+    await assertSucceeds(db.collection("usernames").doc("ayse").get());
+  });
+
+  await test("blocked user post is hidden", async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await ctx.firestore().collection("blocks").doc("user-a_user-b").set({
+        blockerUid: "user-a",
+        blockedUid: "user-b",
+        blockedUsername: "zeynep",
+        createdAt: "2026-07-06T11:00:00.000Z",
+      });
+      await ctx.firestore().collection("posts").doc("pb1").set({
+        ...postPayload,
+        authorUid: "user-b",
+        authorUsername: "zeynep",
+      });
+    });
+    const db = env.authenticatedContext("user-a").firestore();
+    await assertFails(db.collection("posts").doc("pb1").get());
+  });
+
+  await test("client CANNOT create reports", async () => {
+    const db = env.authenticatedContext("user-a").firestore();
+    await assertFails(
+      db.collection("reports").add({
+        reporterUid: "user-a",
+        reporterUsername: "ayse",
+        targetType: "post",
+        targetId: "p1",
+        reason: "test report",
+        createdAt: "2026-07-06T12:00:00.000Z",
+      })
+    );
+  });
+
   await test("approved user CAN send friend request with valid usernames", async () => {
     const db = env.authenticatedContext("user-a").firestore();
     await assertSucceeds(db.collection("friendships").add(friendshipPayload));

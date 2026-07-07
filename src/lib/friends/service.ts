@@ -4,26 +4,26 @@ import {
   getDoc,
   getDocs,
   addDoc,
+  setDoc,
   updateDoc,
   deleteDoc,
   query,
   where,
   or,
   limit,
-  orderBy,
 } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
-import { isValidUsernameSearchQuery } from "@/lib/security/username";
-import { isSafeContent } from "@/lib/security/content-filter";
 import { lookupUidByUsername } from "@/lib/users/usernames";
-import type { Friendship, Block, FriendProfile } from "@/types/friendship";
-
-const USERNAME_SEARCH_MIN = 2;
-const USERNAME_SEARCH_DEFAULT_LIMIT = 8;
+import { lookupUserViaApi, searchUsersViaApi } from "@/lib/users/client-api";
+import type { Friendship, FriendProfile } from "@/types/friendship";
 
 function db() {
   return getFirebaseDb();
+}
+
+export function blockDocId(blockerUid: string, blockedUid: string): string {
+  return `${blockerUid}_${blockedUid}`;
 }
 
 export async function findUserByUsername(
@@ -32,61 +32,33 @@ export async function findUserByUsername(
   const normalized = normalizeUsername(username);
   if (!validateUsername(normalized)) return null;
 
-  const indexed = await lookupUidByUsername(normalized);
-  if (indexed) {
+  try {
+    return await lookupUserViaApi(normalized);
+  } catch {
+    const indexed = await lookupUidByUsername(normalized);
+    if (!indexed) return null;
+
     const userSnap = await getDoc(doc(db(), "users", indexed.uid));
-    if (userSnap.exists() && userSnap.data().verificationStatus === "banned") return null;
+    if (!userSnap.exists() || userSnap.data().verificationStatus !== "approved") return null;
+    if (userSnap.data().verificationStatus === "banned") return null;
+
     return indexed;
   }
-
-  const q = query(
-    collection(db(), "users"),
-    where("username", "==", normalized),
-    limit(1)
-  );
-  const snap = await getDocs(q);
-  if (snap.empty) return null;
-
-  const data = snap.docs[0].data();
-  if (data.verificationStatus === "banned") return null;
-
-  return { uid: snap.docs[0].id, username: data.username as string };
 }
 
-/** Kullanıcı adı öneki ile arama — örn. "papa" → papatyakiz */
+/** Kullanıcı adı öneki ile arama — onaylı kullanıcılar (server API) */
 export async function searchUsersByUsernamePrefix(
   rawQuery: string,
   options?: { excludeUid?: string; limit?: number }
 ): Promise<FriendProfile[]> {
   const normalized = normalizeUsername(rawQuery);
-  if (normalized.length < USERNAME_SEARCH_MIN) return [];
-  if (!isValidUsernameSearchQuery(normalized)) return [];
+  if (normalized.length < 2) return [];
 
-  const maxResults = options?.limit ?? USERNAME_SEARCH_DEFAULT_LIMIT;
-  const q = query(
-    collection(db(), "users"),
-    where("username", ">=", normalized),
-    where("username", "<=", normalized + "\uf8ff"),
-    orderBy("username"),
-    limit(maxResults + 4)
-  );
-
-  const snap = await getDocs(q);
-  const results: FriendProfile[] = [];
-
-  for (const docSnap of snap.docs) {
-    if (options?.excludeUid && docSnap.id === options.excludeUid) continue;
-
-    const data = docSnap.data();
-    const username = data.username as string;
-    if (data.verificationStatus === "banned") continue;
-    if (!isSafeContent(username)) continue;
-
-    results.push({ uid: docSnap.id, username });
-    if (results.length >= maxResults) break;
+  try {
+    return await searchUsersViaApi(normalized, options);
+  } catch {
+    return [];
   }
-
-  return results;
 }
 
 export async function isBlocked(
@@ -226,7 +198,7 @@ export async function blockUser(
   await Promise.all(related.map((f) => deleteDoc(doc(db(), "friendships", f.id))));
 
   const now = new Date().toISOString();
-  await addDoc(collection(db(), "blocks"), {
+  await setDoc(doc(db(), "blocks", blockDocId(blockerUid, blockedUid)), {
     blockerUid,
     blockedUid,
     blockedUsername: normalizeUsername(blockedUsername),

@@ -270,6 +270,9 @@ export interface TranslationDictionary {
     chatFriendsDesc: string;
     chatEveryone: string;
     chatEveryoneDesc: string;
+    chatEveryoneConfirmTitle: string;
+    chatEveryoneConfirmBody: string;
+    chatEveryoneConfirmYes: string;
     legalTitle: string;
     deleteTitle: string;
     deleteHint: string;
@@ -378,10 +381,28 @@ export interface TranslationDictionary {
     resolving: string;
     markSafe: string;
   };
+  permissions: {
+    title: string;
+    body: string;
+    cameraHint: string;
+    locationHint: string;
+    note: string;
+    allow: string;
+    later: string;
+    requesting: string;
+    cameraOk: string;
+    cameraDenied: string;
+    locationOk: string;
+    locationDenied: string;
+  };
   report: {
     action: string;
     title: string;
+    titleUser: string;
+    titleComment: string;
+    titleConversation: string;
     hint: string;
+    hintConversation: string;
     placeholder: string;
     send: string;
     sending: string;

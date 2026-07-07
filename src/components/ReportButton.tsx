@@ -12,7 +12,31 @@ type ReportButtonProps = {
   targetId: string;
   targetAuthorUid?: string;
   disabled?: boolean;
+  className?: string;
 };
+
+function reportTitle(
+  targetType: ReportTargetType,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
+  switch (targetType) {
+    case "user":
+      return t.report.titleUser;
+    case "comment":
+      return t.report.titleComment;
+    case "conversation":
+      return t.report.titleConversation;
+    default:
+      return t.report.title;
+  }
+}
+
+function reportHint(
+  targetType: ReportTargetType,
+  t: ReturnType<typeof useLanguage>["t"]
+): string {
+  return targetType === "conversation" ? t.report.hintConversation : t.report.hint;
+}
 
 export function ReportButton({
   reporterUid,
@@ -21,6 +45,7 @@ export function ReportButton({
   targetId,
   targetAuthorUid,
   disabled = false,
+  className = "text-xs text-[var(--muted)] hover:text-red-600 underline",
 }: ReportButtonProps) {
   const { t } = useLanguage();
   const [open, setOpen] = useState(false);
@@ -64,7 +89,7 @@ export function ReportButton({
         type="button"
         disabled={disabled}
         onClick={() => setOpen(true)}
-        className="text-xs text-[var(--muted)] hover:text-red-600 underline"
+        className={className}
       >
         {t.report.action}
       </button>
@@ -72,8 +97,8 @@ export function ReportButton({
       {open && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/40">
           <div className="w-full max-w-md rounded-2xl bg-[var(--card)] border border-[var(--border)] p-5 space-y-4 shadow-xl">
-            <h3 className="font-semibold text-tomris">{t.report.title}</h3>
-            <p className="text-sm text-[var(--muted)]">{t.report.hint}</p>
+            <h3 className="font-semibold text-tomris">{reportTitle(targetType, t)}</h3>
+            <p className="text-sm text-[var(--muted)]">{reportHint(targetType, t)}</p>
             {message && <div className="alert-success text-sm">{message}</div>}
             {error && <div className="alert-error text-sm">{error}</div>}
             <form onSubmit={handleSubmit} className="space-y-3">

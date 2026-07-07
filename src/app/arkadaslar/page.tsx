@@ -25,6 +25,7 @@ import {
 import { getOrCreateDm } from "@/lib/chat/service";
 import type { Friendship } from "@/types/friendship";
 import { IncomingSignalsBanner } from "@/components/IncomingSignalsBanner";
+import { ReportButton } from "@/components/ReportButton";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 type FriendErrorKey =
@@ -281,6 +282,14 @@ export default function FriendsPage() {
                         >
                           {t.friends.block}
                         </button>
+                        <ReportButton
+                          reporterUid={user.uid}
+                          reporterUsername={profile.username}
+                          targetType="user"
+                          targetId={friend.uid}
+                          targetAuthorUid={friend.uid}
+                          className="flex-1 sm:flex-none px-4 py-2 rounded-xl border border-[var(--border)] text-sm text-[var(--muted)] hover:text-red-600"
+                        />
                       </div>
                     </div>
                   );

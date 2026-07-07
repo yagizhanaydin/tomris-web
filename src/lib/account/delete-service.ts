@@ -2,6 +2,7 @@ import { getAuth } from "firebase-admin/auth";
 import type { Query } from "firebase-admin/firestore";
 import { getAdminApp, getAdminDb } from "@/lib/firebase-admin";
 import { deleteVerificationPhoto } from "@/lib/verification/photo-storage";
+import { normalizeUsername } from "@/lib/security/validate";
 import type { UserProfile } from "@/types/user";
 
 async function deleteQueryBatch(query: Query, batchSize = 100): Promise<void> {
@@ -26,6 +27,15 @@ export async function deleteUserAccount(uid: string): Promise<void> {
   if (userSnap.exists) {
     const profile = userSnap.data() as UserProfile;
     await deleteVerificationPhoto(profile.verificationPhotoPath || uid);
+
+    if (profile.username) {
+      const normalized = normalizeUsername(profile.username);
+      const usernameRef = db.collection("usernames").doc(normalized);
+      const usernameSnap = await usernameRef.get();
+      if (usernameSnap.exists && usernameSnap.data()?.uid === uid) {
+        await usernameRef.delete();
+      }
+    }
   } else {
     await deleteVerificationPhoto(uid);
   }

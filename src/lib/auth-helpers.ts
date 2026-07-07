@@ -1,5 +1,6 @@
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   sendEmailVerification,
   updateProfile,
 } from "firebase/auth";
@@ -79,25 +80,34 @@ export async function registerWithEmail(
   const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   const { user } = credential;
 
-  await updateProfile(user, { displayName: username });
-  await sendEmailVerification(user, {
-    url: `${window.location.origin}/dashboard`,
-    handleCodeInApp: false,
-  });
+  try {
+    await updateProfile(user, { displayName: username });
+    await sendEmailVerification(user, {
+      url: `${window.location.origin}/dashboard`,
+      handleCodeInApp: false,
+    });
 
-  const normalized = await reserveUsername(user.uid, username);
+    const normalized = await reserveUsername(user.uid, username);
 
-  await saveUserProfile(user.uid, {
-    username: normalized,
-    gender,
-    verificationPhotoPath: "",
-    verificationStatus: "unverified",
-    genderVerified: false,
-    authProvider: "email",
-    chatVisibility: "friends",
-  });
+    await saveUserProfile(user.uid, {
+      username: normalized,
+      gender,
+      verificationPhotoPath: "",
+      verificationStatus: "unverified",
+      genderVerified: false,
+      authProvider: "email",
+      chatVisibility: "friends",
+    });
 
-  return user;
+    return user;
+  } catch (err) {
+    try {
+      await deleteUser(user);
+    } catch {
+      // Auth hesabı temizlenemediyse orphan kalabilir — nadir
+    }
+    throw err;
+  }
 }
 
 export async function createGoogleProfile(

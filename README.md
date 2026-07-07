@@ -159,6 +159,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] TR / EN / DE / FR / ES (`src/lib/i18n/`) — DE/FR/ES tam override dosyaları
 - [x] Dil seçici: header **🌐 TR** → alttan bottom sheet (`LanguageSheet`) · Ayarlar'da `LanguageSetting`
 - [x] Atatürk sözü (giriş/kayıt)
+- [x] **Giriş izinleri** — kamera + konum bir kez (`PermissionPrompt`); sonra uğraşmaz
 
 ### Admin (genel yönetim — doğrulama fotoğrafı yok)
 - [x] Ayrı admin girişi (`/admin/giris`)

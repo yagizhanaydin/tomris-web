@@ -2,10 +2,15 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
+import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 type RouteContext = { params: Promise<{ signalId: string }> };
 
 export async function POST(request: NextRequest, context: RouteContext) {
+  const ip = getClientIp(request);
+  const limit = checkRateLimit(`signal-resolve:${ip}`, 30, 60 * 1000);
+  if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
+
   if (!isAdminConfigured()) {
     return NextResponse.json({ error: "Sunucu yapılandırması eksik." }, { status: 500 });
   }

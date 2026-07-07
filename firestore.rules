@@ -50,6 +50,16 @@ service cloud.firestore {
       return exists(/databases/$(database)/documents/users/$(uid));
     }
 
+    function blockDocId(blockerUid, blockedUid) {
+      return blockerUid + '_' + blockedUid;
+    }
+
+    /** İki kullanıcı birbirini engellediyse içerik okuma/yazma kapalı */
+    function notBlockedWith(authorUid) {
+      return !exists(/databases/$(database)/documents/blocks/$(blockDocId(request.auth.uid, authorUid))) &&
+        !exists(/databases/$(database)/documents/blocks/$(blockDocId(authorUid, request.auth.uid)));
+    }
+
     function userSelfUpdateAllowed() {
       let diff = request.resource.data.diff(resource.data);
       let keys = diff.affectedKeys();
@@ -66,7 +76,7 @@ service cloud.firestore {
     match /users/{userId} {
       allow read: if isSignedIn() && (
         isOwner(userId) ||
-        resource.data.verificationStatus == 'approved'
+        (isApproved() && resource.data.verificationStatus == 'approved')
       );
       allow create: if isOwner(userId) &&
         request.resource.data.verificationStatus == 'unverified' &&
@@ -84,7 +94,8 @@ service cloud.firestore {
     }
 
     match /usernames/{username} {
-      allow read: if isSignedIn();
+      allow get: if isSignedIn();
+      allow list: if false;
       allow create: if isSignedIn() &&
         request.resource.data.uid == request.auth.uid &&
         request.resource.data.username == username &&
@@ -138,7 +149,9 @@ service cloud.firestore {
     }
 
     match /posts/{postId} {
-      allow read: if isSignedIn() && canReadAudienceContent(resource.data.audience);
+      allow read: if isSignedIn() &&
+        canReadAudienceContent(resource.data.audience) &&
+        notBlockedWith(resource.data.authorUid);
 
       allow create: if isApproved() &&
         authorIntegrity(request.resource.data) &&
@@ -159,7 +172,8 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/posts/$(resource.data.postId)) &&
         canReadAudienceContent(
           get(/databases/$(database)/documents/posts/$(resource.data.postId)).data.audience
-        );
+        ) &&
+        notBlockedWith(resource.data.authorUid);
 
       allow create: if isApproved() &&
         authorIntegrity(request.resource.data) &&
@@ -167,6 +181,9 @@ service cloud.firestore {
         exists(/databases/$(database)/documents/posts/$(request.resource.data.postId)) &&
         canReadAudienceContent(
           get(/databases/$(database)/documents/posts/$(request.resource.data.postId)).data.audience
+        ) &&
+        notBlockedWith(
+          get(/databases/$(database)/documents/posts/$(request.resource.data.postId)).data.authorUid
         ) &&
         request.resource.data.keys().hasAll([
           'postId', 'authorUid', 'authorUsername', 'content', 'createdAt'
@@ -245,17 +262,7 @@ service cloud.firestore {
     }
 
     match /reports/{reportId} {
-      allow create: if isApproved() &&
-        request.resource.data.reporterUid == request.auth.uid &&
-        request.resource.data.reporterUsername == myUsername() &&
-        request.resource.data.targetType in ['post', 'comment', 'user'] &&
-        request.resource.data.targetId is string &&
-        request.resource.data.reason.size() >= 5 &&
-        textLen(request.resource.data.reason, 500) &&
-        request.resource.data.keys().hasAll([
-          'reporterUid', 'reporterUsername', 'targetType', 'targetId', 'reason', 'createdAt'
-        ]);
-      allow read, update, delete: if false;
+      allow read, write: if false;
     }
 
     match /signals/{signalId} {

@@ -10,6 +10,7 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { needsProfileCompletion, isPlatformUnlocked } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
 import { MessageThread } from "@/components/chat/MessageThread";
+import { ReportButton } from "@/components/ReportButton";
 import { fetchConversation } from "@/lib/chat/service";
 import { conversationTitle } from "@/lib/chat/helpers";
 import { formatPostLocation } from "@/lib/locations";
@@ -76,6 +77,10 @@ export default function ConversationPage() {
   }
 
   const isMember = conversation ? conversation.participantUids.includes(user.uid) : false;
+  const otherParticipantUid =
+    conversation?.type === "dm"
+      ? conversation.participantUids.find((id) => id !== user.uid)
+      : undefined;
 
   if (!fetching && conversation && !isMember) {
     return (
@@ -109,22 +114,34 @@ export default function ConversationPage() {
           <div className="alert-error">{error || t.chat.errorLoad}</div>
         ) : (
           <div className="card space-y-4">
-            <header>
-              <h1 className="text-lg font-bold text-tomris">
-                {conversationTitle(conversation, user.uid)}
-              </h1>
-              {conversation.type === "group" && (
-                <p className="text-xs text-[var(--muted)] mt-1">
-                  📍 {formatPostLocation(conversation, locale)} ·{" "}
-                  {conversation.participantUids.length} {t.chat.memberCount}
-                  {conversation.adminUid === user.uid && (
-                    <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary-light">
-                      {t.chat.adminBadge}
-                    </span>
-                  )}
-                </p>
+            <header className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+              <div>
+                <h1 className="text-lg font-bold text-tomris">
+                  {conversationTitle(conversation, user.uid)}
+                </h1>
+                {conversation.type === "group" && (
+                  <p className="text-xs text-[var(--muted)] mt-1">
+                    📍 {formatPostLocation(conversation, locale)} ·{" "}
+                    {conversation.participantUids.length} {t.chat.memberCount}
+                    {conversation.adminUid === user.uid && (
+                      <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary-light">
+                        {t.chat.adminBadge}
+                      </span>
+                    )}
+                  </p>
+                )}
+                <p className="text-xs text-[var(--muted)] mt-2">{t.chat.pageSizeHint}</p>
+              </div>
+              {unlocked && isMember && (
+                <ReportButton
+                  reporterUid={user.uid}
+                  reporterUsername={profile.username}
+                  targetType="conversation"
+                  targetId={conversation.id}
+                  targetAuthorUid={otherParticipantUid}
+                  className="text-sm px-3 py-2 rounded-xl border border-[var(--border)] text-[var(--muted)] hover:text-red-600 shrink-0"
+                />
               )}
-              <p className="text-xs text-[var(--muted)] mt-2">{t.chat.pageSizeHint}</p>
             </header>
 
             <MessageThread

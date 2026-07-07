@@ -151,10 +151,23 @@ export function PostCard({
                   key={c.id}
                   className="text-sm p-3 rounded-xl bg-primary-light/30 border border-[var(--border)]"
                 >
-                  <span className="font-medium text-tomris">@{c.authorUsername}</span>
-                  <span className="text-xs text-[var(--muted)] ml-2">
-                    {formatDate(c.createdAt, locale)}
-                  </span>
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <span className="font-medium text-tomris">@{c.authorUsername}</span>
+                      <span className="text-xs text-[var(--muted)] ml-2">
+                        {formatDate(c.createdAt, locale)}
+                      </span>
+                    </div>
+                    {canInteract && c.authorUid !== profile.uid && (
+                      <ReportButton
+                        reporterUid={profile.uid}
+                        reporterUsername={profile.username}
+                        targetType="comment"
+                        targetId={c.id}
+                        targetAuthorUid={c.authorUid}
+                      />
+                    )}
+                  </div>
                   <p className="mt-1 break-words">{c.content}</p>
                 </li>
               ))}
