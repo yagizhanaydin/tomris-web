@@ -54,7 +54,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 |-------|--------|-----|
 | Authentication (E-posta + Google) | ✅ | |
 | Firestore Database | ✅ | |
-| **Rules Publish** (`firestore.rules`) | ⏳ | `reps`, `fcm_tokens`, `signals`, `reports`, `verification_photos` client kapalı |
+| **Rules Publish** (`firestore.rules`) | ⏳ | Grup: yalnızca üye okur; `join_requests` client kapalı; `groupJoinAllowed` **yok** |
 | **Indexes (7 zorunlu)** | ✅ | conversations×2, signals×2, fcm_tokens, reports, users |
 | Index #8 `comments` (postId + createdAt) | ⚪ Önerilen | Yorum açılırken index hatası alırsan ekle — [`firestore.indexes.json`](firestore.indexes.json) |
 | Cloud Messaging → Web Push (VAPID) | ⏳ | Key → `NEXT_PUBLIC_FIREBASE_VAPID_KEY` |
@@ -92,6 +92,9 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | Push: yeni mesaj | ✅ |
 | Push: gönderiye yorum | ✅ |
 | Push: arkadaş isteği | ❌ Sırada |
+| **Grup: onaylı katılım + lider** | ✅ Lider istek kabul/red; üye çıkarma; lider ayrılınca devretme |
+| **Grup: metadata gizliliği** | ✅ Liste `/api/groups`; Firestore'da grup doc yalnızca üyelere |
+| **Profil ziyareti + süre (Reddit tarzı)** | ✅ `/profil/[username]` — "N gündür Tomris'te" |
 | Üç parmak selfie UI (i18n hazır) | ⏳ Component bağlanmadı |
 | Vercel canlı deploy | ⏳ |
 
@@ -107,6 +110,14 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `GET /api/admin/stats` | Admin — kullanıcı/şikayet sayıları |
 | `POST /api/push/notify` | Onaylı kullanıcı — mesaj/yorum push tetikle |
 | `POST /api/push/register` | FCM token kaydı |
+| `GET /api/groups` | Onaylı kullanıcı — public grup listesi (üye sayısı, konum; metadata sızıntısı yok) |
+| `POST /api/groups/[id]/join` | Katılma isteği veya anında katılım (`joinMode`) |
+| `GET /api/groups/[id]/join-requests` | Grup lideri — bekleyen istekler |
+| `POST .../join-requests/[uid]/approve` · `reject` | Lider — istek kabul/red |
+| `POST /api/groups/[id]/members/[uid]/kick` | Lider — üyeyi gruptan çıkar |
+| `POST /api/groups/[id]/leave` | Üye ayrılır; lider ise liderlik devredilir |
+| `GET /api/users/profile` | Onaylı profil — `memberSinceDays` (Reddit tarzı süre) |
+| `GET /api/users/lookup` · `search` | Kullanıcı arama — süre bilgisi dahil |
 
 ---
 
@@ -136,6 +147,9 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | Doğrulama kuyruk + erişim paneli | ✅ Sırada N. kişi · kullanabilir/kullanamaz listesi |
 | Dashboard onboarding checklist | ✅ 4 adım (e-posta, doğrulama, arkadaş, gönderi) |
 | Admin panel (moderasyon + temsilci) | ✅ Şikayet, içerik silme, `reps` CRUD |
+| **Grup: onaylı katılım + lider moderasyonu** | ✅ İstek kabul/red, üye çıkarma, lider devri |
+| **Grup metadata gizliliği** | ✅ Public liste API; Firestore grup doc yalnızca üyeler |
+| **Profil ziyareti + platform süresi** | ✅ `/profil/[username]` — "N gündür Tomris'te" |
 | Vercel deploy | ❌ Sırada — local test devam |
 
 **Tek cümle:** Kod ve Firebase hazır; site şu an yalnızca `npm run dev` ile local'de çalışır. İnternete açmak için Vercel deploy gerekir.
@@ -184,7 +198,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### Sosyal
 - [x] Arkadaş ekleme / kabul / red / çıkarma / engelleme (`/arkadaslar`)
-- [x] **Kullanıcı adı arama + öneriler** — yazdıkça eşleşen isimler (`UsernameSearchInput`, `searchUsersByUsernamePrefix`)
+- [x] **Kullanıcı adı arama + öneriler** — yazdıkça eşleşen isimler + **platform süresi** (`UsernameSearchInput`)
+- [x] **Profil ziyareti** — `/profil/[username]`; Reddit tarzı **"N gündür Tomris'te"** (`memberSinceDays`)
 - [x] **Türkçe kullanıcı adı** — `papatyakız`, `gülkız` vb. (`src/lib/security/username.ts`, `tr-TR` normalizasyon)
 - [x] **Kullanıcı adı benzersizliği** — `usernames/{username}` rezervasyonu; çakışmada `USERNAME_TAKEN`
 - [x] **Şikayet et** — gönderilerde raporlama (`ReportButton` → `reports` koleksiyonu)
@@ -199,7 +214,10 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### Sohbet (canlı — Firestore onSnapshot)
 - [x] **Bireysel DM** (`/mesajlar`) — arkadaş veya herkese açık (ayarlardan)
-- [x] **Grup sohbeti** — kurucu yönetici, üyeler mesaj yazar
+- [x] **Grup sohbeti** — kurucu **lider**; üyeler mesaj yazar
+- [x] **Onaylı grup katılımı** — varsayılan `joinMode: approval`; lider istek kabul/red eder
+- [x] **Lider moderasyonu** — üye çıkarma (`kick`); lider ayrılınca liderlik sıradaki üyeye geçer
+- [x] **Grup listesi güvenliği** — public liste `GET /api/groups`; Firestore grup metadata yalnızca üyelere
 - [x] Grup konumu: TR il/ilçe, AB ülke/şehir + filtreler
 - [x] **Canlı mesajlar** — `onSnapshot` ile anında güncelleme
 - [x] Son 20 mesaj + eski mesajları yükle (sayfalama)
@@ -232,6 +250,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] `reports` — onaylı kullanıcı yazabilir; okuma kapalı (moderasyon ileride)
 - [x] `usernames` — benzersiz isim indeksi; client create, update/delete kapalı
 - [x] `reps` — client kapalı; admin panelden temsilci (scrypt hash)
+- [x] **Grup güvenliği** — `conversations` okuma yalnızca üyeler; istemciden katılma/çıkarma kapalı (`groupJoinAllowed` kaldırıldı)
+- [x] **`join_requests`** alt koleksiyonu — client kapalı; katılma istekleri Admin SDK (sunucu API)
 - [x] `verification_photos` / `platform_bans` client kapalı
 - [x] Middleware — `/api/admin/*` oturum koruması (login/logout hariç)
 
@@ -305,6 +325,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `/dogrulama-reddedildi` | Doğrulama reddedildi — tekrar denenebilir |
 | `/hesap-yasaklandi` | Kalıcı ban |
 | `/arkadaslar` | Arkadaşlık yönetimi (doğrulama gerekli) |
+| `/profil/[username]` | Kullanıcı profili — platform süresi, arkadaş ekle / mesaj |
 | `/mesajlar` | DM + gruplar (canlı sohbet) |
 | `/mesajlar/[id]` | Sohbet ekranı |
 | `/ayarlar` | Sohbet gizliliği, dil, hesap silme |
@@ -487,8 +508,15 @@ function userSelfUpdateAllowed() { ... }
 function canViewAudience() { ... }
 function authorIntegrity() { ... }
 function me() { ... }
-function groupJoinAllowed() { ... }
 function lastMessageUpdateAllowed() { ... }
+match /conversations/{conversationId} {
+  allow read: if isSignedIn() &&
+    request.auth.uid in resource.data.participantUids;
+  ...
+  match /join_requests/{requestUid} {
+    allow read, write: if false;
+  }
+}
 match /signals/{signalId} {
   allow read: if isSignedIn() &&
     (request.auth.uid in resource.data.notifyUids ||
@@ -861,3 +889,27 @@ Repodaki [`firestore.rules`](firestore.rules) = güncel. İçermesi gerekenler:
 3. Admin → Temsilciler'den ilk Firestore temsilcisi (veya env `REP_*`)
 4. ⚪ Yorum index hatası alırsan → `comments`: postId + createdAt
 5. Vercel deploy
+
+---
+
+## Oturum Notu — 8 Temmuz 2026 (gruplar, profil süresi)
+
+### Yapılanlar
+- **Onaylı grup katılımı** — varsayılan `joinMode: approval`; lider kabul/red (`GroupLeaderPanel`)
+- **Lider moderasyonu** — üye çıkarma; lider ayrılınca liderlik sıradaki üyeye devredilir
+- **Grup metadata gizliliği** — Firestore grup doc yalnızca üyeler okur; public liste `GET /api/groups`
+- **Katılma istekleri** — `conversations/{id}/join_requests` (Admin SDK); istemci yazamaz
+- **Profil ziyareti** — `/profil/[username]`; Reddit tarzı **"N gündür Tomris'te"** (`memberSinceDays`)
+- **Arama/lookup** — kullanıcı önerilerinde ve profil API'de süre bilgisi
+
+### Yeni API rotaları
+- `GET /api/groups` · `POST /api/groups/[id]/join`
+- `GET /api/groups/[id]/join-requests` · `approve` / `reject`
+- `POST /api/groups/[id]/members/[uid]/kick` · `POST .../leave`
+- `GET /api/users/profile`
+
+### Senin yapman gereken
+1. Firebase Console → **Rules Publish** — `groupJoinAllowed` **olmamalı**; `join_requests` client kapalı olmalı
+2. İki hesapla test: grup kur → istek gönder → lider onayla → mesaj; lider üye çıkarsın
+3. `/profil/kullaniciadi` — süre metnini kontrol et
+4. Vercel deploy (env aynı)

@@ -22,4 +22,12 @@ export interface Block {
 export interface FriendProfile {
   uid: string;
   username: string;
+  memberSinceDays?: number;
+}
+
+export interface PublicUserProfile {
+  uid: string;
+  username: string;
+  memberSinceDays: number;
+  createdAt: string;
 }

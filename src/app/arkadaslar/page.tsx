@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "firebase/auth";
@@ -220,7 +221,12 @@ export default function FriendsPage() {
                     key={req.id}
                     className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-[var(--border)] bg-primary-light/20"
                   >
-                    <span className="font-medium text-tomris">@{req.fromUsername}</span>
+                    <Link
+                      href={`/profil/${req.fromUsername}`}
+                      className="font-medium text-tomris link-tomris"
+                    >
+                      @{req.fromUsername}
+                    </Link>
                     <div className="flex gap-2">
                       <button
                         onClick={() => handleAccept(req)}
@@ -258,7 +264,12 @@ export default function FriendsPage() {
                       key={friend.uid}
                       className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 rounded-xl border border-[var(--border)]"
                     >
-                      <span className="font-medium text-tomris">@{friend.username}</span>
+                      <Link
+                        href={`/profil/${friend.username}`}
+                        className="font-medium text-tomris link-tomris"
+                      >
+                        @{friend.username}
+                      </Link>
                       <div className="flex flex-wrap gap-2">
                         <button
                           type="button"

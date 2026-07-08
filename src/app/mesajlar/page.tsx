@@ -20,14 +20,13 @@ import {
   startDmByUsername,
   createGroup,
   joinGroup,
-  isGroupMember,
   subscribeToMyConversations,
 } from "@/lib/chat/service";
 import { conversationTitle } from "@/lib/chat/helpers";
 import { formatPostLocation } from "@/lib/locations";
 import { localeToIntl } from "@/lib/i18n";
 import { DEFAULT_GROUP_FILTERS } from "@/types/chat";
-import type { Conversation } from "@/types/chat";
+import type { Conversation, PublicGroupListing } from "@/types/chat";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 type Tab = "inbox" | "groups" | "newDm";
@@ -41,7 +40,7 @@ function MessagesPageContent() {
 
   const [tab, setTab] = useState<Tab>("inbox");
   const [inbox, setInbox] = useState<Conversation[]>([]);
-  const [groups, setGroups] = useState<Conversation[]>([]);
+  const [groups, setGroups] = useState<PublicGroupListing[]>([]);
   const [groupFilters, setGroupFilters] = useState(DEFAULT_GROUP_FILTERS);
   const [fetching, setFetching] = useState(true);
   const [inboxError, setInboxError] = useState("");
@@ -183,11 +182,16 @@ function MessagesPageContent() {
   const handleJoinGroup = async (groupId: string) => {
     if (!user || !profile || !unlocked) return;
     setJoiningId(groupId);
+    setGroupError("");
     try {
-      await joinGroup(groupId, user.uid, profile.username);
-      setGroupMessage(t.chat.joinedGroup);
+      const result = await joinGroup(groupId);
+      if (result === "pending") {
+        setGroupMessage(t.chat.joinRequestSent);
+      } else {
+        setGroupMessage(t.chat.joinedGroup);
+        router.push(`/mesajlar/${groupId}`);
+      }
       await loadGroups();
-      router.push(`/mesajlar/${groupId}`);
     } catch {
       setGroupError(t.chat.errorSend);
     } finally {
@@ -265,7 +269,7 @@ function MessagesPageContent() {
                       {conversationTitle(conv, user.uid)}
                       {conv.type === "group" && conv.adminUid === user.uid && (
                         <span className="ml-2 text-xs font-normal px-2 py-0.5 rounded-lg bg-primary-light">
-                          {t.chat.adminBadge}
+                          {t.chat.leaderBadge}
                         </span>
                       )}
                     </p>
@@ -337,7 +341,7 @@ function MessagesPageContent() {
                 </p>
               ) : (
                 filteredGroups.map((group) => {
-                  const member = isGroupMember(group, user.uid);
+                  const member = group.isMember;
                   return (
                     <div
                       key={group.id}
@@ -347,7 +351,7 @@ function MessagesPageContent() {
                         <div>
                           <p className="font-semibold text-tomris">{group.title}</p>
                           <p className="text-xs text-[var(--muted)] mt-1">
-                            📍 {formatPostLocation(group, locale)} · {group.participantUids.length}{" "}
+                            📍 {formatPostLocation(group, locale)} · {group.memberCount}{" "}
                             {t.chat.memberCount}
                           </p>
                         </div>
@@ -358,6 +362,10 @@ function MessagesPageContent() {
                           >
                             {t.chat.tabInbox}
                           </Link>
+                        ) : group.joinPending ? (
+                          <span className="text-xs text-[var(--muted)] px-3 py-2 rounded-xl border border-[var(--border)]">
+                            {t.chat.joinRequestPending}
+                          </span>
                         ) : unlocked ? (
                           <button
                             type="button"
@@ -365,7 +373,11 @@ function MessagesPageContent() {
                             disabled={joiningId === group.id}
                             className="btn-primary text-sm py-2 px-4 sm:w-auto"
                           >
-                            {joiningId === group.id ? t.common.loading : t.chat.joinGroup}
+                            {joiningId === group.id
+                              ? t.common.loading
+                              : group.joinMode === "open"
+                                ? t.chat.joinGroup
+                                : t.chat.requestJoinGroup}
                           </button>
                         ) : (
                           <span className="text-xs text-[var(--muted)]">{t.chat.gateHint}</span>

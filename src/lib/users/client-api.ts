@@ -13,7 +13,7 @@ async function authFetch(path: string): Promise<Response> {
 export async function searchUsersViaApi(
   prefix: string,
   options?: { excludeUid?: string; limit?: number }
-): Promise<{ uid: string; username: string }[]> {
+): Promise<{ uid: string; username: string; memberSinceDays?: number }[]> {
   const params = new URLSearchParams({ prefix });
   if (options?.excludeUid) params.set("excludeUid", options.excludeUid);
   if (options?.limit) params.set("limit", String(options.limit));
@@ -27,11 +27,22 @@ export async function searchUsersViaApi(
 
 export async function lookupUserViaApi(
   username: string
-): Promise<{ uid: string; username: string } | null> {
+): Promise<{ uid: string; username: string; memberSinceDays?: number } | null> {
   const params = new URLSearchParams({ username });
   const res = await authFetch(`/api/users/lookup?${params}`);
   if (!res.ok) throw new Error("lookup_failed");
 
   const data = await res.json();
   return data.user ?? null;
+}
+
+export async function fetchPublicProfileViaApi(
+  username: string
+): Promise<import("@/types/friendship").PublicUserProfile | null> {
+  const params = new URLSearchParams({ username });
+  const res = await authFetch(`/api/users/profile?${params}`);
+  if (!res.ok) throw new Error("profile_failed");
+
+  const data = await res.json();
+  return data.profile ?? null;
 }

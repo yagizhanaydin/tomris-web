@@ -3,6 +3,7 @@ import type { NextRequest } from "next/server";
 import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
 import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
+import { daysOnPlatform } from "@/lib/users/tenure";
 
 export async function GET(request: NextRequest) {
   if (!isAdminConfigured()) {
@@ -47,7 +48,14 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ user: null });
   }
 
+  const data = userSnap.data()!;
+  const createdAt = String(data.createdAt ?? "");
+
   return NextResponse.json({
-    user: { uid, username: userSnap.data()?.username as string },
+    user: {
+      uid,
+      username: data.username as string,
+      memberSinceDays: daysOnPlatform(createdAt),
+    },
   });
 }

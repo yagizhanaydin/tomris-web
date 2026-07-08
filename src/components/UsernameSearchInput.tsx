@@ -41,7 +41,7 @@ export function UsernameSearchInput({
   className = "",
   inputClassName = "input-field w-full",
 }: UsernameSearchInputProps) {
-  const { t } = useLanguage();
+  const { t, ti } = useLanguage();
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const [suggestions, setSuggestions] = useState<FriendProfile[]>([]);
@@ -167,7 +167,18 @@ export function UsernameSearchInput({
                         : "hover:bg-primary-light/25 text-tomris"
                     }`}
                   >
-                    <UsernameMatch username={user.username} query={value} />
+                    <div>
+                      <UsernameMatch username={user.username} query={value} />
+                      {typeof user.memberSinceDays === "number" && user.memberSinceDays >= 0 && (
+                        <p className="text-xs text-[var(--muted)] mt-0.5">
+                          {user.memberSinceDays <= 1
+                            ? t.profile.memberSinceOne
+                            : ti(t.profile.memberSince, {
+                                days: String(user.memberSinceDays),
+                              })}
+                        </p>
+                      )}
+                    </div>
                   </button>
                 </li>
               ))}

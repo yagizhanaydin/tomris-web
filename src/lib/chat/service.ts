@@ -11,7 +11,6 @@ import {
   orderBy,
   limit,
   startAfter,
-  arrayUnion,
   onSnapshot,
 } from "firebase/firestore";
 import type { QueryDocumentSnapshot, DocumentData, Unsubscribe } from "firebase/firestore";
@@ -24,7 +23,7 @@ import { canInitiateDm } from "./visibility";
 import { fetchUserProfile } from "@/lib/users/settings";
 import { findUserByUsername } from "@/lib/friends/service";
 import type { PostLocationInput } from "@/types/post";
-import type { Conversation, ChatMessage, GroupFilters } from "@/types/chat";
+import type { Conversation, ChatMessage, GroupFilters, PublicGroupListing, GroupJoinRequest } from "@/types/chat";
 
 export const MESSAGE_PAGE_SIZE = 20;
 
@@ -116,6 +115,7 @@ export async function createGroup(
     city: location.city,
     district: location.region === "tr" ? location.district : "",
     adminUid: creatorUid,
+    joinMode: "approval",
     participantUids: [creatorUid],
     participantUsernames: { [creatorUid]: creatorUsername },
     createdBy: creatorUid,
@@ -125,21 +125,28 @@ export async function createGroup(
   return ref.id;
 }
 
-export async function fetchPublicGroups(max = 50): Promise<Conversation[]> {
-  const q = query(
-    collection(db(), "conversations"),
-    where("type", "==", "group"),
-    orderBy("updatedAt", "desc"),
-    limit(max)
-  );
-  const snap = await getDocs(q);
-  return snap.docs.map((d) => ({ id: d.id, ...d.data() } as Conversation));
+export async function fetchPublicGroups(max = 50): Promise<PublicGroupListing[]> {
+  const user = getFirebaseAuth().currentUser;
+  if (!user) throw new Error("auth");
+
+  const token = await user.getIdToken();
+  const res = await fetch(`/api/groups?limit=${max}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || "groups_load_failed");
+  }
+
+  const data = await res.json();
+  return (data.groups ?? []) as PublicGroupListing[];
 }
 
 export function filterGroups(
-  groups: Conversation[],
+  groups: PublicGroupListing[],
   filters: GroupFilters
-): Conversation[] {
+): PublicGroupListing[] {
   return groups.filter((g) => {
     if (filters.region && g.region !== filters.region) return false;
     if (filters.country && g.country !== filters.country) return false;
@@ -149,27 +156,85 @@ export function filterGroups(
   });
 }
 
-export async function joinGroup(
-  conversationId: string,
-  uid: string,
-  username: string
-): Promise<void> {
-  const ref = doc(db(), "conversations", conversationId);
-  const snap = await getDoc(ref);
-  if (!snap.exists()) throw new Error("not_found");
+export async function joinGroup(conversationId: string): Promise<"joined" | "pending"> {
+  const user = getFirebaseAuth().currentUser;
+  if (!user) throw new Error("auth");
 
-  const data = snap.data() as Conversation;
-  if (data.type !== "group") throw new Error("not_group");
-  if (data.participantUids.includes(uid)) return;
-
-  await updateDoc(ref, {
-    participantUids: arrayUnion(uid),
-    participantUsernames: {
-      ...data.participantUsernames,
-      [uid]: username,
-    },
-    updatedAt: new Date().toISOString(),
+  const token = await user.getIdToken();
+  const res = await fetch(`/api/groups/${encodeURIComponent(conversationId)}/join`, {
+    method: "POST",
+    headers: { Authorization: `Bearer ${token}` },
   });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data.error || "join_failed");
+  }
+
+  const data = await res.json();
+  return data.pending ? "pending" : "joined";
+}
+
+async function groupAuthFetch(path: string, init?: RequestInit): Promise<Response> {
+  const user = getFirebaseAuth().currentUser;
+  if (!user) throw new Error("auth");
+  const token = await user.getIdToken();
+  return fetch(path, {
+    ...init,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(init?.headers ?? {}),
+    },
+  });
+}
+
+export async function fetchGroupJoinRequests(
+  conversationId: string
+): Promise<GroupJoinRequest[]> {
+  const res = await groupAuthFetch(
+    `/api/groups/${encodeURIComponent(conversationId)}/join-requests`
+  );
+  if (!res.ok) throw new Error("load_requests_failed");
+  const data = await res.json();
+  return data.requests ?? [];
+}
+
+export async function approveGroupJoinRequest(
+  conversationId: string,
+  targetUid: string
+): Promise<void> {
+  const res = await groupAuthFetch(
+    `/api/groups/${encodeURIComponent(conversationId)}/join-requests/${encodeURIComponent(targetUid)}/approve`,
+    { method: "POST" }
+  );
+  if (!res.ok) throw new Error("approve_failed");
+}
+
+export async function rejectGroupJoinRequest(
+  conversationId: string,
+  targetUid: string
+): Promise<void> {
+  const res = await groupAuthFetch(
+    `/api/groups/${encodeURIComponent(conversationId)}/join-requests/${encodeURIComponent(targetUid)}/reject`,
+    { method: "POST" }
+  );
+  if (!res.ok) throw new Error("reject_failed");
+}
+
+export async function kickGroupMember(conversationId: string, targetUid: string): Promise<void> {
+  const res = await groupAuthFetch(
+    `/api/groups/${encodeURIComponent(conversationId)}/members/${encodeURIComponent(targetUid)}/kick`,
+    { method: "POST" }
+  );
+  if (!res.ok) throw new Error("kick_failed");
+}
+
+export async function leaveGroup(conversationId: string): Promise<void> {
+  const res = await groupAuthFetch(
+    `/api/groups/${encodeURIComponent(conversationId)}/leave`,
+    { method: "POST" }
+  );
+  if (!res.ok) throw new Error("leave_failed");
 }
 
 export async function fetchMessagesPage(

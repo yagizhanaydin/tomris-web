@@ -200,13 +200,6 @@ service cloud.firestore {
         request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUids;
     }
 
-    function groupJoinAllowed() {
-      return resource.data.type == 'group' &&
-        !(request.auth.uid in resource.data.participantUids) &&
-        request.auth.uid in request.resource.data.participantUids &&
-        request.resource.data.participantUids.size() == resource.data.participantUids.size() + 1;
-    }
-
     function lastMessageUpdateAllowed() {
       return request.auth.uid in resource.data.participantUids &&
         request.resource.data.diff(resource.data).affectedKeys()
@@ -214,10 +207,8 @@ service cloud.firestore {
     }
 
     match /conversations/{conversationId} {
-      allow read: if isSignedIn() && (
-        request.auth.uid in resource.data.participantUids ||
-        resource.data.type == 'group'
-      );
+      allow read: if isSignedIn() &&
+        request.auth.uid in resource.data.participantUids;
 
       allow create: if isApproved() &&
         request.resource.data.keys().hasAll([
@@ -235,16 +226,13 @@ service cloud.firestore {
            ]))
         );
 
-      allow update: if isApproved() && (
-        lastMessageUpdateAllowed() ||
-        (
-          groupJoinAllowed() &&
-          request.resource.data.diff(resource.data).affectedKeys()
-            .hasOnly(['participantUids', 'participantUsernames', 'updatedAt'])
-        )
-      );
+      allow update: if isApproved() && lastMessageUpdateAllowed();
 
       allow delete: if false;
+
+      match /join_requests/{requestUid} {
+        allow read, write: if false;
+      }
 
       match /messages/{messageId} {
         allow read: if isConversationParticipant(conversationId);

@@ -10,6 +10,7 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { needsProfileCompletion, isPlatformUnlocked } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
 import { MessageThread } from "@/components/chat/MessageThread";
+import { GroupLeaderPanel } from "@/components/chat/GroupLeaderPanel";
 import { ReportButton } from "@/components/ReportButton";
 import { fetchConversation } from "@/lib/chat/service";
 import { conversationTitle } from "@/lib/chat/helpers";
@@ -125,7 +126,7 @@ export default function ConversationPage() {
                     {conversation.participantUids.length} {t.chat.memberCount}
                     {conversation.adminUid === user.uid && (
                       <span className="ml-2 px-2 py-0.5 rounded-lg bg-primary-light">
-                        {t.chat.adminBadge}
+                        {t.chat.leaderBadge}
                       </span>
                     )}
                   </p>
@@ -143,6 +144,14 @@ export default function ConversationPage() {
                 />
               )}
             </header>
+
+            {conversation.type === "group" && unlocked && isMember && (
+              <GroupLeaderPanel
+                conversation={conversation}
+                currentUid={user.uid}
+                onConversationChange={loadConversation}
+              />
+            )}
 
             <MessageThread
               conversation={conversation}

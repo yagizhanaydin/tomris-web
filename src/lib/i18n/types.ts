@@ -175,6 +175,15 @@ export interface TranslationDictionary {
     message: string;
     errorNetwork: string;
     usernameTaken: string;
+    viewProfile: string;
+  };
+  profile: {
+    title: string;
+    memberSince: string;
+    memberSinceOne: string;
+    notFound: string;
+    addFriend: string;
+    message: string;
   };
   nav: {
     dashboard: string;
@@ -259,7 +268,20 @@ export interface TranslationDictionary {
     groupTitlePlaceholder: string;
     createGroupBtn: string;
     joinGroup: string;
+    requestJoinGroup: string;
     joinedGroup: string;
+    joinRequestSent: string;
+    joinRequestPending: string;
+    joinRequestsTitle: string;
+    noJoinRequests: string;
+    approveJoin: string;
+    rejectJoin: string;
+    kickMember: string;
+    kickConfirmYes: string;
+    leaveGroup: string;
+    leaveGroupConfirm: string;
+    membersTitle: string;
+    leaderBadge: string;
     memberCount: string;
     adminBadge: string;
     messagePlaceholder: string;

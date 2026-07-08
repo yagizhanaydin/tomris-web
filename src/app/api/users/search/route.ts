@@ -5,6 +5,7 @@ import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
 import { normalizeUsername } from "@/lib/security/validate";
 import { isValidUsernameSearchQuery } from "@/lib/security/username";
 import { isSafeContent } from "@/lib/security/content-filter";
+import { daysOnPlatform } from "@/lib/users/tenure";
 
 const SEARCH_MIN = 2;
 const DEFAULT_LIMIT = 8;
@@ -44,13 +45,18 @@ export async function GET(request: NextRequest) {
     .limit(limit + 4)
     .get();
 
-  const users: { uid: string; username: string }[] = [];
+  const users: { uid: string; username: string; memberSinceDays: number }[] = [];
 
   for (const docSnap of snap.docs) {
     if (docSnap.id === excludeUid) continue;
-    const username = docSnap.data().username as string;
+    const data = docSnap.data();
+    const username = data.username as string;
     if (!isSafeContent(username)) continue;
-    users.push({ uid: docSnap.id, username });
+    users.push({
+      uid: docSnap.id,
+      username,
+      memberSinceDays: daysOnPlatform(String(data.createdAt ?? "")),
+    });
     if (users.length >= limit) break;
   }
 
