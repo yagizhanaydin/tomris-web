@@ -192,6 +192,34 @@ export interface TranslationDictionary {
     messages: string;
     settings: string;
     signal: string;
+    more: string;
+    whyUs: string;
+  };
+  whyUs: {
+    title: string;
+    subtitle: string;
+    pillars: { icon: string; title: string; body: string }[];
+    verificationTitle: string;
+    verificationBody: string;
+    verificationCta: string;
+    darkModeTitle: string;
+    darkModeBody: string;
+    ctaFeed: string;
+    ctaFriends: string;
+  };
+  empty: {
+    postsTitle: string;
+    postsAction: string;
+    postsFilteredTitle: string;
+    inboxTitle: string;
+    inboxAction: string;
+    groupsTitle: string;
+    groupsAction: string;
+    groupsFilteredTitle: string;
+    friendsTitle: string;
+    friendsAction: string;
+    requestsTitle: string;
+    threadTitle: string;
   };
   posts: {
     title: string;
@@ -492,6 +520,9 @@ export interface TranslationDictionary {
     installBody: string;
     installAction: string;
     installDismiss: string;
+    installIosTitle: string;
+    installIosBody: string;
+    installIosSteps: string[];
     pushTitle: string;
     pushBody: string;
     pushPoints: string[];

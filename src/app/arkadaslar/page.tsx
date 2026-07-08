@@ -12,6 +12,7 @@ import { AppShell } from "@/components/AppShell";
 import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { VerificationGate } from "@/components/VerificationGate";
 import { validateUsername, normalizeUsername } from "@/lib/security/validate";
+import { EmptyState } from "@/components/EmptyState";
 import { UsernameSearchInput } from "@/components/UsernameSearchInput";
 import {
   findUserByUsername,
@@ -214,7 +215,11 @@ export default function FriendsPage() {
               {fetching ? (
                 <p className="text-sm text-[var(--muted)]">{t.common.loading}</p>
               ) : incoming.length === 0 ? (
-                <p className="text-sm text-[var(--muted)]">{t.friends.noRequests}</p>
+                <EmptyState
+                  variant="requests"
+                  title={t.empty.requestsTitle}
+                  description={t.friends.noRequests}
+                />
               ) : (
                 incoming.map((req) => (
                   <div
@@ -251,7 +256,11 @@ export default function FriendsPage() {
               {fetching ? (
                 <p className="text-sm text-[var(--muted)]">{t.common.loading}</p>
               ) : friends.length === 0 ? (
-                <p className="text-sm text-[var(--muted)]">{t.friends.noFriends}</p>
+                <EmptyState
+                  variant="friends"
+                  title={t.empty.friendsTitle}
+                  description={t.friends.noFriends}
+                />
               ) : (
                 friends.map((friend) => {
                   const friendship = friendships.find(

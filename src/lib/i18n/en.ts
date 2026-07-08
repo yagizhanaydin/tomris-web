@@ -211,6 +211,57 @@ export const en: TranslationDictionary = {
     messages: "Messages",
     settings: "Settings",
     signal: "Signal",
+    more: "More",
+    whyUs: "Why Tomris?",
+  },
+  whyUs: {
+    title: "Why Tomris?",
+    subtitle:
+      "Tomris is not an empty app — it's a real solidarity space where women are heard and feel safer together.",
+    pillars: [
+      {
+        icon: "🤝",
+        title: "Women's solidarity",
+        body: "Share experiences, get support, and know you're not alone. The community is here for you.",
+      },
+      {
+        icon: "🛡️",
+        title: "Safer space",
+        body: "Verification, blocking, and reporting help us protect the community together.",
+      },
+      {
+        icon: "🔒",
+        title: "Privacy first",
+        body: "Your email stays out of your public profile. Verification photos are deleted after review.",
+      },
+      {
+        icon: "📍",
+        title: "Local community",
+        body: "Connect by city and groups — feed, messages, and emergency signals when you need them.",
+      },
+    ],
+    verificationTitle: "Why verification?",
+    verificationBody:
+      "Women reps review each request to keep fake and troll accounts out. You can browse until approval; posting and messaging unlock after — to protect everyone, not to judge you.",
+    verificationCta: "Go to verification",
+    darkModeTitle: "Dark mode — coming soon",
+    darkModeBody: "We're working on a dark theme for night use. You'll be able to turn it on in Settings when it's ready.",
+    ctaFeed: "Go to feed",
+    ctaFriends: "Add friends",
+  },
+  empty: {
+    postsTitle: "No posts yet",
+    postsAction: "Share the first post",
+    postsFilteredTitle: "No posts match your filters",
+    inboxTitle: "No chats yet",
+    inboxAction: "Browse groups",
+    groupsTitle: "No groups yet",
+    groupsAction: "Create a group",
+    groupsFilteredTitle: "No groups match your filters",
+    friendsTitle: "No friends yet",
+    friendsAction: "Find friends",
+    requestsTitle: "No pending requests",
+    threadTitle: "No messages yet",
   },
   posts: {
     title: "Feed",
@@ -665,6 +716,13 @@ export const en: TranslationDictionary = {
     installBody: "Open from your home screen — app-like access and notifications.",
     installAction: "Install",
     installDismiss: "Later",
+    installIosTitle: "Add to home screen on iPhone",
+    installIosBody: "To use Tomris like an app in Safari:",
+    installIosSteps: [
+      "Tap Share at the bottom of Safari (square with arrow)",
+      "Scroll down → Add to Home Screen",
+      "Tap Add in the top right",
+    ],
     pushTitle: "Notifications",
     pushBody: "Get notified when you're verified, receive messages, comments, or emergency signals?",
     pushPoints: [

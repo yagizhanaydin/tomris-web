@@ -211,6 +211,57 @@ export const tr: TranslationDictionary = {
     messages: "Mesajlar",
     settings: "Ayarlar",
     signal: "Sinyal",
+    more: "Daha fazla",
+    whyUs: "Neden Tomris?",
+  },
+  whyUs: {
+    title: "Neden Tomris?",
+    subtitle:
+      "Tomris boş bir uygulama değil — kadınların birbirini duyduğu, güvende hissettiği gerçek bir dayanışma alanı.",
+    pillars: [
+      {
+        icon: "🤝",
+        title: "Kadın dayanışması",
+        body: "Deneyimlerini paylaş, destek al, yalnız hissetme. Topluluk senin için var.",
+      },
+      {
+        icon: "🛡️",
+        title: "Güvenli alan",
+        body: "Doğrulama, engelleme ve şikayet araçlarıyla topluluğu birlikte koruyoruz.",
+      },
+      {
+        icon: "🔒",
+        title: "Gizlilik önceliği",
+        body: "E-postan profilde saklanmaz. Doğrulama fotoğrafın inceleme sonrası silinir.",
+      },
+      {
+        icon: "📍",
+        title: "Yakın topluluk",
+        body: "İl, şehir ve gruplarla çevrendeki kadınlarla bağ kur — mesaj, akış, acil sinyal.",
+      },
+    ],
+    verificationTitle: "Neden doğrulama var?",
+    verificationBody:
+      "Sahte profil ve troll hesapları uzak tutmak için kadın temsilcilerimiz her başvuruyu inceler. Onay gelene kadar gezebilirsin; paylaşım ve mesajlaşma onay sonrası açılır — seni yargılamak için değil, hepimizi korumak için.",
+    verificationCta: "Doğrulamaya git",
+    darkModeTitle: "Karanlık mod — yakında",
+    darkModeBody: "Gece kullanımı için karanlık tema üzerinde çalışıyoruz. Hazır olunca Ayarlar'dan açılabilecek.",
+    ctaFeed: "Akışa git",
+    ctaFriends: "Arkadaş ekle",
+  },
+  empty: {
+    postsTitle: "Henüz gönderi yok",
+    postsAction: "İlk paylaşımı yap",
+    postsFilteredTitle: "Filtreye uygun gönderi yok",
+    inboxTitle: "Henüz sohbet yok",
+    inboxAction: "Gruba göz at",
+    groupsTitle: "Henüz grup yok",
+    groupsAction: "İlk grubu kur",
+    groupsFilteredTitle: "Filtreye uygun grup yok",
+    friendsTitle: "Henüz arkadaşın yok",
+    friendsAction: "Arkadaş ara",
+    requestsTitle: "Bekleyen istek yok",
+    threadTitle: "Henüz mesaj yok",
   },
   posts: {
     title: "Akış",
@@ -676,6 +727,13 @@ export const tr: TranslationDictionary = {
     installBody: "Ana ekrandan açı — uygulama gibi, daha hızlı erişim ve bildirimler.",
     installAction: "Ekle",
     installDismiss: "Sonra",
+    installIosTitle: "iPhone'da ana ekrana ekle",
+    installIosBody: "Safari'de Tomris'i uygulama gibi kullanmak için:",
+    installIosSteps: [
+      "Safari'de alttaki Paylaş simgesine dokun (kare + ok)",
+      "Aşağı kaydır → Ana Ekrana Ekle",
+      "Sağ üstten Ekle'ye dokun",
+    ],
     pushTitle: "Bildirimler",
     pushBody: "Doğrulama onayı, mesaj, yorum ve acil sinyallerde haberdar olmak ister misin?",
     pushPoints: [

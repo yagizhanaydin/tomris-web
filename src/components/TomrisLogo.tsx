@@ -1,17 +1,14 @@
 "use client";
 
 import { useLanguage } from "@/context/LanguageProvider";
+import { TomrisMark } from "./TomrisMark";
 
 interface TomrisLogoProps {
   size?: "sm" | "md" | "lg";
   showText?: boolean;
 }
 
-const iconSizes = {
-  sm: "w-9 h-9 text-base",
-  md: "w-12 h-12 text-xl",
-  lg: "w-14 h-14 text-2xl",
-};
+const markSizes = { sm: 36, md: 48, lg: 56 };
 
 const textSizes = {
   sm: "text-lg",
@@ -24,11 +21,8 @@ export function TomrisLogo({ size = "md", showText = true }: TomrisLogoProps) {
 
   return (
     <div className="flex items-center gap-3">
-      <div
-        className={`${iconSizes[size]} rounded-2xl flex items-center justify-center font-extrabold text-white shadow-md bg-gradient-to-br from-violet-600 to-purple-700 shrink-0`}
-        aria-hidden
-      >
-        T
+      <div className="shrink-0 rounded-2xl shadow-md overflow-hidden text-primary">
+        <TomrisMark size={markSizes[size]} />
       </div>
       {showText && (
         <div className="text-left">

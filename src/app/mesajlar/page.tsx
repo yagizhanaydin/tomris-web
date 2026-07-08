@@ -11,6 +11,7 @@ import { needsProfileCompletion, isPlatformUnlocked } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
 import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { VerificationGate } from "@/components/VerificationGate";
+import { EmptyState } from "@/components/EmptyState";
 import { GroupFiltersBar, GroupLocationFields, defaultGroupLocation } from "@/components/chat/GroupLocationFields";
 import { normalizeUsername, validateUsername } from "@/lib/security/validate";
 import { UsernameSearchInput } from "@/components/UsernameSearchInput";
@@ -256,7 +257,13 @@ function MessagesPageContent() {
             {fetching ? (
               <p className="text-sm text-[var(--muted)]">{t.common.loading}</p>
             ) : inbox.length === 0 ? (
-              <p className="text-sm text-[var(--muted)]">{t.chat.emptyInbox}</p>
+              <EmptyState
+                variant="inbox"
+                title={t.empty.inboxTitle}
+                description={t.chat.emptyInbox}
+                actionLabel={t.empty.inboxAction}
+                actionHref="/mesajlar?tab=groups"
+              />
             ) : (
               inbox.map((conv) => (
                 <Link
@@ -336,9 +343,15 @@ function MessagesPageContent() {
               {fetching ? (
                 <p className="text-sm text-[var(--muted)]">{t.common.loading}</p>
               ) : filteredGroups.length === 0 ? (
-                <p className="text-sm text-[var(--muted)]">
-                  {groups.length === 0 ? t.chat.emptyGroups : t.chat.emptyFilteredGroups}
-                </p>
+                <EmptyState
+                  variant={groups.length === 0 ? "groups" : "groupsFiltered"}
+                  title={
+                    groups.length === 0 ? t.empty.groupsTitle : t.empty.groupsFilteredTitle
+                  }
+                  description={
+                    groups.length === 0 ? t.chat.emptyGroups : t.chat.emptyFilteredGroups
+                  }
+                />
               ) : (
                 filteredGroups.map((group) => {
                   const member = group.isMember;

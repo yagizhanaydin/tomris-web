@@ -13,6 +13,8 @@
   --tomris-text: #5b21b6;
 }
 
+/* Karanlık mod — gelecek sürüm (Ayarlar'dan açılacak) */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

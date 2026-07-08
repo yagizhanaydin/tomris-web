@@ -14,6 +14,7 @@ import { AppShell } from "@/components/AppShell";
 import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { VerificationGate } from "@/components/VerificationGate";
 import { PostFiltersBar } from "@/components/posts/PostFilters";
+import { EmptyState } from "@/components/EmptyState";
 import { PostComposer } from "@/components/posts/PostComposer";
 import { PostCard } from "@/components/posts/PostCard";
 import {
@@ -150,9 +151,11 @@ export default function FeedPage() {
         {fetching ? (
           <p className="text-sm text-[var(--muted)]">{t.common.loading}</p>
         ) : visiblePosts.length === 0 ? (
-          <p className="text-sm text-[var(--muted)] text-center py-8">
-            {posts.length === 0 ? t.posts.empty : t.posts.emptyFiltered}
-          </p>
+          <EmptyState
+            variant={posts.length === 0 ? "posts" : "postsFiltered"}
+            title={posts.length === 0 ? t.empty.postsTitle : t.empty.postsFilteredTitle}
+            description={posts.length === 0 ? t.posts.empty : t.posts.emptyFiltered}
+          />
         ) : (
           <div className="space-y-4">
             {visiblePosts.map((post) => (

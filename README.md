@@ -95,6 +95,11 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | **Grup: onaylı katılım + lider** | ✅ Lider istek kabul/red; üye çıkarma; lider ayrılınca devretme |
 | **Grup: metadata gizliliği** | ✅ Liste `/api/groups`; Firestore'da grup doc yalnızca üyelere |
 | **Profil ziyareti + süre (Reddit tarzı)** | ✅ `/profil/[username]` — "N gündür Tomris'te" |
+| **UI: marka ikonu + sade nav (4 + Daha fazla)** | ✅ `TomrisMark` · `NavMoreSheet` |
+| **UI: boş durum ekranları** | ✅ `EmptyState` — akış, mesaj, grup, arkadaş |
+| **UI: iOS ana ekrana ekle kılavuzu** | ✅ Safari 3 adım (`PwaInstallHint`) |
+| **UI: Neden Tomris? sayfası** | ✅ `/neden-biz` |
+| Karanlık mod | ⏳ Yakında (placeholder + bilgi metni) |
 | Üç parmak selfie UI (i18n hazır) | ⏳ Component bağlanmadı |
 | Vercel canlı deploy | ⏳ |
 
@@ -150,6 +155,12 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | **Grup: onaylı katılım + lider moderasyonu** | ✅ İstek kabul/red, üye çıkarma, lider devri |
 | **Grup metadata gizliliği** | ✅ Public liste API; Firestore grup doc yalnızca üyeler |
 | **Profil ziyareti + platform süresi** | ✅ `/profil/[username]` — "N gündür Tomris'te" |
+| **Marka ikonu (dayanışma simgesi)** | ✅ `TomrisMark` + maskable PWA ikonları |
+| **Nav 4 + Daha fazla** | ✅ Ana Sayfa · Akış · Mesajlar · sheet (Arkadaş/Sinyal/Ayarlar/Neden) |
+| **Boş durum illüstrasyonları** | ✅ Akış, sohbet, grup, arkadaş, thread |
+| **iOS PWA kılavuzu** | ✅ Safari ana ekrana ekle adımları |
+| **Neden Tomris?** | ✅ `/neden-biz` — dayanışma, güvenlik, gizlilik |
+| Karanlık mod | ⏳ Yakında |
 | Vercel deploy | ❌ Sırada — local test devam |
 
 **Tek cümle:** Kod ve Firebase hazır; site şu an yalnızca `npm run dev` ile local'de çalışır. İnternete açmak için Vercel deploy gerekir.
@@ -257,11 +268,16 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### UI / UX
 - [x] Mobil uyumlu Tailwind tasarım
-- [x] Mor Tomris teması + Tomris logosu/isim
+- [x] Mor Tomris teması + **dayanışma marka ikonu** (`TomrisMark` — üç birleşen daire; maskable PWA)
+- [x] **Sade navigasyon** — 4 sekme (Ana Sayfa, Akış, Mesajlar) + **Daha fazla** bottom sheet
+- [x] **Boş durum ekranları** — illüstrasyonlu `EmptyState` (akış, inbox, grup, arkadaş, mesaj)
+- [x] **Neden Tomris?** — `/neden-biz` (dayanışma, güvenlik, gizlilik, doğrulama açıklaması)
+- [x] **iOS ana ekrana ekle** — Safari için 3 adımlık kılavuz (`PwaInstallHint`)
 - [x] TR / EN / DE / FR / ES (`src/lib/i18n/`) — DE/FR/ES tam override dosyaları
 - [x] Dil seçici: header **🌐 TR** → alttan bottom sheet (`LanguageSheet`) · Ayarlar'da `LanguageSetting`
 - [x] Atatürk sözü (giriş/kayıt)
 - [x] **Giriş izinleri** — kamera + konum bir kez (`PermissionPrompt`); sonra uğraşmaz
+- [ ] **Karanlık mod** — planlandı (`globals.css` placeholder)
 
 ### Admin (genel yönetim — doğrulama fotoğrafı yok)
 - [x] Ayrı admin girişi (`/admin/giris`)
@@ -277,6 +293,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 |---------|-----|
 | **Vercel deploy** | GitHub hazır — env + deploy: [`DEPLOY.md`](DEPLOY.md) |
 | Push: arkadaş isteği | Planlanmış |
+| **Karanlık mod** | Planlandı — gece teması |
 | Üç parmak selfie UI | i18n hazır — `GenderVerification` bağlanmadı |
 | Bildirim merkezi | Planlanmış (uygulama içi sinyal banner + nav rozeti var) |
 | Profil fotoğrafı | Planlanmış |
@@ -326,6 +343,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | `/hesap-yasaklandi` | Kalıcı ban |
 | `/arkadaslar` | Arkadaşlık yönetimi (doğrulama gerekli) |
 | `/profil/[username]` | Kullanıcı profili — platform süresi, arkadaş ekle / mesaj |
+| `/neden-biz` | Neden Tomris? — dayanışma, güvenlik, gizlilik, doğrulama |
 | `/mesajlar` | DM + gruplar (canlı sohbet) |
 | `/mesajlar/[id]` | Sohbet ekranı |
 | `/ayarlar` | Sohbet gizliliği, dil, hesap silme |
@@ -913,3 +931,20 @@ Repodaki [`firestore.rules`](firestore.rules) = güncel. İçermesi gerekenler:
 2. İki hesapla test: grup kur → istek gönder → lider onayla → mesaj; lider üye çıkarsın
 3. `/profil/kullaniciadi` — süre metnini kontrol et
 4. Vercel deploy (env aynı)
+
+---
+
+## Oturum Notu — 8 Temmuz 2026 (UI 8.5+ cilası)
+
+### Yapılanlar
+- **Marka ikonu** — `TomrisMark` (üç daire dayanışma); `icon.svg` + maskable PWA PNG'ler (`npm run icons:pwa`)
+- **Nav sadeleştirme** — 4 sekme + **Daha fazla** sheet (`NavMoreSheet`): Arkadaşlar, Sinyal, Neden Tomris?, Ayarlar
+- **Boş durumlar** — `EmptyState` bileşeni; akış, inbox, grup, arkadaş, thread
+- **iOS PWA** — Safari ana ekrana ekle 3 adım (`PwaInstallHint`)
+- **Neden Tomris?** — `/neden-biz` sayfası (4 sütun + doğrulama + karanlık mod yakında notu)
+
+### Senin yapman gereken
+1. iPhone Safari → Dashboard → ana ekrana ekle metnini kontrol et
+2. Nav → Daha fazla → Neden Tomris?
+3. Boş akış / boş sohbet görünümü
+4. Vercel deploy

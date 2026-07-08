@@ -13,6 +13,7 @@ import {
 } from "@/lib/chat/service";
 import type { ChatMessage, Conversation } from "@/types/chat";
 import type { UserProfile } from "@/types/user";
+import { EmptyState } from "@/components/EmptyState";
 
 interface MessageThreadProps {
   conversation: Conversation;
@@ -138,7 +139,11 @@ export function MessageThread({ conversation, profile, canSend }: MessageThreadP
         {loading ? (
           <p className="text-sm text-[var(--muted)] text-center py-8">{t.common.loading}</p>
         ) : messages.length === 0 ? (
-          <p className="text-sm text-[var(--muted)] text-center py-8">{t.chat.emptyThread}</p>
+          <EmptyState
+            variant="thread"
+            title={t.empty.threadTitle}
+            description={t.chat.emptyThread}
+          />
         ) : (
           messages.map((msg) => {
             const mine = msg.authorUid === profile.uid;
