@@ -2,6 +2,15 @@ import { createHash } from "node:crypto";
 import { getMessaging } from "firebase-admin/messaging";
 import { getAdminApp, getAdminDb, isAdminConfigured } from "@/lib/firebase-admin";
 
+export type PushPayload = {
+  uids: string[];
+  title: string;
+  body: string;
+  url: string;
+  type: string;
+  data?: Record<string, string>;
+};
+
 export type PushTokenRecord = {
   uid: string;
   token: string;
@@ -61,30 +70,26 @@ async function getTokensForUids(uids: string[]): Promise<string[]> {
   return [...tokens];
 }
 
-export async function sendSignalPush(input: {
-  notifyUids: string[];
-  senderUsername: string;
-  signalId: string;
-}): Promise<{ sent: number; failed: number }> {
+export async function sendPushToUids(
+  input: PushPayload
+): Promise<{ sent: number; failed: number }> {
   if (!isAdminConfigured()) return { sent: 0, failed: 0 };
 
-  const tokens = await getTokensForUids(input.notifyUids);
+  const tokens = await getTokensForUids(input.uids);
   if (tokens.length === 0) return { sent: 0, failed: 0 };
 
   const messaging = getMessaging(getAdminApp());
-  const title = `@${input.senderUsername} acil sinyal gönderdi`;
-  const body = "Tomris — acil durum bildirimi. Uygulamayı aç; konuma gitme.";
 
   const res = await messaging.sendEachForMulticast({
     tokens,
-    notification: { title, body },
+    notification: { title: input.title, body: input.body },
     data: {
-      url: "/sinyal",
-      type: "signal",
-      signalId: input.signalId,
+      url: input.url,
+      type: input.type,
+      ...input.data,
     },
     webpush: {
-      fcmOptions: { link: "/sinyal" },
+      fcmOptions: { link: input.url },
     },
   });
 
@@ -105,4 +110,67 @@ export async function sendSignalPush(input: {
     sent: res.successCount,
     failed: res.failureCount,
   };
+}
+
+export async function sendSignalPush(input: {
+  notifyUids: string[];
+  senderUsername: string;
+  signalId: string;
+}): Promise<{ sent: number; failed: number }> {
+  return sendPushToUids({
+    uids: input.notifyUids,
+    title: `@${input.senderUsername} acil sinyal gönderdi`,
+    body: "Tomris — acil durum bildirimi. Uygulamayı aç; konuma gitme.",
+    url: "/sinyal",
+    type: "signal",
+    data: { signalId: input.signalId },
+  });
+}
+
+export async function sendVerificationApprovedPush(
+  uid: string
+): Promise<{ sent: number; failed: number }> {
+  return sendPushToUids({
+    uids: [uid],
+    title: "Doğrulaman onaylandı ✓",
+    body: "Artık gönderi, yorum ve mesajlaşma açık. Tomris'e hoş geldin!",
+    url: "/dashboard",
+    type: "verification_approved",
+  });
+}
+
+export async function sendMessagePush(input: {
+  recipientUids: string[];
+  senderUsername: string;
+  conversationId: string;
+  preview: string;
+}): Promise<{ sent: number; failed: number }> {
+  const preview =
+    input.preview.length > 80 ? `${input.preview.slice(0, 77)}...` : input.preview;
+  return sendPushToUids({
+    uids: input.recipientUids,
+    title: `@${input.senderUsername} mesaj gönderdi`,
+    body: preview,
+    url: `/mesajlar/${input.conversationId}`,
+    type: "message",
+    data: { conversationId: input.conversationId },
+  });
+}
+
+export async function sendCommentPush(input: {
+  postAuthorUid: string;
+  commenterUsername: string;
+  postId: string;
+  preview: string;
+}): Promise<{ sent: number; failed: number }> {
+  const preview =
+    input.preview.length > 80 ? `${input.preview.slice(0, 77)}...` : input.preview;
+  return sendPushToUids({
+    uids: [input.postAuthorUid],
+    title: `@${input.commenterUsername} gönderine yorum yaptı`,
+    body: preview,
+    url: "/akis",
+    type: "comment",
+    data: { postId: input.postId },
+  });
 }

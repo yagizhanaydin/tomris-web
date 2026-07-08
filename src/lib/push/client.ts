@@ -66,3 +66,24 @@ export async function registerWebPushToken(authToken: string): Promise<boolean> 
 
   return res.ok;
 }
+
+/** Sunucuya push bildirimi tetikle — hata sessiz yutulur */
+export async function notifyPushEvent(
+  authToken: string,
+  payload:
+    | { type: "message"; conversationId: string; preview: string }
+    | { type: "comment"; postId: string; preview: string }
+): Promise<void> {
+  try {
+    await fetch("/api/push/notify", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    // Bildirim başarısız olsa mesaj/yorum zaten kaydedildi
+  }
+}

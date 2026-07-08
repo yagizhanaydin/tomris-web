@@ -30,8 +30,8 @@
 | Authentication — E-posta/Şifre | ✅ |
 | Authentication — Google | ✅ |
 | Firestore Database | ✅ |
-| Firestore Security Rules (`firestore.rules`) | ✅ Güncel sürüm — Console'da **Publish** et |
-| Firestore Indexes (7 composite) | ✅ Console'da Enabled — `signals`×2, `fcm_tokens`, `conversations`×2, `reports`, `users` |
+| Firestore Security Rules (`firestore.rules`) | ✅ Güncel — `reps` dahil; Console'da **Publish** et |
+| Firestore Indexes (7 composite + 1 önerilen) | ✅ 7/7 Enabled — isteğe bağlı 8.: `comments` (postId + createdAt) |
 | Service Account JSON (`.env.local`) | ✅ |
 | Firebase Storage | ⚪ Opsiyonel (Blaze) — varsayılan Vercel yolu **Firestore** — [`DEPLOY.md`](DEPLOY.md) |
 | GitHub (`master`) | ✅ Push edildi — son commit: güncel `master` |
@@ -41,6 +41,72 @@
 Detaylı kurulum: [`FIREBASE-KURULUM.md`](FIREBASE-KURULUM.md)  
 Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)  
 **Canlıya alma:** [`DEPLOY.md`](DEPLOY.md)
+
+---
+
+## Envanter (Kontrol Listesi)
+
+> Deploy öncesi ve Firebase Console'da tek bakışta durum. ✅ = kodda hazır · ⏳ = senin yapman gereken.
+
+### Firebase Console
+
+| Madde | Durum | Not |
+|-------|--------|-----|
+| Authentication (E-posta + Google) | ✅ | |
+| Firestore Database | ✅ | |
+| **Rules Publish** (`firestore.rules`) | ⏳ | `reps`, `fcm_tokens`, `signals`, `reports`, `verification_photos` client kapalı |
+| **Indexes (7 zorunlu)** | ✅ | conversations×2, signals×2, fcm_tokens, reports, users |
+| Index #8 `comments` (postId + createdAt) | ⚪ Önerilen | Yorum açılırken index hatası alırsan ekle — [`firestore.indexes.json`](firestore.indexes.json) |
+| Cloud Messaging → Web Push (VAPID) | ⏳ | Key → `NEXT_PUBLIC_FIREBASE_VAPID_KEY` |
+| Blaze / Storage | ⚪ Opsiyonel | Varsayılan Vercel yolu **Firestore** selfie |
+
+### Ortam değişkenleri (`.env.local` / Vercel)
+
+| Değişken | Zorunlu | Durum |
+|----------|---------|--------|
+| `NEXT_PUBLIC_FIREBASE_*` (6 adet) | ✅ Evet | Firebase Console → Project settings |
+| `FIREBASE_SERVICE_ACCOUNT_JSON` | ✅ Evet | Service Accounts → private key (tek satır JSON) |
+| `SESSION_SECRET` | ✅ Production | Admin + temsilci oturum imzası (32+ karakter) |
+| `ADMIN_USERNAME` / `ADMIN_PASSWORD` | ✅ Evet | `/admin/giris` |
+| `REP_USERNAME` / `REP_PASSWORD` | ⚪ Yedek | Env temsilci; **veya** admin panelden Firestore `reps` |
+| `NEXT_PUBLIC_FIREBASE_VAPID_KEY` | ⏳ Push için | Yoksa push çalışmaz, site açılır |
+| `VERIFICATION_PHOTO_STORAGE` | Local/Vercel | `local` (dev) · `firestore` (Vercel/Spark) |
+
+### Özellik envanteri (kod)
+
+| Özellik | Durum |
+|---------|--------|
+| Kayıt / giriş / e-posta doğrulama | ✅ |
+| Soft gate doğrulama (fotoğraf → temsilci) | ✅ |
+| Doğrulama: KVKK checkbox + gizlilik §9 push | ✅ |
+| Doğrulama: kullanabilir / kullanamaz paneli | ✅ |
+| Doğrulama: kuyruk sırası (Sırada N. kişi) | ✅ |
+| Dashboard onboarding checklist (4 adım) | ✅ |
+| Kadın temsilci paneli (onay/red/yasak) | ✅ |
+| Admin: istatistik + şikayet moderasyonu | ✅ |
+| Admin: yorum / mesaj / gönderi silme | ✅ |
+| Admin: Firestore temsilci ekleme (`reps`) | ✅ |
+| PWA (Serwist, offline, install ipucu) | ✅ |
+| Push: acil sinyal | ✅ |
+| Push: doğrulama onayı | ✅ |
+| Push: yeni mesaj | ✅ |
+| Push: gönderiye yorum | ✅ |
+| Push: arkadaş isteği | ❌ Sırada |
+| Üç parmak selfie UI (i18n hazır) | ⏳ Component bağlanmadı |
+| Vercel canlı deploy | ⏳ |
+
+### API rotaları (yeni / önemli)
+
+| Rota | Kim |
+|------|-----|
+| `GET /api/verification/queue` | Bekleyen kullanıcı — sıra numarası |
+| `POST /api/verification/upload` | Fotoğraf + KVKK onayı + `pending` (sunucu) |
+| `GET/POST /api/admin/reps` | Admin — temsilci listele/ekle |
+| `DELETE /api/admin/reps/[username]` | Admin — temsilci devre dışı |
+| `GET /api/admin/reports` · `POST /api/admin/moderation` | Admin — şikayet + içerik sil |
+| `GET /api/admin/stats` | Admin — kullanıcı/şikayet sayıları |
+| `POST /api/push/notify` | Onaylı kullanıcı — mesaj/yorum push tetikle |
+| `POST /api/push/register` | FCM token kaydı |
 
 ---
 
@@ -65,8 +131,11 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | Acil sinyal + konum | ✅ GPS → arkadaşlara anlık (onSnapshot) |
 | Sinyal hukuki onay | ✅ İlk `/sinyal` bilgi kutusu + gönderim öncesi checkbox (sunucu kaydı) |
 | PWA (Serwist) | ✅ Manifest, PNG ikonlar, SW, offline, ana ekrana ekle ipucu |
-| Push (acil sinyal) | ✅ FCM — bildirim izni + VAPID key gerekir |
-| Akış cinsiyet gösterimi | ✅ ♀ / ♂ rozeti (metin yerine) |
+| Push (sinyal + onay + mesaj + yorum) | ✅ FCM — VAPID key + bildirim izni gerekir |
+| Doğrulama KVKK onayı + genişletilmiş gizlilik | ✅ Checkbox `/dogrulama` · §6–§9 gizlilik |
+| Doğrulama kuyruk + erişim paneli | ✅ Sırada N. kişi · kullanabilir/kullanamaz listesi |
+| Dashboard onboarding checklist | ✅ 4 adım (e-posta, doğrulama, arkadaş, gönderi) |
+| Admin panel (moderasyon + temsilci) | ✅ Şikayet, içerik silme, `reps` CRUD |
 | Vercel deploy | ❌ Sırada — local test devam |
 
 **Tek cümle:** Kod ve Firebase hazır; site şu an yalnızca `npm run dev` ile local'de çalışır. İnternete açmak için Vercel deploy gerekir.
@@ -86,6 +155,10 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] **Kayıt fotoğrafsız** — kullanıcı hemen dashboard'a girer
 - [x] **Kısıtlı mod:** doğrulama olmadan arkadaşlık, yorum vb. **kapalı**
 - [x] `/dogrulama` — isteğe bağlı fotoğraf doğrulama + güven verici açıklama metni
+- [x] **KVKK onay checkbox'ı** — gizlilik linki; upload sunucuda `verificationPrivacyConsentAt`
+- [x] **Erişim paneli** — manuel inceleme; şu an kullanabilir / onay sonrası açılır listesi
+- [x] **Kuyruk sırası** — "Sırada N. kişisiniz" (`/api/verification/queue`, ~30 sn yenileme)
+- [x] **Dashboard onboarding** — 4 adımlı checklist (`OnboardingChecklist`)
 - [x] 5 saniyelik geri sayım + kamera selfie
 - [x] Fotoğraf **sunucuda geçici** tutulur — **local:** `data/verifications/{uid}.jpg` · **Vercel:** Firestore `verification_photos/{uid}` (Spark)
 - [x] **Kadın temsilci paneli** (`/temsilci`) — yalnızca kadın temsilciler inceler
@@ -135,7 +208,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### Yasal & Hesap
 - [x] Kullanım Koşulları (`/kullanim-kosullari`) TR/EN
-- [x] Gizlilik Politikası (`/gizlilik-politikasi`) KVKK uyumlu özet
+- [x] Gizlilik Politikası (`/gizlilik-politikasi`) KVKK uyumlu — veri sorumlusu, özel nitelikli veri, push §9
 - [x] Kayıtta sözleşme onay checkbox'ı
 - [x] **Hesap silme** — Ayarlar → DELETE onayı → `/api/account/delete`
 
@@ -158,7 +231,9 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] `fcm_tokens` — client kapalı; push token yalnızca sunucu
 - [x] `reports` — onaylı kullanıcı yazabilir; okuma kapalı (moderasyon ileride)
 - [x] `usernames` — benzersiz isim indeksi; client create, update/delete kapalı
+- [x] `reps` — client kapalı; admin panelden temsilci (scrypt hash)
 - [x] `verification_photos` / `platform_bans` client kapalı
+- [x] Middleware — `/api/admin/*` oturum koruması (login/logout hariç)
 
 ### UI / UX
 - [x] Mobil uyumlu Tailwind tasarım
@@ -170,7 +245,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 ### Admin (genel yönetim — doğrulama fotoğrafı yok)
 - [x] Ayrı admin girişi (`/admin/giris`)
-- [x] Temel admin iskeleti (`/admin`)
+- [x] **Admin paneli** — Genel bakış (istatistik), Moderasyon (şikayet + yorum/mesaj/gönderi sil), Temsilciler
+- [x] **Firestore `reps`** — panelden yeni temsilci; env `REP_*` yedek olarak çalışır
 - [x] Doğrulama fotoğraflarına **erişemez** (yalnızca `/temsilci`)
 
 ---
@@ -179,8 +255,9 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 
 | Özellik | Not |
 |---------|-----|
-| **Vercel deploy** | GitHub hazır — env + deploy adımları: [`DEPLOY.md`](DEPLOY.md) |
-| Push: mesaj / arkadaş isteği / yorum | [`PWA.md`](PWA.md) Faz 2 devam |
+| **Vercel deploy** | GitHub hazır — env + deploy: [`DEPLOY.md`](DEPLOY.md) |
+| Push: arkadaş isteği | Planlanmış |
+| Üç parmak selfie UI | i18n hazır — `GenderVerification` bağlanmadı |
 | Bildirim merkezi | Planlanmış (uygulama içi sinyal banner + nav rozeti var) |
 | Profil fotoğrafı | Planlanmış |
 | Analytics | Yok |
@@ -202,11 +279,12 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] **Harita linki** — alıcı 📍 Haritada aç → Google Maps
 - [x] **Sinyal güvenlik onayı** — ilk ziyaret bilgi kutusu (`SignalIntroAck`) + gönderim modalı (`SignalSendConsentModal`); Firestore'da `senderSafetyAck` + kullanıcı `signalSafetyIntroAckAt`
 - [x] **112 uyarısı** — gönder/al ekranlarında sabit banner (`SignalSafetyNotice`); dashboard'da dönen popup yok
-- [ ] Push: mesaj / arkadaş isteği / yorum → [`PWA.md`](PWA.md) Faz 2
+- [ ] Push: arkadaş isteği
 
 ### PWA & Bildirimler
 - [x] **PWA Faz 1** — `@serwist/next`, `manifest.json`, 192/512 PNG ikonlar, `/~offline`, dashboard install ipucu — [`PWA.md`](PWA.md)
-- [x] **Push: acil sinyal** — FCM + `fcm_tokens` + `PushOptIn`; arkadaşlara bildirim (VAPID key şart)
+- [x] **Push: acil sinyal** — FCM + `fcm_tokens` + `PushOptIn`
+- [x] **Push: doğrulama onayı, mesaj, yorum** — `/api/push/notify` + onay sonrası tetikleme
 - [x] Uygulama içi rozetler (arkadaş isteği + mesaj + sinyal)
 
 ---
@@ -245,8 +323,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | Rol | Giriş | Görev |
 |-----|-------|-------|
 | Kullanıcı | Firebase Auth | Platform kullanımı |
-| **Kadın Temsilci** | `.env` → `REP_USERNAME` / `REP_PASSWORD` | Fotoğraf inceleme, onay / red / **kalıcı yasak** |
-| **Admin** | `.env` → `ADMIN_USERNAME` / `ADMIN_PASSWORD` | Genel yönetim — **doğrulama fotoğrafına erişemez** |
+| **Kadın Temsilci** | `.env` `REP_*` **veya** admin panelden `reps` | Fotoğraf inceleme, onay / red / **kalıcı yasak** |
+| **Admin** | `.env` → `ADMIN_USERNAME` / `ADMIN_PASSWORD` | İstatistik, şikayet moderasyonu, temsilci ekleme — **fotoğrafa erişemez** |
 
 ---
 
@@ -257,14 +335,14 @@ Kayıt (fotoğrafsız) → verificationStatus = "unverified" → /dashboard (kı
        ↓
 İsteğe bağlı /dogrulama → selfie → geçici depolama (local disk veya Firestore)
        ↓
-Firestore: verificationStatus = "pending"
+Firestore: verificationStatus = "pending" + verificationSubmittedAt (sunucu)
        ↓
-Dashboard + akış (okuma) — turuncu banner: "Doğrulaman inceleniyor"
+Dashboard + akış (okuma) — turuncu banner + **kuyruk sırası** + kullanabilir/kullanamaz paneli
 Yazma / arkadaş / mesaj kapalı (onay sonrası otomatik açılır)
        ↓
 Kadın temsilci inceler (/temsilci)
        ↓
-Onayla & Sil  →  "approved"  →  tam erişim
+Onayla & Sil  →  "approved"  →  tam erişim + **push bildirimi** (izin varsa)
 Reddet & Sil  →  "rejected"  →  tekrar /dogrulama
 Kalıcı Yasakla → "banned"   →  Auth devre dışı, e-posta + UID ban listesinde (IP ban yok)
        ↓
@@ -298,7 +376,9 @@ src/
 │   ├── admin/             # Admin paneli (fotoğraf yok)
 │   └── api/
 │       ├── auth/check-ban/
-│       ├── verification/upload/
+│       ├── verification/upload/  verification/queue/
+│       ├── push/register/  push/notify/
+│       ├── admin/         # reps, reports, moderation, stats
 │       └── temsilci/      # Onay / red / ban API
 ├── lib/
 │   ├── auth-routing.ts    # Soft gate yönlendirme
@@ -545,7 +625,7 @@ NEXT_PUBLIC_FIREBASE_VAPID_KEY=
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=
 
-# Kadın temsilci (fotoğraf onay / red / yasak)
+# Kadın temsilci (fotoğraf onay / red / yasak) — veya admin panelden Firestore reps
 REP_USERNAME=temsilci
 REP_PASSWORD=
 
@@ -595,10 +675,11 @@ VERIFICATION_PHOTO_STORAGE=local
 
 ## Sonraki Öncelikler
 
-1. ⏳ **Vercel deploy** — [`DEPLOY.md`](DEPLOY.md) + `NEXT_PUBLIC_FIREBASE_VAPID_KEY`
-2. ⏳ Local/production test: PWA install + push (2 hesap, bildirim izni)
-3. Push: mesaj / arkadaş isteği / yorum
+1. ⏳ **Vercel deploy** — [`DEPLOY.md`](DEPLOY.md) + tüm env (VAPID dahil)
+2. ⏳ Firebase Console → **Rules Publish** (`reps` bloğu)
+3. ⏳ Local/production test: PWA + push (onay, mesaj, yorum, sinyal)
 4. Üç parmak doğrulama selfie UI (metinler hazır)
+5. ⚪ İsteğe bağlı: `comments` composite index (yorum hatası alırsan)
 
 ---
 
@@ -761,3 +842,22 @@ Repodaki [`firestore.rules`](firestore.rules) = güncel. İçermesi gerekenler:
 - Kullanım koşulları / gizlilik (hukuki metinler)
 - Sinyal, 112, doğrulama güvenlik katmanı
 - `content-filter.ts` kelime listesi (sadece UI mesajları yumuşatıldı)
+
+---
+
+## Oturum Notu — 8 Temmuz 2026 (onboarding, admin, push genişletme)
+
+### Yapılanlar
+- **Onboarding checklist** — dashboard 4 adım (`OnboardingChecklist`)
+- **KVKK** — doğrulama checkbox; gizlilik §6–§9 (push dahil)
+- **Doğrulama UX** — kullanabilir/kullanamaz paneli; kuyruk sırası (`verificationSubmittedAt`, `/api/verification/queue`)
+- **Admin panel** — istatistik, şikayet moderasyonu (yorum/mesaj/gönderi sil), Firestore `reps` temsilci ekleme
+- **Push** — doğrulama onayı, yeni mesaj, gönderiye yorum (+ mevcut sinyal)
+- **Firestore rules** — `match /reps/{repId}` client kapalı
+
+### Senin yapman gereken
+1. Firebase Console → **Rules Publish** (`reps` en altta)
+2. `.env.local` + Vercel → `NEXT_PUBLIC_FIREBASE_VAPID_KEY`
+3. Admin → Temsilciler'den ilk Firestore temsilcisi (veya env `REP_*`)
+4. ⚪ Yorum index hatası alırsan → `comments`: postId + createdAt
+5. Vercel deploy

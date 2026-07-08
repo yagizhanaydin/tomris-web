@@ -25,4 +25,8 @@ export interface UserProfile {
   /** İlk /sinyal ziyaretinde güvenlik bilgisi onayı (sunucu kaydı) */
   signalSafetyIntroAckAt?: string;
   signalSafetyIntroVersion?: string;
+  /** Doğrulama fotoğrafı gönderim zamanı (kuyruk sırası) */
+  verificationSubmittedAt?: string;
+  verificationPrivacyConsentAt?: string;
+  verificationPrivacyVersion?: string;
 }

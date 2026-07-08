@@ -29,6 +29,15 @@ export async function middleware(request: NextRequest) {
     ) {
       return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
     }
+
+    if (
+      pathname.startsWith("/api/admin/") &&
+      pathname !== "/api/admin/login" &&
+      pathname !== "/api/admin/logout" &&
+      !(await isAdminSessionEdge(request))
+    ) {
+      return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
+    }
   }
 
   if (pathname.startsWith("/admin") && pathname !== "/admin/giris") {

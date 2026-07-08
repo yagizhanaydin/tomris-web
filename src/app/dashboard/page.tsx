@@ -16,6 +16,7 @@ import { AtaturkQuote } from "@/components/AtaturkQuote";
 import { VerificationStatusBanner } from "@/components/VerificationStatusBanner";
 import { IncomingSignalsBanner } from "@/components/IncomingSignalsBanner";
 import { PwaInstallHint } from "@/components/PwaInstallHint";
+import { OnboardingChecklist } from "@/components/OnboardingChecklist";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
 export default function DashboardPage() {
@@ -61,6 +62,8 @@ export default function DashboardPage() {
         <PwaInstallHint />
 
         {!isPlatformUnlocked(profile) && <VerificationStatusBanner />}
+
+        <OnboardingChecklist />
 
         <div className="card">
           <h1 className="text-xl sm:text-3xl font-bold text-tomris mb-1">

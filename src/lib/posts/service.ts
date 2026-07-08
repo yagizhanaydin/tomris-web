@@ -10,7 +10,8 @@ import {
   doc,
   deleteDoc,
 } from "firebase/firestore";
-import { getFirebaseDb } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
+import { notifyPushEvent } from "@/lib/push/client";
 import { sanitizeText } from "@/lib/security/validate";
 import type { Gender, UserProfile } from "@/types/user";
 import type {
@@ -138,6 +139,17 @@ export async function addComment(
     content: text,
     createdAt: now,
   });
+
+  const user = getFirebaseAuth().currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+    void notifyPushEvent(token, {
+      type: "comment",
+      postId,
+      preview: text,
+    });
+  }
+
   return ref.id;
 }
 

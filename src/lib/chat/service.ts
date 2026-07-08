@@ -15,7 +15,8 @@ import {
   onSnapshot,
 } from "firebase/firestore";
 import type { QueryDocumentSnapshot, DocumentData, Unsubscribe } from "firebase/firestore";
-import { getFirebaseDb } from "@/lib/firebase";
+import { getFirebaseDb, getFirebaseAuth } from "@/lib/firebase";
+import { notifyPushEvent } from "@/lib/push/client";
 import { sanitizeText } from "@/lib/security/validate";
 import { TR_COUNTRY } from "@/lib/locations";
 import { buildDmId } from "./helpers";
@@ -303,6 +304,16 @@ export async function sendMessage(
     lastMessageAuthorUid: authorUid,
     updatedAt: now,
   });
+
+  const user = getFirebaseAuth().currentUser;
+  if (user) {
+    const token = await user.getIdToken();
+    void notifyPushEvent(token, {
+      type: "message",
+      conversationId,
+      preview: text,
+    });
+  }
 }
 
 export function isGroupMember(conversation: Conversation, uid: string): boolean {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isRepSession } from "@/lib/auth/session";
+import { isRepSession, getRepUsernameFromSession } from "@/lib/auth/session";
 import { isAdminConfigured } from "@/lib/firebase-admin";
 import {
   approveVerification,
@@ -23,7 +23,7 @@ export async function POST(
   }
 
   const { uid, action } = await params;
-  const repUsername = process.env.REP_USERNAME ?? "temsilci";
+  const repUsername = getRepUsernameFromSession(request) ?? "temsilci";
 
   try {
     if (action === "approve") {

@@ -3,7 +3,7 @@ import {
   deleteUser,
   updateProfile,
 } from "firebase/auth";
-import { doc, setDoc, updateDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
 import { getFirebaseAuth, getFirebaseDb } from "@/lib/firebase";
 import { sendTomrisEmailVerification } from "@/lib/auth/email-verification";
 import { getVerificationPhotoId } from "@/lib/verification/paths";
@@ -30,6 +30,7 @@ async function uploadVerificationPhotoToServer(photoBlob: Blob): Promise<string>
   const token = await user.getIdToken();
   const formData = new FormData();
   formData.append("photo", photoBlob, "verification.jpg");
+  formData.append("privacyConsent", "true");
 
   const res = await fetch("/api/verification/upload", {
     method: "POST",
@@ -144,16 +145,10 @@ export async function createGoogleProfile(
   }
 }
 
-/** Fotoğraf gönder — temsilci incelemesine alınır */
+/** Fotoğraf gönder — temsilci incelemesine alınır (durum sunucuda güncellenir) */
 export async function submitVerificationPhoto(photoBlob: Blob) {
   const user = getFirebaseAuth().currentUser;
   if (!user) throw new Error("Oturum bulunamadı.");
 
-  const photoId = await uploadVerificationPhotoToServer(photoBlob);
-
-  await updateDoc(doc(getFirebaseDb(), "users", user.uid), {
-    verificationPhotoPath: photoId,
-    verificationStatus: "pending",
-    genderVerified: false,
-  });
+  await uploadVerificationPhotoToServer(photoBlob);
 }

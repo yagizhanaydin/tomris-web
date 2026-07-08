@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { isRepSession } from "@/lib/auth/session";
+import { isRepSession, getRepUsernameFromSession } from "@/lib/auth/session";
 import { isAdminConfigured } from "@/lib/firebase-admin";
 import { banUser } from "@/lib/ban/service";
 
@@ -32,7 +32,7 @@ export async function POST(
       ? body.reason.trim()
       : VALID_REASONS[0];
 
-  const repUsername = process.env.REP_USERNAME ?? "temsilci";
+  const repUsername = getRepUsernameFromSession(request) ?? "temsilci";
 
   try {
     await banUser(uid, repUsername, reason);

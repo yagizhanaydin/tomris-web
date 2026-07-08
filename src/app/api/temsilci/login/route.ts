@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { setRepSessionCookie } from "@/lib/auth/session";
+import { verifyRepCredentials } from "@/lib/reps/service";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
 export async function POST(request: NextRequest) {
@@ -9,18 +10,21 @@ export async function POST(request: NextRequest) {
   if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
 
   const { username, password } = await request.json();
-
-  const repUsername = process.env.REP_USERNAME;
-  const repPassword = process.env.REP_PASSWORD;
-
-  if (!repUsername || !repPassword) {
-    return NextResponse.json(
-      { error: "Temsilci yapılandırması eksik." },
-      { status: 500 }
-    );
+  if (!username || !password) {
+    return NextResponse.json({ error: "Kullanıcı adı ve şifre gerekli." }, { status: 400 });
   }
 
-  if (username !== repUsername || password !== repPassword) {
+  let authenticatedUsername: string | null = null;
+
+  const envUser = process.env.REP_USERNAME;
+  const envPass = process.env.REP_PASSWORD;
+  if (envUser && envPass && username === envUser && password === envPass) {
+    authenticatedUsername = envUser;
+  } else {
+    authenticatedUsername = await verifyRepCredentials(username, password);
+  }
+
+  if (!authenticatedUsername) {
     return NextResponse.json(
       { error: "Geçersiz kullanıcı adı veya şifre." },
       { status: 401 }
@@ -28,6 +32,6 @@ export async function POST(request: NextRequest) {
   }
 
   const response = NextResponse.json({ success: true });
-  setRepSessionCookie(response);
+  setRepSessionCookie(response, authenticatedUsername);
   return response;
 }

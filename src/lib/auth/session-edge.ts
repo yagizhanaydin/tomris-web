@@ -30,28 +30,47 @@ async function hmacHex(message: string): Promise<string> {
   return toHex(sig);
 }
 
-async function verifyToken(token: string | undefined, role: string): Promise<boolean> {
-  if (!secret()) return false;
-  if (!token) return false;
+async function verifySignedToken(
+  token: string | undefined
+): Promise<{ role: string; username?: string } | null> {
+  if (!secret()) return null;
+  if (!token) return null;
   const dot = token.lastIndexOf(".");
-  if (dot <= 0) return false;
+  if (dot <= 0) return null;
 
   const payload = token.slice(0, dot);
   const sig = token.slice(dot + 1);
-  const [tokenRole, expStr] = payload.split(":");
-  if (tokenRole !== role) return false;
+  const parts = payload.split(":");
 
-  const expiresAt = Number(expStr);
-  if (!Number.isFinite(expiresAt) || Date.now() > expiresAt) return false;
+  let role: string;
+  let username: string | undefined;
+  let expiresAt: number;
+
+  if (parts[0] === "rep" && parts.length === 3) {
+    role = "rep";
+    username = parts[1];
+    expiresAt = Number(parts[2]);
+  } else if (parts.length === 2) {
+    role = parts[0];
+    expiresAt = Number(parts[1]);
+  } else {
+    return null;
+  }
+
+  if (!Number.isFinite(expiresAt) || Date.now() > expiresAt) return null;
 
   const expected = await hmacHex(payload);
-  return sig === expected;
+  if (sig !== expected) return null;
+
+  return { role, username };
 }
 
 export async function isAdminSessionEdge(request: NextRequest): Promise<boolean> {
-  return verifyToken(request.cookies.get(ADMIN_COOKIE)?.value, "admin");
+  const parsed = await verifySignedToken(request.cookies.get(ADMIN_COOKIE)?.value);
+  return parsed?.role === "admin";
 }
 
 export async function isRepSessionEdge(request: NextRequest): Promise<boolean> {
-  return verifyToken(request.cookies.get(REP_COOKIE)?.value, "rep");
+  const parsed = await verifySignedToken(request.cookies.get(REP_COOKIE)?.value);
+  return parsed?.role === "rep";
 }

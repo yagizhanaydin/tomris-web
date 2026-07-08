@@ -127,6 +127,23 @@ export interface TranslationDictionary {
     posts: string;
     signal: string;
   };
+  onboarding: {
+    title: string;
+    subtitle: string;
+    progress: string;
+    dismiss: string;
+    completeTitle: string;
+    completeBody: string;
+    steps: {
+      email: { title: string; description: string; cta: string };
+      verification: { title: string; description: string; cta: string };
+      friend: { title: string; description: string; cta: string };
+      post: { title: string; description: string; cta: string };
+    };
+    statusDone: string;
+    statusPending: string;
+    statusLocked: string;
+  };
   friends: {
     title: string;
     subtitle: string;
@@ -342,6 +359,21 @@ export interface TranslationDictionary {
     rejectedBannerTitle: string;
     rejectedBannerBody: string;
     rejectedBannerCta: string;
+    privacyConsentLabel: string;
+    privacyConsentRequired: string;
+    privacyConsentLink: string;
+    accessTitle: string;
+    accessPendingIntro: string;
+    accessUnverifiedIntro: string;
+    accessCanTitle: string;
+    accessCannotTitle: string;
+    accessCanList: string[];
+    accessCannotList: string[];
+    queuePosition: string;
+    queueLoading: string;
+    queueHint: string;
+    submitSuccessDetail: string;
+    submitSuccessCta: string;
     introPoints: string[];
     camera: {
       title: string;

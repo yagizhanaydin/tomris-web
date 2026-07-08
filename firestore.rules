@@ -283,5 +283,9 @@ service cloud.firestore {
     match /fcm_tokens/{tokenId} {
       allow read, write: if false;
     }
+
+    match /reps/{repId} {
+      allow read, write: if false;
+    }
   }
 }

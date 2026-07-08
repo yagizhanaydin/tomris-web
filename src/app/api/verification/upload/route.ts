@@ -43,6 +43,14 @@ export async function POST(request: NextRequest) {
   }
 
   const formData = await request.formData();
+  const privacyConsent = formData.get("privacyConsent");
+  if (privacyConsent !== "true") {
+    return NextResponse.json(
+      { error: "Gizlilik onayı gerekli." },
+      { status: 400 }
+    );
+  }
+
   const file = formData.get("photo");
 
   if (!file || !(file instanceof Blob)) {
@@ -70,6 +78,16 @@ export async function POST(request: NextRequest) {
   }
 
   await saveVerificationPhoto(auth.uid, buffer);
+
+  const now = new Date().toISOString();
+  await getAdminDb().collection("users").doc(auth.uid).update({
+    verificationPhotoPath: auth.uid,
+    verificationStatus: "pending",
+    genderVerified: false,
+    verificationSubmittedAt: now,
+    verificationPrivacyConsentAt: now,
+    verificationPrivacyVersion: "2026-07-08",
+  });
 
   return NextResponse.json({ success: true, uid: auth.uid });
 }

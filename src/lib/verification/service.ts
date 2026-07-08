@@ -1,5 +1,6 @@
 import { getAdminDb } from "@/lib/firebase-admin";
 import { deleteVerificationPhoto } from "@/lib/verification/photo-storage";
+import { sendVerificationApprovedPush } from "@/lib/push/service";
 import type { UserProfile, VerificationStatus } from "@/types/user";
 
 export { getVerificationPhotoId } from "./paths";
@@ -10,7 +11,13 @@ export async function listPendingVerifications(): Promise<UserProfile[]> {
     .where("verificationStatus", "==", "pending")
     .get();
 
-  return snap.docs.map((d) => d.data() as UserProfile);
+  return snap.docs
+    .map((d) => d.data() as UserProfile)
+    .sort((a, b) => {
+      const aTime = a.verificationSubmittedAt || a.createdAt;
+      const bTime = b.verificationSubmittedAt || b.createdAt;
+      return aTime.localeCompare(bTime);
+    });
 }
 
 async function finalizeReview(
@@ -44,6 +51,7 @@ export async function approveVerification(
   repUsername: string
 ): Promise<void> {
   await finalizeReview(uid, "approved", repUsername);
+  await sendVerificationApprovedPush(uid).catch(() => undefined);
 }
 
 export async function rejectVerification(

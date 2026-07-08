@@ -50,7 +50,9 @@ export function PushOptIn() {
 
   useEffect(() => {
     if (loading || !user || !profile || !supported) return;
-    if (!isPlatformUnlocked(profile)) return;
+    const canOfferPush =
+      isPlatformUnlocked(profile) || profile.verificationStatus === "pending";
+    if (!canOfferPush) return;
     if (SKIP_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return;
     if (!permissionsAlreadyHandled()) return;
     if (pushAlreadyHandled()) return;

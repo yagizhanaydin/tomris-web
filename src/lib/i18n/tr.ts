@@ -130,6 +130,39 @@ export const tr: TranslationDictionary = {
     posts: "Gönderi paylaşma ve yorum",
     signal: "Acil durum sinyali",
   },
+  onboarding: {
+    title: "Başlangıç rehberi",
+    subtitle: "Tomris'te ilk adımlarını tamamla",
+    progress: "{done}/{total} tamamlandı",
+    dismiss: "Tamam, anladım",
+    completeTitle: "Harika — hazırsın!",
+    completeBody: "Temel adımları tamamladın. Dayanışma ağına katılmaya devam edebilirsin.",
+    steps: {
+      email: {
+        title: "E-postanı doğrula",
+        description: "Hesap güvenliği için e-posta adresini onayla.",
+        cta: "E-postayı doğrula",
+      },
+      verification: {
+        title: "Kimlik doğrulaması",
+        description: "Kadın temsilcilerimiz kısa bir fotoğraf incelemesi yapar.",
+        cta: "Doğrulamaya git",
+      },
+      friend: {
+        title: "İlk arkadaşını ekle",
+        description: "Dayanışma ağını oluşturmak için bir arkadaş ekle.",
+        cta: "Arkadaşlar",
+      },
+      post: {
+        title: "İlk gönderini paylaş",
+        description: "Topluluğa kısa bir dayanışma mesajı bırak.",
+        cta: "Akışa git",
+      },
+    },
+    statusDone: "Tamam",
+    statusPending: "Devam ediyor",
+    statusLocked: "Doğrulama sonrası",
+  },
   friends: {
     title: "Arkadaşlarım",
     subtitle: "Kadın dayanışma ağını oluştur",
@@ -355,7 +388,7 @@ export const tr: TranslationDictionary = {
     },
     privacy: {
       title: "Gizlilik Politikası",
-      updated: "Son güncelleme: 6 Temmuz 2026 · KVKK kapsamında",
+      updated: "Son güncelleme: 8 Temmuz 2026 · KVKK kapsamında",
       sections: [
         {
           title: "1. Toplanan veriler",
@@ -391,6 +424,33 @@ export const tr: TranslationDictionary = {
             "KVKK kapsamında verilerinize erişim, düzeltme ve silme talebinde bulunabilirsiniz. Hesap silme: Ayarlar → Hesabı kalıcı sil.",
           ],
         },
+        {
+          title: "6. Veri sorumlusu",
+          body: [
+            "Veri sorumlusu: Tomris Web (tomris.app). İletişim: gizlilik@tomris.app",
+            "Temsilci ve moderasyon süreçleri yalnızca yetkili kadın temsilciler ve admin tarafından yürütülür; doğrulama fotoğraflarına erkek adminler erişemez.",
+          ],
+        },
+        {
+          title: "7. Özel nitelikli veriler",
+          body: [
+            "Cinsiyet bilgisi ve doğrulama fotoğrafı özel nitelikli kişisel veri sayılabilir. Bu veriler yalnızca topluluk güvenliği ve doğrulama amacıyla, açık rızanızla işlenir.",
+            "Doğrulama fotoğrafı inceleme sonrası kalıcı olarak silinir.",
+          ],
+        },
+        {
+          title: "8. Yurt dışı aktarım",
+          body: [
+            "Altyapı Firebase (Google) sunucularında barındırılır; veriler AB/Türkiye dışındaki sunucularda işlenebilir. Push bildirimleri için cihaz token'ları (fcm_tokens) sunucu tarafında saklanır.",
+          ],
+        },
+        {
+          title: "9. Bildirimler (PWA / push)",
+          body: [
+            "Bildirim izni verirsen; doğrulama onayı, yeni mesaj, gönderine gelen yorum ve acil sinyal gibi olaylarda push bildirimi alabilirsin.",
+            "Bildirimler isteğe bağlıdır; tarayıcı veya cihaz ayarlarından istediğin zaman kapatabilirsin.",
+          ],
+        },
       ],
     },
   },
@@ -418,7 +478,7 @@ export const tr: TranslationDictionary = {
     gateCta: "Doğrulamaya Git",
     pendingBannerTitle: "Doğrulaman inceleniyor",
     pendingBannerBody:
-      "Kadın temsilcilerimiz fotoğrafını güvenlik amacıyla inceliyor: gerçeklik, yapay zeka (AI) veya başka hesaptan alınma kontrolü. Genelde birkaç saat sürer. Bu arada akışı okuyabilirsin; yazma ve mesaj onay sonrası açılır.",
+      "Güvenliğiniz ve rahatınız için kadın temsilcilerimiz fotoğrafınızı manuel olarak inceliyor. Genelde birkaç saat sürer. Onay gelene kadar aşağıdaki özellikleri kullanabilirsin; diğerleri onay sonrası açılır.",
     pendingBannerCta: "Akışa göz at",
     pendingGateTitle: "Onay sonrası açılacak",
     pendingGateBody:
@@ -438,6 +498,35 @@ export const tr: TranslationDictionary = {
     rejectedBannerBody:
       "Endişelenme — tekrar deneyebilirsin. Bu arada siteyi gezebilirsin; paylaşım ve mesajlaşma doğrulama sonrası açılır.",
     rejectedBannerCta: "Tekrar Dene",
+    privacyConsentLabel:
+      "Doğrulama fotoğrafımın yalnızca kadın temsilciler tarafından güvenlik amacıyla incelenmesini ve inceleme sonrası silinmesini; {privacyLink} kapsamında kişisel verilerimin işlenmesini kabul ediyorum.",
+    privacyConsentRequired: "Devam etmek için gizlilik onayını işaretlemeniz gerekir.",
+    privacyConsentLink: "Gizlilik Politikası",
+    accessTitle: "Güvenliğiniz ve rahatınız için",
+    accessPendingIntro:
+      "Kadın temsilcilerimiz her başvuruyu manuel kontrol ediyor. Bu süreç seni yargılamak için değil; her kadının burada güvende hissetmesi içindir. Fotoğrafın inceleme bitince kalıcı olarak silinir.",
+    accessUnverifiedIntro:
+      "Doğrulama tamamlanana kadar platformu sınırlı kullanırsın. Kısa fotoğraf adımından sonra kadın temsilcilerimiz manuel inceleme yapar.",
+    accessCanTitle: "Şu an kullanabilirsin",
+    accessCannotTitle: "Onay sonrası açılır",
+    accessCanList: [
+      "Ana sayfa ve profil",
+      "Akışı okuma (gönderileri görme)",
+      "Ayarlar ve gizlilik",
+    ],
+    accessCannotList: [
+      "Gönderi paylaşma",
+      "Yorum yazma",
+      "Mesajlaşma",
+      "Arkadaş ekleme",
+      "Acil sinyal gönderme",
+    ],
+    queuePosition: "Sırada {position}. kişisiniz ({total} kişi bekliyor)",
+    queueLoading: "Sıra bilgisi yükleniyor…",
+    queueHint: "Temsilci onayladıkça sıra ilerler — sayfa birkaç dakikada bir güncellenir.",
+    submitSuccessDetail:
+      "Fotoğrafın güvenle iletildi. Kadın temsilcilerimiz manuel incelemeye aldı; onaylandığında bildirim alabilirsin (PWA bildirimleri açıksa).",
+    submitSuccessCta: "Ana sayfaya dön",
     camera: {
       title: "Cinsiyet Doğrulama",
       selectedGender: "Seçilen cinsiyet",
@@ -566,10 +655,12 @@ export const tr: TranslationDictionary = {
     installAction: "Ekle",
     installDismiss: "Sonra",
     pushTitle: "Bildirimler",
-    pushBody: "Acil sinyal ve önemli olaylarda haberdar olmak ister misin?",
+    pushBody: "Doğrulama onayı, mesaj, yorum ve acil sinyallerde haberdar olmak ister misin?",
     pushPoints: [
+      "Doğrulaman onaylandığında",
+      "Yeni mesaj geldiğinde",
+      "Gönderine yorum yapıldığında",
       "Arkadaşlarından acil sinyal",
-      "Yeni mesaj ve arkadaş isteği (yakında)",
     ],
     pushNote: "İstediğin zaman tarayıcı ayarlarından kapatabilirsin.",
     pushEnable: "Bildirimleri aç",

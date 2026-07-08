@@ -130,6 +130,39 @@ export const en: TranslationDictionary = {
     posts: "Posts and comments",
     signal: "Emergency signal",
   },
+  onboarding: {
+    title: "Getting started",
+    subtitle: "Complete your first steps on Tomris",
+    progress: "{done}/{total} complete",
+    dismiss: "Got it",
+    completeTitle: "You're all set!",
+    completeBody: "You've completed the basics. Keep building your solidarity network.",
+    steps: {
+      email: {
+        title: "Verify your email",
+        description: "Confirm your email address for account security.",
+        cta: "Verify email",
+      },
+      verification: {
+        title: "Identity verification",
+        description: "Our women representatives perform a brief photo review.",
+        cta: "Go to verification",
+      },
+      friend: {
+        title: "Add your first friend",
+        description: "Start building your solidarity network.",
+        cta: "Friends",
+      },
+      post: {
+        title: "Share your first post",
+        description: "Leave a short solidarity message for the community.",
+        cta: "Go to feed",
+      },
+    },
+    statusDone: "Done",
+    statusPending: "In progress",
+    statusLocked: "After verification",
+  },
   friends: {
     title: "My Friends",
     subtitle: "Build your women's solidarity network",
@@ -355,7 +388,7 @@ export const en: TranslationDictionary = {
     },
     privacy: {
       title: "Privacy Policy",
-      updated: "Last updated: 6 July 2026 · GDPR/KVKK aligned",
+      updated: "Last updated: 8 July 2026 · GDPR/KVKK aligned",
       sections: [
         {
           title: "1. Data we collect",
@@ -391,6 +424,33 @@ export const en: TranslationDictionary = {
             "You may request access, correction, or deletion of your data. Self-service deletion: Settings → Permanently delete account.",
           ],
         },
+        {
+          title: "6. Data controller",
+          body: [
+            "Data controller: Tomris Web (tomris.app). Contact: privacy@tomris.app",
+            "Verification and moderation are handled only by authorized women representatives and admins; male admins cannot access verification photos.",
+          ],
+        },
+        {
+          title: "7. Sensitive data",
+          body: [
+            "Gender information and verification photos may qualify as sensitive personal data. They are processed only for community safety and verification, with your explicit consent.",
+            "Verification photos are permanently deleted after review.",
+          ],
+        },
+        {
+          title: "8. International transfers",
+          body: [
+            "Infrastructure is hosted on Firebase (Google) servers; data may be processed outside the EU/Turkey. Device tokens for push notifications (fcm_tokens) are stored server-side.",
+          ],
+        },
+        {
+          title: "9. Notifications (PWA / push)",
+          body: [
+            "If you enable notifications, you may receive push alerts for verification approval, new messages, comments on your posts, and emergency signals.",
+            "Notifications are optional; you can disable them anytime in browser or device settings.",
+          ],
+        },
       ],
     },
   },
@@ -417,7 +477,7 @@ export const en: TranslationDictionary = {
     gateCta: "Go to Verification",
     pendingBannerTitle: "Your verification is under review",
     pendingBannerBody:
-      "Our women representatives are reviewing your photo for security: authenticity, AI-generated images, or photos taken from other accounts. This usually takes a few hours. You can browse the feed meanwhile.",
+      "For your security and comfort, our women representatives are manually reviewing your photo. This usually takes a few hours. Until approval, you can use the features below; the rest unlock afterward.",
     pendingBannerCta: "Browse feed",
     pendingGateTitle: "Unlocks after approval",
     pendingGateBody:
@@ -437,6 +497,35 @@ export const en: TranslationDictionary = {
     rejectedBannerBody:
       "Don't worry — you can try again. You can still browse the site; posting and messaging unlock after verification.",
     rejectedBannerCta: "Try Again",
+    privacyConsentLabel:
+      "I accept that my verification photo will be reviewed only by women representatives for security purposes and deleted afterward; and that my personal data will be processed under the {privacyLink}.",
+    privacyConsentRequired: "You must accept the privacy consent to continue.",
+    privacyConsentLink: "Privacy Policy",
+    accessTitle: "For your security and comfort",
+    accessPendingIntro:
+      "Our women representatives manually review every application. This is not to judge you — it helps every woman feel safe here. Your photo is permanently deleted after review.",
+    accessUnverifiedIntro:
+      "Until verification is complete, you use the platform in a limited way. After a brief photo step, our women representatives perform a manual review.",
+    accessCanTitle: "You can use now",
+    accessCannotTitle: "Unlocks after approval",
+    accessCanList: [
+      "Dashboard and profile",
+      "Read the feed (view posts)",
+      "Settings and privacy",
+    ],
+    accessCannotList: [
+      "Share posts",
+      "Write comments",
+      "Messaging",
+      "Add friends",
+      "Send emergency signal",
+    ],
+    queuePosition: "You are #{position} in line ({total} waiting)",
+    queueLoading: "Loading queue info…",
+    queueHint: "The number goes down as representatives approve — refreshes every few minutes.",
+    submitSuccessDetail:
+      "Your photo was sent securely. Our women representatives will review it manually; you may get a notification when approved (if push is enabled).",
+    submitSuccessCta: "Back to dashboard",
     camera: {
       title: "Gender Verification",
       selectedGender: "Selected gender",
@@ -555,10 +644,12 @@ export const en: TranslationDictionary = {
     installAction: "Install",
     installDismiss: "Later",
     pushTitle: "Notifications",
-    pushBody: "Want to be notified about emergency signals and important events?",
+    pushBody: "Get notified when you're verified, receive messages, comments, or emergency signals?",
     pushPoints: [
+      "When your verification is approved",
+      "When you receive a new message",
+      "When someone comments on your post",
       "Emergency signals from friends",
-      "New messages and friend requests (coming soon)",
     ],
     pushNote: "You can turn this off anytime in browser settings.",
     pushEnable: "Enable notifications",
