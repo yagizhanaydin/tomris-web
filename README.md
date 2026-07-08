@@ -34,7 +34,7 @@
 | Firestore Indexes (7 composite + 1 önerilen) | ✅ 7/7 Enabled — isteğe bağlı 8.: `comments` (postId + createdAt) |
 | Service Account JSON (`.env.local`) | ✅ |
 | Firebase Storage | ⚪ Opsiyonel (Blaze) — varsayılan Vercel yolu **Firestore** — [`DEPLOY.md`](DEPLOY.md) |
-| GitHub (`master`) | ✅ Push edildi — son commit: `a378c72` |
+| GitHub (`master`) | ✅ Push edildi — son commit: `ace6f7a` |
 | Canlı site (Vercel) | ⏳ Henüz deploy edilmedi |
 | Local test (`npm run dev`) | ✅ Hazır |
 
@@ -279,7 +279,7 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 - [x] Dil seçici: header **🌐 TR** → alttan bottom sheet (`LanguageSheet`) · Ayarlar'da `LanguageSetting`
 - [x] Atatürk sözü (giriş/kayıt)
 - [x] **Giriş izinleri** — kamera + konum bir kez (`PermissionPrompt`); sonra uğraşmaz
-- [ ] **Karanlık mod** — planlandı (`globals.css` placeholder)
+- [x] **Karanlık mod** — Ayarlar'da Açık / Karanlık / Sistem (`ThemeProvider`)
 
 ### Admin (genel yönetim — doğrulama fotoğrafı yok)
 - [x] Ayrı admin girişi (`/admin/giris`)
@@ -295,7 +295,6 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 |---------|-----|
 | **Vercel deploy** | GitHub hazır — env + deploy: [`DEPLOY.md`](DEPLOY.md) |
 | Push: arkadaş isteği | Planlanmış |
-| **Karanlık mod** | Planlandı — gece teması |
 | Üç parmak selfie UI | i18n hazır — `GenderVerification` bağlanmadı |
 | Bildirim merkezi | Planlanmış (uygulama içi sinyal banner + nav rozeti var) |
 | Profil fotoğrafı | Planlanmış |
@@ -950,3 +949,16 @@ Repodaki [`firestore.rules`](firestore.rules) = güncel. İçermesi gerekenler:
 2. Nav → Daha fazla → Neden Tomris?
 3. Boş akış / boş sohbet görünümü
 4. Vercel deploy
+
+---
+
+## Oturum Notu — 8 Temmuz 2026 (karanlık mod + ikon)
+
+### Yapılanlar
+- **Karanlık mod** — Ayarlar → Görünüm: Açık / Karanlık / Sistem
+- **PWA ikon** — `icon-512` SVG birebir; maskable güvenli alan; `npm run icons:verify`
+
+### Senin yapman gereken
+1. Ayarlar → karanlık modu dene
+2. Ana ekran ikonu vs header logosu
+3. Vercel deploy
