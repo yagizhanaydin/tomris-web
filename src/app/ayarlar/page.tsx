@@ -9,6 +9,7 @@ import { useLanguage } from "@/context/LanguageProvider";
 import { needsProfileCompletion } from "@/lib/auth-routing";
 import { AppShell } from "@/components/AppShell";
 import { ChatVisibilitySetting } from "@/components/settings/ChatVisibilitySetting";
+import { DarkModeSetting } from "@/components/settings/DarkModeSetting";
 import { LanguageSetting } from "@/components/settings/LanguageSetting";
 import { DeleteAccountSetting } from "@/components/settings/DeleteAccountSetting";
 import Link from "next/link";
@@ -53,6 +54,8 @@ export default function SettingsPage() {
         </div>
 
         <ChatVisibilitySetting profile={profile} onUpdated={refreshProfile} />
+
+        <DarkModeSetting />
 
         <LanguageSetting />
 

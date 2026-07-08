@@ -10,7 +10,8 @@
     "test:rules": "firebase emulators:exec --only firestore \"node scripts/test-firestore-rules.mjs\"",
     "strip:emails": "node scripts/strip-public-emails.mjs",
     "backfill:usernames": "node scripts/backfill-usernames.mjs",
-    "icons:pwa": "node scripts/generate-pwa-icons.mjs"
+    "icons:pwa": "node scripts/generate-pwa-icons.mjs",
+    "icons:verify": "node scripts/verify-pwa-icons.mjs"
   },
   "dependencies": {
     "@serwist/next": "^9.5.11",

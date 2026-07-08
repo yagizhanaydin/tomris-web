@@ -179,7 +179,7 @@ export function MessageThread({ conversation, profile, canSend }: MessageThreadP
       {error && <div className="alert-error text-sm mb-3">{error}</div>}
 
       {canSend ? (
-        <form onSubmit={handleSend} className="flex gap-2 sticky bottom-0 bg-white/80 backdrop-blur pt-2">
+        <form onSubmit={handleSend} className="flex gap-2 sticky bottom-0 bg-[var(--card)]/80 backdrop-blur pt-2">
           <input
             type="text"
             value={text}

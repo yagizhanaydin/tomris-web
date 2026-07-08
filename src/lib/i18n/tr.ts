@@ -244,8 +244,9 @@ export const tr: TranslationDictionary = {
     verificationBody:
       "Sahte profil ve troll hesapları uzak tutmak için kadın temsilcilerimiz her başvuruyu inceler. Onay gelene kadar gezebilirsin; paylaşım ve mesajlaşma onay sonrası açılır — seni yargılamak için değil, hepimizi korumak için.",
     verificationCta: "Doğrulamaya git",
-    darkModeTitle: "Karanlık mod — yakında",
-    darkModeBody: "Gece kullanımı için karanlık tema üzerinde çalışıyoruz. Hazır olunca Ayarlar'dan açılabilecek.",
+    darkModeTitle: "Karanlık mod",
+    darkModeBody: "Gece kullanımı için göz yormayan tema. Ayarlar'dan açabilirsin.",
+    darkModeCta: "Ayarlara git",
     ctaFeed: "Akışa git",
     ctaFriends: "Arkadaş ekle",
   },
@@ -395,6 +396,11 @@ export const tr: TranslationDictionary = {
     languageTitle: "Dil",
     languageHint: "Uygulama dilini seç. Tercihin cihazında saklanır.",
     languageChange: "Değiştir",
+    themeTitle: "Görünüm",
+    themeHint: "Açık, karanlık veya sistem temasını seç. Tercihin cihazında saklanır.",
+    themeLight: "Açık",
+    themeDark: "Karanlık",
+    themeSystem: "Sistem",
   },
   legal: {
     termsLink: "Kullanım Koşulları",

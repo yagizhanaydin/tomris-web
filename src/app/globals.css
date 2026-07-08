@@ -10,17 +10,43 @@
   --muted: #6b7280;
   --border: #e9d5ff;
   --surface: #f5f3ff;
+  --card: #ffffff;
   --tomris-text: #5b21b6;
+  --alert-error-bg: #fef2f2;
+  --alert-error-border: #fecaca;
+  --alert-error-text: #b91c1c;
+  --gradient-from: #f5f3ff;
+  --gradient-mid: #ede9fe;
+  --gradient-to: #faf8ff;
 }
 
-/* Karanlık mod — gelecek sürüm (Ayarlar'dan açılacak) */
+html[data-theme="dark"] {
+  --background: #0c0814;
+  --foreground: #f0eaf8;
+  --primary: #8b5cf6;
+  --primary-dark: #7c3aed;
+  --primary-light: #2a1a42;
+  --accent: #a78bfa;
+  --muted: #a89bb8;
+  --border: #3d2a5c;
+  --surface: #161022;
+  --card: #1a1228;
+  --tomris-text: #c4b5fd;
+  --alert-error-bg: #3b1515;
+  --alert-error-border: #7f1d1d;
+  --alert-error-text: #fecaca;
+  --gradient-from: #0c0814;
+  --gradient-mid: #161028;
+  --gradient-to: #100a18;
+  color-scheme: dark;
+}
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-primary: #7c3aed;
-  --color-primary-dark: #6d28d9;
-  --color-primary-light: #ede9fe;
+  --color-primary: var(--primary);
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
   --color-tomris: var(--tomris-text);
   --color-tomris-primary: var(--primary);
   --color-tomris-light: var(--primary-light);
@@ -44,9 +70,13 @@ input, button, select, textarea {
   }
 }
 
-/* Tomris — mobil uyumlu yardımcı sınıflar */
 .tomris-gradient {
-  background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 50%, #faf8ff 100%);
+  background: linear-gradient(
+    135deg,
+    var(--gradient-from) 0%,
+    var(--gradient-mid) 50%,
+    var(--gradient-to) 100%
+  );
 }
 
 .btn-primary {
@@ -54,12 +84,18 @@ input, button, select, textarea {
 }
 
 .btn-secondary {
-  @apply py-3 px-4 rounded-xl font-medium transition-colors border border-[var(--border)] text-[var(--muted)] hover:bg-violet-50;
+  @apply py-3 px-4 rounded-xl font-medium transition-colors border border-[var(--border)] text-[var(--muted)];
+  background: var(--card);
+}
+.btn-secondary:hover {
+  background: var(--primary-light);
 }
 
 .input-field {
   @apply w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:border-transparent text-base;
   border-color: var(--border);
+  background: var(--card);
+  color: var(--foreground);
 }
 .input-field:focus {
   --tw-ring-color: var(--primary);
@@ -75,15 +111,20 @@ input, button, select, textarea {
 }
 
 .card {
-  @apply bg-white rounded-2xl shadow-xl border p-6 sm:p-8;
+  @apply rounded-2xl shadow-xl border p-6 sm:p-8;
+  background: var(--card);
   border-color: var(--border);
+}
+
+html[data-theme="dark"] .card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
 }
 
 .alert-error {
   @apply rounded-lg text-sm p-3;
-  background-color: #fef2f2;
-  border: 1px solid #fecaca;
-  color: #b91c1c;
+  background-color: var(--alert-error-bg);
+  border: 1px solid var(--alert-error-border);
+  color: var(--alert-error-text);
 }
 
 .alert-success {

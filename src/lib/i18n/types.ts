@@ -204,6 +204,7 @@ export interface TranslationDictionary {
     verificationCta: string;
     darkModeTitle: string;
     darkModeBody: string;
+    darkModeCta: string;
     ctaFeed: string;
     ctaFriends: string;
   };
@@ -350,6 +351,11 @@ export interface TranslationDictionary {
     languageTitle: string;
     languageHint: string;
     languageChange: string;
+    themeTitle: string;
+    themeHint: string;
+    themeLight: string;
+    themeDark: string;
+    themeSystem: string;
   };
   legal: {
     termsLink: string;

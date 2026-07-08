@@ -46,7 +46,7 @@ export function AppShell({ children, onLogout }: AppShellProps) {
 
   return (
     <div className="min-h-screen tomris-gradient relative">
-      <header className="bg-white/90 backdrop-blur border-b border-[var(--border)] sticky top-0 z-10">
+      <header className="bg-[var(--card)]/90 backdrop-blur border-b border-[var(--border)] sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3">
             <Link href="/dashboard" className="shrink-0">

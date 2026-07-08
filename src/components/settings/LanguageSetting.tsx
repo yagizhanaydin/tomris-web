@@ -19,10 +19,10 @@ export function LanguageSetting() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-[var(--border)] bg-white hover:bg-primary-light/30 transition-colors text-left"
+        className="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl border border-[var(--border)] bg-[var(--card)] hover:bg-primary-light/30 transition-colors text-left"
       >
         <span className="flex items-center gap-3 min-w-0">
-          <span className="w-9 h-9 shrink-0 rounded-lg border border-[var(--border)] flex items-center justify-center text-xs font-bold text-tomris bg-white">
+          <span className="w-9 h-9 shrink-0 rounded-lg border border-[var(--border)] flex items-center justify-center text-xs font-bold text-tomris bg-[var(--surface)]">
             {LOCALE_CODES[locale]}
           </span>
           <span className="text-sm text-tomris font-medium truncate">{LOCALE_ARIA[locale]}</span>

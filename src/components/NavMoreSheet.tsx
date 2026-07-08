@@ -64,7 +64,7 @@ export function NavMoreSheet({ open, onClose, badges }: NavMoreSheetProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="nav-more-title"
-        className="relative bg-white rounded-t-2xl shadow-xl animate-[slideUp_0.25s_ease-out]"
+        className="relative bg-[var(--card)] rounded-t-2xl shadow-xl animate-[slideUp_0.25s_ease-out]"
       >
         <div className="pt-3 pb-2 px-4 border-b border-[var(--border)]">
           <div className="w-10 h-1 rounded-full bg-[var(--border)] mx-auto mb-3" aria-hidden />

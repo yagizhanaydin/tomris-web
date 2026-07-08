@@ -16,7 +16,7 @@ export function LanguageSwitcher({ className = "" }: { className?: string }) {
         onClick={() => setOpen(true)}
         aria-label={t.common.selectLanguage}
         aria-haspopup="dialog"
-        className={`inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-[var(--border)] bg-white/90 text-tomris hover:bg-[var(--primary-light)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomris/40 ${className}`}
+        className={`inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl border border-[var(--border)] bg-[var(--card)]/90 text-tomris hover:bg-[var(--primary-light)] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-tomris/40 ${className}`}
       >
         <GlobeIcon />
         <span className="text-xs font-bold tracking-wide">{LOCALE_CODES[locale]}</span>

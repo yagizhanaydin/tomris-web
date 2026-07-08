@@ -84,6 +84,9 @@ export default function WhyUsPage() {
         <section className="card space-y-2 border-dashed">
           <h2 className="font-semibold text-tomris text-sm">{t.whyUs.darkModeTitle}</h2>
           <p className="text-xs text-[var(--muted)]">{t.whyUs.darkModeBody}</p>
+          <Link href="/ayarlar" className="text-sm link-tomris inline-block">
+            {t.whyUs.darkModeCta} →
+          </Link>
         </section>
 
         <div className="flex flex-wrap gap-3 justify-center">

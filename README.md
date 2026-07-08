@@ -99,7 +99,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | **UI: boş durum ekranları** | ✅ `EmptyState` — akış, mesaj, grup, arkadaş |
 | **UI: iOS ana ekrana ekle kılavuzu** | ✅ Safari 3 adım (`PwaInstallHint`) |
 | **UI: Neden Tomris? sayfası** | ✅ `/neden-biz` |
-| Karanlık mod | ⏳ Yakında (placeholder + bilgi metni) |
+| **Karanlık mod** | ✅ Ayarlar → Açık / Karanlık / Sistem |
+| **PWA ikon doğrulama** | ✅ `npm run icons:verify` |
 | Üç parmak selfie UI (i18n hazır) | ⏳ Component bağlanmadı |
 | Vercel canlı deploy | ⏳ |
 
@@ -160,7 +161,8 @@ Doğrulama akışı: [`DOGRULAMA-AKISI.md`](DOGRULAMA-AKISI.md)
 | **Boş durum illüstrasyonları** | ✅ Akış, sohbet, grup, arkadaş, thread |
 | **iOS PWA kılavuzu** | ✅ Safari ana ekrana ekle adımları |
 | **Neden Tomris?** | ✅ `/neden-biz` — dayanışma, güvenlik, gizlilik |
-| Karanlık mod | ⏳ Yakında |
+| **Karanlık mod** | ✅ Ayarlar → Açık / Karanlık / Sistem |
+| **PWA ikon tutarlılığı** | ✅ `icons:pwa` + `icons:verify` |
 | Vercel deploy | ❌ Sırada — local test devam |
 
 **Tek cümle:** Kod ve Firebase hazır; site şu an yalnızca `npm run dev` ile local'de çalışır. İnternete açmak için Vercel deploy gerekir.

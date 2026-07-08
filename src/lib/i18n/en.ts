@@ -244,8 +244,9 @@ export const en: TranslationDictionary = {
     verificationBody:
       "Women reps review each request to keep fake and troll accounts out. You can browse until approval; posting and messaging unlock after — to protect everyone, not to judge you.",
     verificationCta: "Go to verification",
-    darkModeTitle: "Dark mode — coming soon",
-    darkModeBody: "We're working on a dark theme for night use. You'll be able to turn it on in Settings when it's ready.",
+    darkModeTitle: "Dark mode",
+    darkModeBody: "Easy on the eyes at night. Turn it on in Settings.",
+    darkModeCta: "Go to Settings",
     ctaFeed: "Go to feed",
     ctaFriends: "Add friends",
   },
@@ -395,6 +396,11 @@ export const en: TranslationDictionary = {
     languageTitle: "Language",
     languageHint: "Choose the app language. Your preference is saved on this device.",
     languageChange: "Change",
+    themeTitle: "Appearance",
+    themeHint: "Choose light, dark, or system theme. Saved on this device.",
+    themeLight: "Light",
+    themeDark: "Dark",
+    themeSystem: "System",
   },
   legal: {
     termsLink: "Terms of Service",

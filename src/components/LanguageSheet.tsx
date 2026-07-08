@@ -47,9 +47,9 @@ export function LanguageSheet({ open, onClose }: LanguageSheetProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="language-sheet-title"
-        className="relative bg-white rounded-t-2xl shadow-xl max-h-[85vh] overflow-y-auto animate-[slideUp_0.25s_ease-out]"
+        className="relative bg-[var(--card)] rounded-t-2xl shadow-xl max-h-[85vh] overflow-y-auto animate-[slideUp_0.25s_ease-out]"
       >
-        <div className="sticky top-0 bg-white pt-3 pb-2 px-4 border-b border-[var(--border)]">
+        <div className="sticky top-0 bg-[var(--card)] pt-3 pb-2 px-4 border-b border-[var(--border)]">
           <div className="w-10 h-1 rounded-full bg-[var(--border)] mx-auto mb-3" aria-hidden />
           <h2 id="language-sheet-title" className="text-base font-semibold text-tomris text-center">
             {t.common.selectLanguage}
@@ -73,7 +73,7 @@ export function LanguageSheet({ open, onClose }: LanguageSheetProps) {
                   <span className="flex items-center gap-3 min-w-0">
                     <span
                       className={`w-9 h-9 shrink-0 rounded-lg border flex items-center justify-center text-xs font-bold ${
-                        active ? "border-tomris bg-white" : "border-[var(--border)] bg-white/80"
+                        active ? "border-tomris bg-[var(--card)]" : "border-[var(--border)] bg-[var(--surface)]"
                       }`}
                     >
                       {LOCALE_CODES[code]}
