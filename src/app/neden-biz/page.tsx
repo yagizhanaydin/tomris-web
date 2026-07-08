@@ -12,6 +12,21 @@ import { AppShell } from "@/components/AppShell";
 import { TomrisMark } from "@/components/TomrisMark";
 import { useRedirectUnverifiedEmail } from "@/lib/use-auth-guard";
 
+function BulletList({ items }: { items: string[] }) {
+  return (
+    <ul className="space-y-2.5">
+      {items.map((item, i) => (
+        <li key={i} className="flex gap-2.5 text-sm text-[var(--muted)] leading-relaxed">
+          <span className="text-primary shrink-0 mt-0.5" aria-hidden>
+            •
+          </span>
+          <span>{item}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function WhyUsPage() {
   const router = useRouter();
   const { user, profile, loading } = useAuth();
@@ -46,34 +61,39 @@ export default function WhyUsPage() {
 
   return (
     <AppShell onLogout={handleLogout}>
-      <div className="space-y-6">
+      <div className="space-y-5">
         <header className="card text-center space-y-4">
           <div className="flex justify-center">
             <TomrisMark size={72} className="rounded-2xl shadow-lg" />
           </div>
           <div>
             <h1 className="text-2xl font-bold text-tomris">{t.whyUs.title}</h1>
-            <p className="text-sm text-[var(--muted)] mt-2 max-w-md mx-auto leading-relaxed">
+            <p className="text-sm text-[var(--muted)] mt-2 max-w-lg mx-auto leading-relaxed">
               {t.whyUs.subtitle}
             </p>
           </div>
         </header>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          {t.whyUs.pillars.map((pillar, i) => (
-            <article key={i} className="card space-y-2">
-              <span className="text-2xl" aria-hidden>
-                {pillar.icon}
+        {t.whyUs.sections.map((section, i) => (
+          <section key={i} className="card space-y-3">
+            <div className="flex items-start gap-3">
+              <span className="text-2xl shrink-0" aria-hidden>
+                {section.icon}
               </span>
-              <h2 className="font-semibold text-tomris">{pillar.title}</h2>
-              <p className="text-sm text-[var(--muted)] leading-relaxed">{pillar.body}</p>
-            </article>
-          ))}
-        </div>
+              <div className="space-y-3 min-w-0 flex-1">
+                <h2 className="font-semibold text-tomris text-base leading-snug">{section.title}</h2>
+                {section.intro && (
+                  <p className="text-sm text-[var(--muted)] leading-relaxed">{section.intro}</p>
+                )}
+                <BulletList items={section.items} />
+              </div>
+            </div>
+          </section>
+        ))}
 
-        <section className="card space-y-3 bg-primary-light/20">
+        <section className="card space-y-3 bg-primary-light/20 border-primary/20">
           <h2 className="font-semibold text-tomris">{t.whyUs.verificationTitle}</h2>
-          <p className="text-sm text-[var(--muted)] leading-relaxed">{t.whyUs.verificationBody}</p>
+          <BulletList items={t.whyUs.verificationItems} />
           {!unlocked && (
             <Link href="/dogrulama" className="btn-primary sm:w-auto sm:inline-block text-sm py-2.5 px-6">
               {t.whyUs.verificationCta}
@@ -89,13 +109,19 @@ export default function WhyUsPage() {
           </Link>
         </section>
 
-        <div className="flex flex-wrap gap-3 justify-center">
-          <Link href="/akis" className="btn-primary sm:w-auto sm:px-8 text-sm py-2.5">
+        <div className="flex flex-wrap gap-3 justify-center pt-2">
+          <Link href="/akis" className="btn-primary sm:w-auto sm:px-6 text-sm py-2.5">
             {t.whyUs.ctaFeed}
           </Link>
           <Link
+            href="/mesajlar?tab=groups"
+            className="text-sm py-2.5 px-5 rounded-xl border border-[var(--border)] hover:bg-primary-light/30"
+          >
+            {t.whyUs.ctaGroups}
+          </Link>
+          <Link
             href="/arkadaslar"
-            className="text-sm py-2.5 px-6 rounded-xl border border-[var(--border)] hover:bg-primary-light/30"
+            className="text-sm py-2.5 px-5 rounded-xl border border-[var(--border)] hover:bg-primary-light/30"
           >
             {t.whyUs.ctaFriends}
           </Link>

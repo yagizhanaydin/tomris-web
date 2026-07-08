@@ -217,38 +217,75 @@ export const en: TranslationDictionary = {
   whyUs: {
     title: "Why Tomris?",
     subtitle:
-      "Tomris is not an empty app — it's a real solidarity space where women are heard and feel safer together.",
-    pillars: [
+      "Tomris is not an empty app — it's a solidarity platform where women are heard, feel safer, and support each other for real.",
+    sections: [
       {
-        icon: "🤝",
-        title: "Women's solidarity",
-        body: "Share experiences, get support, and know you're not alone. The community is here for you.",
+        icon: "✅",
+        title: "Real women, real verification",
+        intro: "Every application is reviewed one by one by our women reps:",
+        items: [
+          "We check whether the selfie is AI-generated.",
+          "We check whether the photo was taken from another account or the internet.",
+          "Fake or bad-faith profiles are not approved.",
+          "Your verification photo is permanently deleted after review — male admins cannot access it.",
+        ],
       },
       {
-        icon: "🛡️",
-        title: "Safer space",
-        body: "Verification, blocking, and reporting help us protect the community together.",
+        icon: "🚫",
+        title: "Zero tolerance for trolls and fake accounts",
+        items: [
+          "Reported troll, harassment, and fake accounts are reviewed with priority.",
+          "Permanent bans can be applied within 24 hours when needed; the same email cannot register again.",
+          "You can block users and report posts and messages at any time.",
+          "Group leaders use approval-only join to keep trolls out of group chats.",
+        ],
       },
       {
-        icon: "🔒",
-        title: "Privacy first",
-        body: "Your email stays out of your public profile. Verification photos are deleted after review.",
+        icon: "💜",
+        title: "Share your struggles with women only",
+        items: [
+          "Choose post audience: everyone, women members only, or men members only.",
+          "Direct messages and group chats with verified women members.",
+          "Your email is not shown on your profile — privacy comes first.",
+          "Emergency signals reach only people on your friends list, instantly.",
+        ],
       },
       {
         icon: "📍",
-        title: "Local community",
-        body: "Connect by city and groups — feed, messages, and emergency signals when you need them.",
+        title: "Solidarity and groups in your city",
+        intro: "Connect with women near you:",
+        items: [
+          "Create or join groups by province, district, or city.",
+          "Chat in groups with women in the same city and plan solidarity together.",
+          "Organize meetups, events, or mutual aid — the group leader decides who joins.",
+          "Filter the feed by your region to follow your local community.",
+        ],
+      },
+      {
+        icon: "🛡️",
+        title: "Built for your peace of mind",
+        items: [
+          "Browse without verification; posting and messaging unlock after approval — to protect you, not judge you.",
+          "Content filter active on signup, posts, and messages.",
+          "Dark mode for comfortable night use (in Settings).",
+          "5 languages; Turkish usernames and search supported.",
+        ],
       },
     ],
-    verificationTitle: "Why verification?",
-    verificationBody:
-      "Women reps review each request to keep fake and troll accounts out. You can browse until approval; posting and messaging unlock after — to protect everyone, not to judge you.",
+    verificationTitle: "How does verification work?",
+    verificationItems: [
+      "Sign up and explore the platform right away — no photo required at signup.",
+      "When ready, upload a selfie at /verification and accept the privacy consent.",
+      "A women rep reviews: AI photo? stolen? genuine?",
+      "Approved → full access (feed, messages, groups, friends). Rejected → you can try again.",
+    ],
     verificationCta: "Go to verification",
     darkModeTitle: "Dark mode",
-    darkModeBody: "Easy on the eyes at night. Turn it on in Settings.",
+    darkModeBody: "Easy on the eyes at night.",
     darkModeCta: "Go to Settings",
     ctaFeed: "Go to feed",
     ctaFriends: "Add friends",
+    ctaGroups: "Browse groups",
   },
   empty: {
     postsTitle: "No posts yet",

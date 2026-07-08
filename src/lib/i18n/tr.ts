@@ -217,38 +217,75 @@ export const tr: TranslationDictionary = {
   whyUs: {
     title: "Neden Tomris?",
     subtitle:
-      "Tomris boş bir uygulama değil — kadınların birbirini duyduğu, güvende hissettiği gerçek bir dayanışma alanı.",
-    pillars: [
+      "Tomris boş bir uygulama değil — kadınların birbirini duyduğu, güvende hissettiği ve gerçekten birbirine destek olduğu bir dayanışma platformu.",
+    sections: [
       {
-        icon: "🤝",
-        title: "Kadın dayanışması",
-        body: "Deneyimlerini paylaş, destek al, yalnız hissetme. Topluluk senin için var.",
+        icon: "✅",
+        title: "Gerçek kadınlar, gerçek doğrulama",
+        intro: "Her başvuru kadın temsilcilerimiz tarafından tek tek incelenir:",
+        items: [
+          "Selfie fotoğrafının yapay zeka (AI) ile üretilip üretilmediğine bakılır.",
+          "Fotoğrafın başka bir hesaptan veya internetten alınıp alınmadığı kontrol edilir.",
+          "Sahte veya kötü niyetli profiller onaylanmaz.",
+          "İnceleme biter bitmez doğrulama fotoğrafın kalıcı olarak silinir — erkek adminler göremez.",
+        ],
       },
       {
-        icon: "🛡️",
-        title: "Güvenli alan",
-        body: "Doğrulama, engelleme ve şikayet araçlarıyla topluluğu birlikte koruyoruz.",
+        icon: "🚫",
+        title: "Troll ve fake hesaplara sıfır tolerans",
+        items: [
+          "Şikayet edilen troll, taciz ve sahte hesaplar öncelikli incelenir.",
+          "Gerekirse 24 saat içinde kalıcı ban uygulanır; aynı e-posta ile tekrar kayıt olunamaz.",
+          "İstediğin kullanıcıyı engelleyebilir, gönderi ve mesajları şikayet edebilirsin.",
+          "Grup liderleri onaylı katılım ile trollün gruba girmesini engeller.",
+        ],
       },
       {
-        icon: "🔒",
-        title: "Gizlilik önceliği",
-        body: "E-postan profilde saklanmaz. Doğrulama fotoğrafın inceleme sonrası silinir.",
+        icon: "💜",
+        title: "Sorunlarını yalnızca kadınlarla paylaş",
+        items: [
+          "Gönderilerinde hedef kitle seçebilirsin: herkes, yalnızca kadın üyeler veya erkek üyeler.",
+          "Onaylı kadın üyelerle birebir mesaj ve grup sohbeti.",
+          "E-postan profilde görünmez; gizliliğin önceliğimiz.",
+          "Acil sinyal ile yalnızca arkadaş listendeki kişilere anında ulaşabilirsin.",
+        ],
       },
       {
         icon: "📍",
-        title: "Yakın topluluk",
-        body: "İl, şehir ve gruplarla çevrendeki kadınlarla bağ kur — mesaj, akış, acil sinyal.",
+        title: "Aynı şehirde dayanışma ve gruplar",
+        intro: "Yakınındaki kadınlarla bağ kur:",
+        items: [
+          "İl, ilçe veya şehir bazlı gruplar kurabilir veya katılabilirsin.",
+          "Grup sohbetinde aynı şehirdeki kadınlarla konuş, dayanışma planla.",
+          "Buluşma, etkinlik veya yardımlaşma için grup oluştur — lider kimlerin gireceğine karar verir.",
+          "Akışta konum filtresiyle kendi bölgeni takip edebilirsin.",
+        ],
+      },
+      {
+        icon: "🛡️",
+        title: "Senin huzurun için tasarlandı",
+        items: [
+          "Doğrulama olmadan gezebilirsin; paylaşım ve mesaj onay sonrası açılır — seni yargılamak için değil.",
+          "Uygunsuz içerik filtresi kayıt, gönderi ve mesajlarda aktif.",
+          "Karanlık mod ile gece rahat kullanım (Ayarlar'dan).",
+          "5 dil desteği; Türkçe kullanıcı adı ve arama.",
+        ],
       },
     ],
-    verificationTitle: "Neden doğrulama var?",
-    verificationBody:
-      "Sahte profil ve troll hesapları uzak tutmak için kadın temsilcilerimiz her başvuruyu inceler. Onay gelene kadar gezebilirsin; paylaşım ve mesajlaşma onay sonrası açılır — seni yargılamak için değil, hepimizi korumak için.",
+    verificationTitle: "Doğrulama süreci nasıl işler?",
+    verificationItems: [
+      "Kayıt olursun, hemen platformu gezmeye başlarsın — fotoğraf zorunlu değil.",
+      "Hazır olunca /dogrulama'dan selfie yüklersin ve KVKK onayı verirsin.",
+      "Kadın temsilci inceler: AI fotoğraf mı, çalıntı mı, gerçek mi?",
+      "Onay → tam erişim (akış, mesaj, grup, arkadaş). Red → tekrar deneyebilirsin.",
+    ],
     verificationCta: "Doğrulamaya git",
     darkModeTitle: "Karanlık mod",
-    darkModeBody: "Gece kullanımı için göz yormayan tema. Ayarlar'dan açabilirsin.",
+    darkModeBody: "Gece kullanımı için göz yormayan tema.",
     darkModeCta: "Ayarlara git",
     ctaFeed: "Akışa git",
     ctaFriends: "Arkadaş ekle",
+    ctaGroups: "Gruplara göz at",
   },
   empty: {
     postsTitle: "Henüz gönderi yok",

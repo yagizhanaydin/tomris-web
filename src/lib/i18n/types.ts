@@ -198,15 +198,16 @@ export interface TranslationDictionary {
   whyUs: {
     title: string;
     subtitle: string;
-    pillars: { icon: string; title: string; body: string }[];
+    sections: { icon: string; title: string; intro?: string; items: string[] }[];
     verificationTitle: string;
-    verificationBody: string;
+    verificationItems: string[];
     verificationCta: string;
     darkModeTitle: string;
     darkModeBody: string;
     darkModeCta: string;
     ctaFeed: string;
     ctaFriends: string;
+    ctaGroups: string;
   };
   empty: {
     postsTitle: string;
