@@ -34,7 +34,7 @@
 | Firestore Indexes (7 composite + 1 önerilen) | ✅ 7/7 Enabled — isteğe bağlı 8.: `comments` (postId + createdAt) |
 | Service Account JSON (`.env.local`) | ✅ |
 | Firebase Storage | ⚪ Opsiyonel (Blaze) — varsayılan Vercel yolu **Firestore** — [`DEPLOY.md`](DEPLOY.md) |
-| GitHub (`master`) | ✅ Push edildi — son commit: `adadab0` |
+| GitHub (`master`) | ✅ Push edildi — son commit: `a378c72` |
 | Canlı site (Vercel) | ⏳ Henüz deploy edilmedi |
 | Local test (`npm run dev`) | ✅ Hazır |
 
