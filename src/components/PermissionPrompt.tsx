@@ -69,9 +69,19 @@ export function PermissionPrompt() {
           {t.permissions.title}
         </h2>
         <p className="text-sm text-[var(--muted)] leading-relaxed">{t.permissions.body}</p>
-        <ul className="text-sm space-y-2 text-tomris">
-          <li>📷 {t.permissions.cameraHint}</li>
-          <li>📍 {t.permissions.locationHint}</li>
+        <ul className="space-y-2.5">
+          <li className="flex gap-2.5 text-sm text-[var(--muted)] leading-relaxed">
+            <span className="text-primary shrink-0 mt-0.5" aria-hidden>
+              •
+            </span>
+            <span>{t.permissions.cameraHint}</span>
+          </li>
+          <li className="flex gap-2.5 text-sm text-[var(--muted)] leading-relaxed">
+            <span className="text-primary shrink-0 mt-0.5" aria-hidden>
+              •
+            </span>
+            <span>{t.permissions.locationHint}</span>
+          </li>
         </ul>
         <p className="text-xs text-[var(--muted)]">{t.permissions.note}</p>
 

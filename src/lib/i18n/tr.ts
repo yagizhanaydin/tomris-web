@@ -738,10 +738,13 @@ export const tr: TranslationDictionary = {
   },
   permissions: {
     title: "Tomris için izinler",
-    body: "Doğrulama selfie’si ve acil sinyalde konum paylaşımı için bir kez izin istiyoruz. Böylece ihtiyaç anında uğraşmazsın.",
-    cameraHint: "Kamera — cinsiyet doğrulama selfie’si",
-    locationHint: "Konum — acil sinyalde arkadaşlarına iletilir",
-    note: "İstediğin zaman tarayıcı ayarlarından kapatabilirsin. “Sonra” dersen bir daha sormayız.",
+    body:
+      "Tomris kamerana veya konumuna sürekli erişmez. İzin yalnızca aşağıdaki anlarda, sen ilgili adımı başlattığında kullanılır:",
+    cameraHint:
+      "Kamera — yalnızca doğrulama selfie’si çekerken (tek seferlik; arka planda kayıt veya sürekli izleme yok)",
+    locationHint:
+      "Konum — yalnızca acil sinyal gönderdiğinde; o anki konumun arkadaş listendeki kişilere iletilir",
+    note: "Arka planda takip etmiyoruz. İzin vermezsen ilgili adımda tekrar sorulur; tarayıcı ayarlarından istediğin zaman kapatabilirsin.",
     allow: "İzin ver",
     later: "Sonra",
     requesting: "İzinler isteniyor…",

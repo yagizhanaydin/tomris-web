@@ -19,12 +19,10 @@ export type VerificationPhotoBackend = "local" | "firestore" | "firebase";
 /** local = disk (dev/VPS) | firestore = Spark ücretsiz (Vercel) | firebase = Storage (Blaze) */
 export function getVerificationPhotoBackend(): VerificationPhotoBackend {
   const explicit = process.env.VERIFICATION_PHOTO_STORAGE?.toLowerCase();
-  if (explicit === "firebase" || explicit === "local" || explicit === "firestore") {
-    return explicit;
-  }
-  if (process.env.VERCEL === "1") {
-    return "firestore";
-  }
+  if (explicit === "firebase") return "firebase";
+  // Vercel serverless: disk yazılamaz — env local olsa bile firestore kullan
+  if (process.env.VERCEL === "1") return "firestore";
+  if (explicit === "firestore" || explicit === "local") return explicit;
   return "local";
 }
 

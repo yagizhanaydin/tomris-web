@@ -3,6 +3,20 @@ import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
 let adminApp: App | undefined;
 
+function parseServiceAccountJson(raw: string): Record<string, unknown> {
+  const trimmed = raw.trim();
+  try {
+    return JSON.parse(trimmed) as Record<string, unknown>;
+  } catch {
+    // Vercel'de bazen çift tırnak veya kaçış bozulur — tek satır JSON dene
+    const unwrapped =
+      trimmed.startsWith('"') && trimmed.endsWith('"')
+        ? JSON.parse(trimmed) as string
+        : trimmed;
+    return JSON.parse(unwrapped) as Record<string, unknown>;
+  }
+}
+
 export function getAdminApp(): App {
   if (adminApp) return adminApp;
   if (getApps().length > 0) {
@@ -17,9 +31,9 @@ export function getAdminApp(): App {
     );
   }
 
-  const serviceAccount = JSON.parse(json);
+  const serviceAccount = parseServiceAccountJson(json);
   adminApp = initializeApp({
-    credential: cert(serviceAccount),
+    credential: cert(serviceAccount as Parameters<typeof cert>[0]),
   });
 
   return adminApp;

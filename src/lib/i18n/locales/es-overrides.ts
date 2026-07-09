@@ -495,10 +495,13 @@ export const esOverrides: DeepPartial<TranslationDictionary> = {
   },
   permissions: {
     title: "Permisos para Tomris",
-    body: "Pedimos una vez cámara y ubicación para que la verificación y las señales de emergencia funcionen sin fricción.",
-    cameraHint: "Cámara — selfie de verificación de género",
-    locationHint: "Ubicación — se envía a amigas en señal de emergencia",
-    note: "Puedes cambiarlo en ajustes del navegador. « Más tarde » = no volvemos a preguntar.",
+    body:
+      "Tomris no accede de forma continua a tu cámara ni ubicación. Los permisos solo se usan cuando inicias estos pasos:",
+    cameraHint:
+      "Cámara — solo al hacer el selfie de verificación (una vez; sin grabación en segundo plano ni acceso permanente)",
+    locationHint:
+      "Ubicación — solo al enviar una señal de emergencia; tu posición en ese momento se comparte con amigas de tu lista",
+    note: "No te rastreamos en segundo plano. Si rechazas, volveremos a preguntar en ese paso. Puedes cambiarlo en ajustes del navegador.",
     allow: "Permitir",
     later: "Más tarde",
     requesting: "Solicitando permisos…",

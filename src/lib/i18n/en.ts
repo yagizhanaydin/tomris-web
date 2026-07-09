@@ -727,10 +727,13 @@ export const en: TranslationDictionary = {
   },
   permissions: {
     title: "Permissions for Tomris",
-    body: "We ask once for camera and location so verification and emergency signals work smoothly when you need them.",
-    cameraHint: "Camera — gender verification selfie",
-    locationHint: "Location — sent to friends in an emergency signal",
-    note: "You can change this anytime in browser settings. Choose “Later” and we won't ask again.",
+    body:
+      "Tomris does not continuously access your camera or location. Permissions are only used when you start these steps:",
+    cameraHint:
+      "Camera — only when you take your verification selfie (one time; no background recording or ongoing access)",
+    locationHint:
+      "Location — only when you send an emergency signal; your position at that moment is shared with friends on your list",
+    note: "We do not track you in the background. If you decline, we'll ask again at that step. You can change this anytime in browser settings.",
     allow: "Allow",
     later: "Later",
     requesting: "Requesting permissions…",

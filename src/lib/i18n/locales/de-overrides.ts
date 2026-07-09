@@ -495,10 +495,13 @@ export const deOverrides: DeepPartial<TranslationDictionary> = {
   },
   permissions: {
     title: "Berechtigungen für Tomris",
-    body: "Wir fragen einmal nach Kamera und Standort, damit Verifizierung und Notfallsignale reibungslos funktionieren.",
-    cameraHint: "Kamera — Selfie zur Geschlechtsverifizierung",
-    locationHint: "Standort — wird bei Notfallsignal an Freundinnen gesendet",
-    note: "Du kannst dies jederzeit in den Browser-Einstellungen ändern. „Später“ = wir fragen nicht erneut.",
+    body:
+      "Tomris greift nicht dauerhaft auf Kamera oder Standort zu. Berechtigungen werden nur genutzt, wenn du diese Schritte startest:",
+    cameraHint:
+      "Kamera — nur beim Verifizierungs-Selfie (einmalig; keine Hintergrundaufnahme oder Dauerzugriff)",
+    locationHint:
+      "Standort — nur beim Senden eines Notfallsignals; dein Standort in diesem Moment geht an Freundinnen auf deiner Liste",
+    note: "Kein Tracking im Hintergrund. Bei Ablehnung fragen wir erneut am jeweiligen Schritt. Jederzeit in den Browser-Einstellungen änderbar.",
     allow: "Erlauben",
     later: "Später",
     requesting: "Berechtigungen werden angefragt…",
