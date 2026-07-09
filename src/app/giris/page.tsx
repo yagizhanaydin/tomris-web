@@ -7,7 +7,6 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { getFirebaseAuth } from "@/lib/firebase";
 import { AuthLayout } from "@/components/AuthLayout";
 import { PasswordField } from "@/components/PasswordField";
-import { GoogleSignInButton } from "@/components/GoogleSignInButton";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
 import { getPostAuthRedirect, needsEmailVerification } from "@/lib/auth-routing";
@@ -102,17 +101,6 @@ export default function LoginPage() {
           {submitting ? t.auth.login.submitting : t.auth.login.submit}
         </button>
       </form>
-
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[var(--border)]" />
-        </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="px-3 bg-white text-[var(--muted)]">{t.common.or}</span>
-        </div>
-      </div>
-
-      <GoogleSignInButton label={t.auth.login.google} />
 
       <p className="mt-6 text-center text-sm text-[var(--muted)]">
         {t.auth.login.noAccount}{" "}
