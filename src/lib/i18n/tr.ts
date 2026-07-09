@@ -220,7 +220,7 @@ export const tr: TranslationDictionary = {
       "Tomris boş bir uygulama değil — kadınların birbirini duyduğu, güvende hissettiği ve gerçekten birbirine destek olduğu bir dayanışma platformu.",
     sections: [
       {
-        icon: "✅",
+        icon: "",
         title: "Gerçek kadınlar, gerçek doğrulama",
         intro: "Her başvuru kadın temsilcilerimiz tarafından tek tek incelenir:",
         items: [
@@ -231,7 +231,7 @@ export const tr: TranslationDictionary = {
         ],
       },
       {
-        icon: "🚫",
+        icon: "",
         title: "Troll ve fake hesaplara sıfır tolerans",
         items: [
           "Şikayet edilen troll, taciz ve sahte hesaplar öncelikli incelenir.",
@@ -251,7 +251,7 @@ export const tr: TranslationDictionary = {
         ],
       },
       {
-        icon: "📍",
+        icon: "",
         title: "Aynı şehirde dayanışma ve gruplar",
         intro: "Yakınındaki kadınlarla bağ kur:",
         items: [
@@ -262,10 +262,10 @@ export const tr: TranslationDictionary = {
         ],
       },
       {
-        icon: "🛡️",
+        icon: "",
         title: "Senin huzurun için tasarlandı",
         items: [
-          "Doğrulama olmadan gezebilirsin; paylaşım ve mesaj onay sonrası açılır — seni yargılamak için değil.",
+          "Doğrulama olmadan gezebilirsin; paylaşım ve mesaj onay sonrası açılır — güvenliğin için geçici kısıtlama, yargılama değil.",
           "Uygunsuz içerik filtresi kayıt, gönderi ve mesajlarda aktif.",
           "Karanlık mod ile gece rahat kullanım (Ayarlar'dan).",
           "5 dil desteği; Türkçe kullanıcı adı ve arama.",
@@ -579,7 +579,7 @@ export const tr: TranslationDictionary = {
     pageSubtitle: "Seni rahat ve konforlu hissettirmek için — kısa, gönüllü bir adım",
     introTitle: "Seni anlıyoruz",
     introBody:
-      "Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığın zorlukları ve yorgunluğu biliyoruz — seni anlıyoruz. Seni bu uygulamada rahat ve konforlu hissettirmek istiyoruz. Bu yüzden Tomris'te kısa bir fotoğraf doğrulaması yapıyoruz; doğrulamayı yalnızca kadın temsilcilerimiz gerçekleştirir. Bu adım seni yargılamak için değil, her kadının burada güvende ve huzurlu hissetmesi içindir.",
+      "Bir kadın olarak dijital alanlarda ve gerçek hayatta yaşadığın zorlukları ve yorgunluğu biliyoruz — seni anlıyoruz. Seni bu uygulamada rahat ve konforlu hissettirmek istiyoruz. Bu yüzden Tomris'te kısa bir fotoğraf doğrulaması yapıyoruz; doğrulamayı yalnızca kadın temsilcilerimiz gerçekleştirir. Bu adım yargılama değil; güvenliğin için geçici kısıtlamadır ve her kadının burada güvende hissetmesi içindir.",
     introNote:
       "İnceleme biter bitmez fotoğrafın kalıcı olarak silinir. Erkek adminler ve genel yönetim panelinin bu görsellere erişimi yoktur. Onay gelene kadar akışı okuyabilirsin; yazma ve mesajlaşma onay sonrası açılır.",
     introPoints: [
@@ -620,7 +620,7 @@ export const tr: TranslationDictionary = {
     privacyConsentLink: "Gizlilik Politikası",
     accessTitle: "Güvenliğiniz ve rahatınız için",
     accessPendingIntro:
-      "Kadın temsilcilerimiz her başvuruyu manuel kontrol ediyor. Bu süreç seni yargılamak için değil; her kadının burada güvende hissetmesi içindir. Fotoğrafın inceleme bitince kalıcı olarak silinir.",
+      "Kadın temsilcilerimiz her başvuruyu manuel kontrol ediyor. Bu süreç yargılama değil; her kadının burada güvende hissetmesi içindir. Fotoğrafın inceleme bitince kalıcı olarak silinir.",
     accessUnverifiedIntro:
       "Doğrulama tamamlanana kadar platformu sınırlı kullanırsın. Kısa fotoğraf adımından sonra kadın temsilcilerimiz manuel inceleme yapar.",
     accessCanTitle: "Şu an kullanabilirsin",

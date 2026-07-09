@@ -40,6 +40,17 @@ function deepMerge<T extends object>(base: T, overrides: DeepPartial<T>): T {
   return result as T;
 }
 
-export function fromEnglish(overrides: DeepPartial<TranslationDictionary>): TranslationDictionary {
+export type LocaleOverrides = DeepPartial<TranslationDictionary>;
+
+export function mergeLocaleOverrides(
+  ...overrides: LocaleOverrides[]
+): LocaleOverrides {
+  return overrides.reduce(
+    (acc, part) => deepMerge(acc, part),
+    {} as LocaleOverrides
+  );
+}
+
+export function fromEnglish(overrides: LocaleOverrides): TranslationDictionary {
   return deepMerge(en, overrides);
 }

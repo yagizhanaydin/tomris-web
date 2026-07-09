@@ -77,9 +77,11 @@ export default function WhyUsPage() {
         {t.whyUs.sections.map((section, i) => (
           <section key={i} className="card space-y-3">
             <div className="flex items-start gap-3">
-              <span className="text-2xl shrink-0" aria-hidden>
-                {section.icon}
-              </span>
+              {section.icon ? (
+                <span className="text-2xl shrink-0" aria-hidden>
+                  {section.icon}
+                </span>
+              ) : null}
               <div className="space-y-3 min-w-0 flex-1">
                 <h2 className="font-semibold text-tomris text-base leading-snug">{section.title}</h2>
                 {section.intro && (

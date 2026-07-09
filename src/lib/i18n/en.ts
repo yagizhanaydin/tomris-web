@@ -220,7 +220,7 @@ export const en: TranslationDictionary = {
       "Tomris is not an empty app — it's a solidarity platform where women are heard, feel safer, and support each other for real.",
     sections: [
       {
-        icon: "✅",
+        icon: "",
         title: "Real women, real verification",
         intro: "Every application is reviewed one by one by our women reps:",
         items: [
@@ -231,7 +231,7 @@ export const en: TranslationDictionary = {
         ],
       },
       {
-        icon: "🚫",
+        icon: "",
         title: "Zero tolerance for trolls and fake accounts",
         items: [
           "Reported troll, harassment, and fake accounts are reviewed with priority.",
@@ -251,7 +251,7 @@ export const en: TranslationDictionary = {
         ],
       },
       {
-        icon: "📍",
+        icon: "",
         title: "Solidarity and groups in your city",
         intro: "Connect with women near you:",
         items: [
@@ -262,10 +262,10 @@ export const en: TranslationDictionary = {
         ],
       },
       {
-        icon: "🛡️",
+        icon: "",
         title: "Built for your peace of mind",
         items: [
-          "Browse without verification; posting and messaging unlock after approval — to protect you, not judge you.",
+          "Browse without verification; posting and messaging unlock after approval — temporary restriction for your safety, not judgment.",
           "Content filter active on signup, posts, and messages.",
           "Dark mode for comfortable night use (in Settings).",
           "5 languages; Turkish usernames and search supported.",
@@ -579,7 +579,7 @@ export const en: TranslationDictionary = {
     pageSubtitle: "So you feel comfortable and at ease — a brief, voluntary step",
     introTitle: "We understand",
     introBody:
-      "As women, we know the difficulties and exhaustion you face in digital spaces and in real life — we understand you. We want you to feel comfortable and at ease in this app. That's why we use brief photo verification, carried out only by our women representatives. This step is not to judge you; it helps every woman here feel safe and at peace.",
+      "As women, we know the difficulties and exhaustion you face in digital spaces and in real life — we understand you. We want you to feel comfortable and at ease in this app. That's why we use brief photo verification, carried out only by our women representatives. This step is not judgment; it's a temporary restriction for safety so every woman here feels safe and at peace.",
     introNote:
       "Your photo is permanently deleted as soon as the review ends. Male admins and the general admin panel cannot access these images. Until approval, you can read the feed; posting and messaging unlock afterward.",
     introPoints: [
@@ -619,7 +619,7 @@ export const en: TranslationDictionary = {
     privacyConsentLink: "Privacy Policy",
     accessTitle: "For your security and comfort",
     accessPendingIntro:
-      "Our women representatives manually review every application. This is not to judge you — it helps every woman feel safe here. Your photo is permanently deleted after review.",
+      "Our women representatives manually review every application. This process is not judgment — it helps every woman feel safe here. Your photo is permanently deleted after review.",
     accessUnverifiedIntro:
       "Until verification is complete, you use the platform in a limited way. After a brief photo step, our women representatives perform a manual review.",
     accessCanTitle: "You can use now",
