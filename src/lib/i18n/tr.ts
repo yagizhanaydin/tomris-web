@@ -21,6 +21,10 @@ export const tr: TranslationDictionary = {
     footer: "Mor, dayanışmanın rengidir.",
     solidarity: "Kadın dayanışma platformu",
   },
+  beta: {
+    badge: "Kapalı beta",
+    notice: "Tomris erken erişim aşamasındadır. Geri bildirimin bizim için çok değerli.",
+  },
   quote: {
     text: "Şuna inanmak lazımdır ki, dünya yüzünde gördüğümüz her şey kadının eseridir.",
     author: "Mustafa Kemal Atatürk",

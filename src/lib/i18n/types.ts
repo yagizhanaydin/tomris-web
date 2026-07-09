@@ -20,6 +20,10 @@ export interface TranslationDictionary {
     footer: string;
     solidarity: string;
   };
+  beta: {
+    badge: string;
+    notice: string;
+  };
   quote: {
     text: string;
     author: string;

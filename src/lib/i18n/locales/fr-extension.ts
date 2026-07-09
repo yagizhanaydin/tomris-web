@@ -1,6 +1,10 @@
 import type { LocaleOverrides } from "../from-english";
 
 export const frExtension: LocaleOverrides = {
+  beta: {
+    badge: "Bêta fermée",
+    notice: "Tomris est en accès anticipé. Vos retours nous aident à progresser.",
+  },
   friends: {
     viewProfile: "Voir le profil",
   },

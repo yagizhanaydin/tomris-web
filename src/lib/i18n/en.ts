@@ -21,6 +21,10 @@ export const en: TranslationDictionary = {
     footer: "Purple is the color of solidarity.",
     solidarity: "Women's solidarity platform",
   },
+  beta: {
+    badge: "Closed beta",
+    notice: "Tomris is in early access. Your feedback helps us improve.",
+  },
   quote: {
     text: "One must believe that everything we see on the face of the earth is the work of women.",
     author: "Mustafa Kemal Atatürk",

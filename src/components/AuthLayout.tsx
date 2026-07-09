@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { AtaturkQuote } from "./AtaturkQuote";
+import { BetaNotice } from "./BetaNotice";
 import { TomrisLogo } from "./TomrisLogo";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useLanguage } from "@/context/LanguageProvider";
@@ -27,7 +28,8 @@ export function AuthLayout({ title, subtitle, children }: AuthLayoutProps) {
             <div className="flex justify-center mb-4">
               <TomrisLogo size="lg" showText />
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-tomris">{title}</h1>
+            <BetaNotice />
+            <h1 className="text-2xl sm:text-3xl font-bold text-tomris mt-4">{title}</h1>
             {subtitle && (
               <p className="mt-2 text-sm text-[var(--muted)]">{subtitle}</p>
             )}
