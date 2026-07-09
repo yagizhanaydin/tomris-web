@@ -74,14 +74,14 @@ export async function registerWithEmail(
     );
   }
 
-  if (await lookupUidByUsername(normalizedUsername)) {
-    throw new UsernameTakenError();
-  }
-
   const credential = await createUserWithEmailAndPassword(getFirebaseAuth(), email, password);
   const { user } = credential;
 
   try {
+    if (await lookupUidByUsername(normalizedUsername)) {
+      throw new UsernameTakenError();
+    }
+
     await updateProfile(user, { displayName: username });
     await sendTomrisEmailVerification(user);
 

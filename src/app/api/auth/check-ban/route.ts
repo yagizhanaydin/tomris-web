@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
   if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
 
   if (!isAdminConfigured()) {
-    return NextResponse.json({ allowed: false });
+    return NextResponse.json({ allowed: true });
   }
 
   const email = request.nextUrl.searchParams.get("email");
@@ -18,6 +18,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
   }
 
-  const banned = await isEmailBanned(email);
-  return NextResponse.json({ allowed: !banned });
+  try {
+    const banned = await isEmailBanned(email);
+    return NextResponse.json({ allowed: !banned });
+  } catch {
+    return NextResponse.json({ allowed: true });
+  }
 }
