@@ -124,8 +124,10 @@ export function getVerificationUploadErrorDisplay(
 
   if (!technical) return base;
 
+  const baseHint = "hint" in base ? base.hint : undefined;
   return {
-    ...base,
-    hint: base.hint ? `${base.hint} Teknik: ${technical}` : `Teknik: ${technical}`,
+    title: base.title,
+    body: base.body,
+    hint: baseHint ? `${baseHint} Teknik: ${technical}` : `Teknik: ${technical}`,
   };
 }
