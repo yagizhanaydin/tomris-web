@@ -93,7 +93,7 @@ export function inferUploadErrorCodeFromMessage(message: string): VerificationUp
   if (lower.includes("sharp") || lower.includes("compress") || lower.includes("sıkıştır")) {
     return "PROCESS_FAILED";
   }
-  if (lower.includes("firestore") || lower.includes("storage") || lower.includes("kayded")) {
+  if (lower.includes("verification_photos") || lower.includes("firestore") || lower.includes("storage") || lower.includes("kayded")) {
     return "STORAGE_FAILED";
   }
   if (lower.includes("gizlilik onayı")) return "CONSENT_REQUIRED";
@@ -109,7 +109,23 @@ export function inferUploadErrorCodeFromMessage(message: string): VerificationUp
 
 export function getVerificationUploadErrorDisplay(
   code: VerificationUploadErrorCode,
-  messages: UploadErrorMessages
+  messages: UploadErrorMessages,
+  detail?: string
 ): { title: string; body: string; hint?: string } {
-  return messages[I18N_KEY[code]] ?? messages.generic;
+  const base = messages[I18N_KEY[code]] ?? messages.generic;
+  const technical =
+    detail &&
+    detail !== code &&
+    !detail.startsWith("SERVER_") &&
+    detail.length > 3 &&
+    detail.length < 400
+      ? detail
+      : undefined;
+
+  if (!technical) return base;
+
+  return {
+    ...base,
+    hint: base.hint ? `${base.hint} Teknik: ${technical}` : `Teknik: ${technical}`,
+  };
 }

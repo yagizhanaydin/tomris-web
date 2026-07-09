@@ -59,7 +59,13 @@ export default function VerificationPage() {
       setSubmitted(true);
     } catch (err: unknown) {
       if (err instanceof VerificationUploadError) {
-        setError(getVerificationUploadErrorDisplay(err.code, t.verification.uploadErrors));
+        setError(
+          getVerificationUploadErrorDisplay(
+            err.code,
+            t.verification.uploadErrors,
+            err.message
+          )
+        );
       } else {
         setError(t.verification.uploadErrors.generic);
       }

@@ -8,13 +8,9 @@ function assertJpegHeader(buffer: Buffer): void {
   }
 }
 
-/** Firestore için sıkıştır — Vercel/canlı ortamda büyük webcam fotoğrafları */
+/** Firestore için sıkıştır — Vercel/canlı ortamda webcam fotoğrafları */
 export async function prepareVerificationPhoto(buffer: Buffer): Promise<Buffer> {
   assertJpegHeader(buffer);
-
-  if (buffer.length <= FIRESTORE_PHOTO_MAX_BYTES) {
-    return buffer;
-  }
 
   let sharp: (input: Buffer) => import("sharp").Sharp;
   try {
@@ -24,26 +20,26 @@ export async function prepareVerificationPhoto(buffer: Buffer): Promise<Buffer> 
     throw new Error(`Fotoğraf sıkıştırılamadı (sharp): ${detail}`);
   }
 
-  let quality = 82;
-  let width = 1280;
+  let quality = 80;
+  let width = 960;
   let output = buffer;
 
-  for (let attempt = 0; attempt < 8; attempt++) {
+  for (let attempt = 0; attempt < 10; attempt++) {
     output = await sharp(buffer)
       .rotate()
       .resize({ width, height: width, fit: "inside", withoutEnlargement: true })
-      .jpeg({ quality, mozjpeg: true })
+      .jpeg({ quality })
       .toBuffer();
 
     if (output.length <= FIRESTORE_PHOTO_MAX_BYTES) {
       return output;
     }
 
-    if (quality > 50) {
-      quality -= 8;
-    } else if (width > 640) {
+    if (quality > 45) {
+      quality -= 7;
+    } else if (width > 480) {
       width = Math.round(width * 0.75);
-      quality = 78;
+      quality = 72;
     } else {
       break;
     }
