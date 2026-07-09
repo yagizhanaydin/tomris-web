@@ -8,7 +8,8 @@ import { GenderVerification } from "@/components/GenderVerification";
 import { VerificationIntro } from "@/components/VerificationIntro";
 import { VerificationPrivacyConsent } from "@/components/VerificationPrivacyConsent";
 import { VerificationAccessPanel } from "@/components/VerificationAccessPanel";
-import { submitVerificationPhoto } from "@/lib/auth-helpers";
+import { submitVerificationPhoto, VerificationUploadError } from "@/lib/auth-helpers";
+import { getVerificationUploadErrorDisplay } from "@/lib/verification/upload-errors";
 import { isPlatformUnlocked, isVerificationPending } from "@/lib/auth-routing";
 import { useAuth } from "@/context/AuthProvider";
 import { useLanguage } from "@/context/LanguageProvider";
@@ -21,7 +22,11 @@ export default function VerificationPage() {
   useRedirectUnverifiedEmail();
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState<{
+    title: string;
+    body: string;
+    hint?: string;
+  } | null>(null);
   const [privacyConsent, setPrivacyConsent] = useState(false);
   const [consentError, setConsentError] = useState(false);
 
@@ -46,14 +51,18 @@ export default function VerificationPage() {
     }
 
     setSubmitting(true);
-    setError("");
+    setError(null);
 
     try {
       await submitVerificationPhoto(photoBlob);
       await refreshProfile();
       setSubmitted(true);
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : t.common.error);
+      if (err instanceof VerificationUploadError) {
+        setError(getVerificationUploadErrorDisplay(err.code, t.verification.uploadErrors));
+      } else {
+        setError(t.verification.uploadErrors.generic);
+      }
     } finally {
       setSubmitting(false);
     }
@@ -104,7 +113,17 @@ export default function VerificationPage() {
           showError={consentError}
         />
 
-        {error && <div className="alert-error">{error}</div>}
+        {error && (
+          <div className="alert-error space-y-2" role="alert">
+            <p className="font-semibold">{error.title}</p>
+            <p className="text-sm leading-relaxed">{error.body}</p>
+            {error.hint && (
+              <p className="text-xs leading-relaxed border-t border-current/20 pt-2 opacity-90">
+                {error.hint}
+              </p>
+            )}
+          </div>
+        )}
 
         {submitting ? (
           <div className="text-center py-8">

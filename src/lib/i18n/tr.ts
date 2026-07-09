@@ -647,6 +647,58 @@ export const tr: TranslationDictionary = {
     submitSuccessDetail:
       "Fotoğrafın güvenle iletildi. Kadın temsilcilerimiz manuel incelemeye aldı; onaylandığında bildirim alabilirsin (PWA bildirimleri açıksa).",
     submitSuccessCta: "Ana sayfaya dön",
+    uploadErrors: {
+      serverConfig: {
+        title: "Sunucu ayarı eksik — fotoğraf iletilemedi",
+        body: "Bu senin hatan değil. Canlı sitede doğrulama sunucusu henüz tam yapılandırılmamış; fotoğrafın kaydedilemedi.",
+        hint: "Yönetici: Vercel → Environment Variables → FIREBASE_SERVICE_ACCOUNT_JSON (Firebase service account JSON, tek satır). Kaydettikten sonra mutlaka Redeploy yapın.",
+      },
+      serverFault: {
+        title: "Sunucu hatası — fotoğraf kaydedilemedi",
+        body: "Fotoğraf sunucuya iletilirken beklenmeyen bir hata oluştu. Birkaç dakika bekleyip tekrar dene.",
+        hint: "Sorun sürerse sayfayı yenile, farklı tarayıcı dene veya bir süre sonra tekrar dene.",
+      },
+      processFailed: {
+        title: "Fotoğraf işlenemedi",
+        body: "Çektiğin görsel sunucuda işlenirken hata oluştu. Tekrar çek; yüzün net ve aydınlık olsun.",
+      },
+      storageFailed: {
+        title: "Fotoğraf kaydedilemedi",
+        body: "Sunucu fotoğrafı güvenli depoya yazamadı. Birkaç dakika sonra tekrar dene.",
+      },
+      network: {
+        title: "Bağlantı hatası",
+        body: "Sunucuya ulaşılamadı. İnternet bağlantını kontrol et ve tekrar dene.",
+      },
+      unauthorized: {
+        title: "Oturum süresi doldu",
+        body: "Güvenlik nedeniyle oturumun sonlanmış olabilir. Çıkış yapıp tekrar giriş yap, ardından yeniden dene.",
+      },
+      forbidden: {
+        title: "Yükleme yapılamıyor",
+        body: "Bu hesap için şu an doğrulama fotoğrafı gönderilemiyor.",
+      },
+      rateLimit: {
+        title: "Çok fazla deneme",
+        body: "Kısa sürede çok fazla yükleme denemesi yapıldı. Birkaç dakika bekle ve tekrar dene.",
+      },
+      fileTooLarge: {
+        title: "Fotoğraf çok büyük",
+        body: "Görsel 5 MB sınırını aşıyor. Tekrar çek; kamera otomatik sıkıştırır.",
+      },
+      invalidFile: {
+        title: "Geçersiz fotoğraf",
+        body: "Sunucu görseli kabul etmedi. Canlı kameradan yeni bir selfie çek.",
+      },
+      consentRequired: {
+        title: "Gizlilik onayı gerekli",
+        body: "Devam etmek için gizlilik onay kutusunu işaretle.",
+      },
+      generic: {
+        title: "Fotoğraf yüklenemedi",
+        body: "Beklenmeyen bir hata oluştu. Birkaç dakika sonra tekrar dene.",
+      },
+    },
     camera: {
       title: "Cinsiyet Doğrulama",
       selectedGender: "Seçilen cinsiyet",

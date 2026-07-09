@@ -436,6 +436,20 @@ export interface TranslationDictionary {
     submitSuccessDetail: string;
     submitSuccessCta: string;
     introPoints: string[];
+    uploadErrors: {
+      serverConfig: { title: string; body: string; hint: string };
+      serverFault: { title: string; body: string; hint?: string };
+      processFailed: { title: string; body: string };
+      storageFailed: { title: string; body: string };
+      network: { title: string; body: string };
+      unauthorized: { title: string; body: string };
+      forbidden: { title: string; body: string };
+      rateLimit: { title: string; body: string };
+      fileTooLarge: { title: string; body: string };
+      invalidFile: { title: string; body: string };
+      consentRequired: { title: string; body: string };
+      generic: { title: string; body: string };
+    };
     camera: {
       title: string;
       selectedGender: string;

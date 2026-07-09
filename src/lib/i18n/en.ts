@@ -646,6 +646,58 @@ export const en: TranslationDictionary = {
     submitSuccessDetail:
       "Your photo was sent securely. Our women representatives will review it manually; you may get a notification when approved (if push is enabled).",
     submitSuccessCta: "Back to dashboard",
+    uploadErrors: {
+      serverConfig: {
+        title: "Server misconfigured — photo not sent",
+        body: "This is not your fault. The live site verification server may not be fully configured yet.",
+        hint: "Admin: Vercel → Environment Variables → FIREBASE_SERVICE_ACCOUNT_JSON (Firebase service account JSON, single line). Redeploy after saving.",
+      },
+      serverFault: {
+        title: "Server error — photo not saved",
+        body: "An unexpected error occurred while sending your photo. Wait a few minutes and try again.",
+        hint: "If it persists, refresh the page, try another browser, or try again later.",
+      },
+      processFailed: {
+        title: "Photo could not be processed",
+        body: "The image could not be processed on the server. Retake with your face clearly visible and well lit.",
+      },
+      storageFailed: {
+        title: "Photo could not be saved",
+        body: "The server could not write your photo to secure storage. Try again in a few minutes.",
+      },
+      network: {
+        title: "Connection error",
+        body: "Could not reach the server. Check your internet connection and try again.",
+      },
+      unauthorized: {
+        title: "Session expired",
+        body: "Your session may have ended. Sign out, sign in again, then retry.",
+      },
+      forbidden: {
+        title: "Upload not allowed",
+        body: "A verification photo cannot be sent for this account right now.",
+      },
+      rateLimit: {
+        title: "Too many attempts",
+        body: "Too many upload attempts in a short time. Wait a few minutes and try again.",
+      },
+      fileTooLarge: {
+        title: "Photo too large",
+        body: "The image exceeds the 5 MB limit. Retake — the camera compresses automatically.",
+      },
+      invalidFile: {
+        title: "Invalid photo",
+        body: "The server rejected the image. Take a new live selfie with the camera.",
+      },
+      consentRequired: {
+        title: "Privacy consent required",
+        body: "Check the privacy consent box to continue.",
+      },
+      generic: {
+        title: "Photo could not be uploaded",
+        body: "An unexpected error occurred. Try again in a few minutes.",
+      },
+    },
     camera: {
       title: "Gender Verification",
       selectedGender: "Selected gender",

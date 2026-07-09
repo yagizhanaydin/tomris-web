@@ -1,13 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { verifyFirebaseIdToken } from "@/lib/auth/verify-token";
-import { isAdminConfigured, getAdminDb } from "@/lib/firebase-admin";
+import { getAdminConfigError, getAdminDb } from "@/lib/firebase-admin";
 import { isUidBanned } from "@/lib/ban/service";
 import { saveVerificationPhoto, getVerificationPhotoBackend } from "@/lib/verification/photo-storage";
 import { prepareVerificationPhoto } from "@/lib/verification/compress-verification-photo";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
+import {
+  inferUploadErrorCodeFromMessage,
+  type VerificationUploadErrorCode,
+} from "@/lib/verification/upload-errors";
 
 export const runtime = "nodejs";
+
+function uploadErrorResponse(
+  code: VerificationUploadErrorCode,
+  error: string,
+  status: number
+) {
+  return NextResponse.json({ error, code }, { status });
+}
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -17,58 +29,61 @@ export async function POST(request: NextRequest) {
     const limit = checkRateLimit(`upload:${ip}`, 10, 60 * 1000);
     if (!limit.ok) return rateLimitResponse(limit.retryAfterSec!);
 
-    if (!isAdminConfigured()) {
-      return NextResponse.json(
-        {
-          error:
-            "Sunucu yapılandırması eksik veya geçersiz. Vercel → FIREBASE_SERVICE_ACCOUNT_JSON (Firebase service account JSON, tek satır).",
-        },
-        { status: 500 }
-      );
+    const adminError = getAdminConfigError();
+    if (adminError) {
+      return uploadErrorResponse("SERVER_CONFIG", adminError, 500);
     }
 
     const auth = await verifyFirebaseIdToken(request.headers.get("authorization"));
     if (!auth) {
-      return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
+      return uploadErrorResponse("UNAUTHORIZED", "Yetkisiz.", 401);
     }
 
     if (await isUidBanned(auth.uid)) {
-      return NextResponse.json(
-        { error: "Hesabınız platformdan yasaklanmıştır." },
-        { status: 403 }
+      return uploadErrorResponse(
+        "FORBIDDEN",
+        "Hesabınız platformdan yasaklanmıştır.",
+        403
       );
     }
 
-    const userSnap = await getAdminDb().collection("users").doc(auth.uid).get();
+    const userRef = getAdminDb().collection("users").doc(auth.uid);
+    const userSnap = await userRef.get();
+    if (!userSnap.exists) {
+      return uploadErrorResponse(
+        "FORBIDDEN",
+        "Kullanıcı profili bulunamadı. Çıkış yapıp kayıt akışını tamamlayın.",
+        403
+      );
+    }
+
     const status = userSnap.data()?.verificationStatus as string | undefined;
     if (status === "approved" || status === "banned") {
-      return NextResponse.json(
-        { error: "Bu hesap için doğrulama fotoğrafı yüklenemez." },
-        { status: 403 }
+      return uploadErrorResponse(
+        "FORBIDDEN",
+        "Bu hesap için doğrulama fotoğrafı yüklenemez.",
+        403
       );
     }
 
     const formData = await request.formData();
     const privacyConsent = formData.get("privacyConsent");
     if (privacyConsent !== "true") {
-      return NextResponse.json(
-        { error: "Gizlilik onayı gerekli." },
-        { status: 400 }
-      );
+      return uploadErrorResponse("CONSENT_REQUIRED", "Gizlilik onayı gerekli.", 400);
     }
 
     const file = formData.get("photo");
 
     if (!file || !(file instanceof Blob)) {
-      return NextResponse.json({ error: "Fotoğraf gerekli." }, { status: 400 });
+      return uploadErrorResponse("INVALID_FILE", "Fotoğraf gerekli.", 400);
     }
 
     if (file.size > MAX_SIZE) {
-      return NextResponse.json({ error: "Fotoğraf çok büyük (max 5MB)." }, { status: 400 });
+      return uploadErrorResponse("FILE_TOO_LARGE", "Fotoğraf çok büyük (max 5MB).", 400);
     }
 
     if (!file.type.startsWith("image/")) {
-      return NextResponse.json({ error: "Geçersiz dosya türü." }, { status: 400 });
+      return uploadErrorResponse("INVALID_FILE", "Geçersiz dosya türü.", 400);
     }
 
     const rawBuffer = Buffer.from(await file.arrayBuffer());
@@ -81,19 +96,23 @@ export async function POST(request: NextRequest) {
     await saveVerificationPhoto(auth.uid, buffer);
 
     const now = new Date().toISOString();
-    await getAdminDb().collection("users").doc(auth.uid).update({
-      verificationPhotoPath: auth.uid,
-      verificationStatus: "pending",
-      genderVerified: false,
-      verificationSubmittedAt: now,
-      verificationPrivacyConsentAt: now,
-      verificationPrivacyVersion: "2026-07-08",
-    });
+    await userRef.set(
+      {
+        verificationPhotoPath: auth.uid,
+        verificationStatus: "pending",
+        genderVerified: false,
+        verificationSubmittedAt: now,
+        verificationPrivacyConsentAt: now,
+        verificationPrivacyVersion: "2026-07-08",
+      },
+      { merge: true }
+    );
 
     return NextResponse.json({ success: true, uid: auth.uid });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Fotoğraf yüklenemedi.";
-    console.error("[verification/upload]", err);
-    return NextResponse.json({ error: message }, { status: 500 });
+    const code = inferUploadErrorCodeFromMessage(message);
+    console.error("[verification/upload]", code, err);
+    return uploadErrorResponse(code, message, 500);
   }
 }

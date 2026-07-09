@@ -3,17 +3,41 @@ import { getFirestore, type Firestore } from "firebase-admin/firestore";
 
 let adminApp: App | undefined;
 
+function normalizePrivateKey(serviceAccount: Record<string, unknown>): Record<string, unknown> {
+  const key = serviceAccount.private_key;
+  if (typeof key === "string") {
+    serviceAccount.private_key = key.includes("\\n") ? key.replace(/\\n/g, "\n") : key;
+  }
+  return serviceAccount;
+}
+
 function parseServiceAccountJson(raw: string): Record<string, unknown> {
   const trimmed = raw.trim();
+  let parsed: Record<string, unknown>;
   try {
-    return JSON.parse(trimmed) as Record<string, unknown>;
+    parsed = JSON.parse(trimmed) as Record<string, unknown>;
   } catch {
     // Vercel'de bazen çift tırnak veya kaçış bozulur — tek satır JSON dene
     const unwrapped =
       trimmed.startsWith('"') && trimmed.endsWith('"')
-        ? JSON.parse(trimmed) as string
+        ? (JSON.parse(trimmed) as string)
         : trimmed;
-    return JSON.parse(unwrapped) as Record<string, unknown>;
+    parsed = JSON.parse(unwrapped) as Record<string, unknown>;
+  }
+  return normalizePrivateKey(parsed);
+}
+
+export function getAdminConfigError(): string | null {
+  const json = process.env.FIREBASE_SERVICE_ACCOUNT_JSON;
+  if (!json?.trim()) {
+    return "FIREBASE_SERVICE_ACCOUNT_JSON eksik.";
+  }
+  try {
+    parseServiceAccountJson(json);
+    getAdminApp();
+    return null;
+  } catch (err) {
+    return err instanceof Error ? err.message : "Firebase Admin başlatılamadı.";
   }
 }
 

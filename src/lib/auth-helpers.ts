@@ -11,8 +11,12 @@ import { normalizeUsername, validateUsername } from "@/lib/security/validate";
 import { findBannedTerm } from "@/lib/security/content-filter";
 import { reserveUsername, UsernameTakenError, lookupUidByUsername } from "@/lib/users/usernames";
 import type { Gender, UserProfile } from "@/types/user";
+import {
+  VerificationUploadError,
+  normalizeUploadErrorCode,
+} from "@/lib/verification/upload-errors";
 
-export { UsernameTakenError };
+export { UsernameTakenError, VerificationUploadError };
 
 export async function checkEmailNotBanned(email: string): Promise<void> {
   const res = await fetch(`/api/auth/check-ban?email=${encodeURIComponent(email)}`);
@@ -32,15 +36,32 @@ async function uploadVerificationPhotoToServer(photoBlob: Blob): Promise<string>
   formData.append("photo", photoBlob, "verification.jpg");
   formData.append("privacyConsent", "true");
 
-  const res = await fetch("/api/verification/upload", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}` },
-    body: formData,
-  });
+  let res: Response;
+  try {
+    res = await fetch("/api/verification/upload", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      body: formData,
+    });
+  } catch {
+    throw new VerificationUploadError("NETWORK");
+  }
 
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data.error || "Fotoğraf yüklenemedi.");
+    const contentType = res.headers.get("content-type") ?? "";
+    if (contentType.includes("application/json")) {
+      const data = (await res.json().catch(() => ({}))) as {
+        error?: string;
+        code?: string;
+      };
+      throw new VerificationUploadError(
+        normalizeUploadErrorCode(data.code, res.status),
+        data.error
+      );
+    }
+
+    await res.text().catch(() => {});
+    throw new VerificationUploadError(normalizeUploadErrorCode(undefined, res.status));
   }
 
   return getVerificationPhotoId(user.uid);

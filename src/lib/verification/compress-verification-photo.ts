@@ -1,4 +1,3 @@
-import sharp from "sharp";
 import { FIRESTORE_PHOTO_MAX_BYTES } from "./firestore-storage";
 
 const JPEG_SOI = Buffer.from([0xff, 0xd8]);
@@ -15,6 +14,14 @@ export async function prepareVerificationPhoto(buffer: Buffer): Promise<Buffer> 
 
   if (buffer.length <= FIRESTORE_PHOTO_MAX_BYTES) {
     return buffer;
+  }
+
+  let sharp: (input: Buffer) => import("sharp").Sharp;
+  try {
+    sharp = (await import("sharp")).default;
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : "sharp modülü yüklenemedi";
+    throw new Error(`Fotoğraf sıkıştırılamadı (sharp): ${detail}`);
   }
 
   let quality = 82;
