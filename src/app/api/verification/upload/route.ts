@@ -23,6 +23,14 @@ function uploadErrorResponse(
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
+function isUploadFile(value: FormDataEntryValue | null): value is File {
+  return (
+    value !== null &&
+    typeof value === "object" &&
+    typeof (value as File).arrayBuffer === "function"
+  );
+}
+
 export async function POST(request: NextRequest) {
   try {
     const ip = getClientIp(request);
@@ -74,7 +82,7 @@ export async function POST(request: NextRequest) {
 
     const file = formData.get("photo");
 
-    if (!file || !(file instanceof Blob)) {
+    if (!isUploadFile(file)) {
       return uploadErrorResponse("INVALID_FILE", "Fotoğraf gerekli.", 400);
     }
 
@@ -112,17 +120,22 @@ export async function POST(request: NextRequest) {
     }
 
     const now = new Date().toISOString();
-    await userRef.set(
-      {
-        verificationPhotoPath: auth.uid,
-        verificationStatus: "pending",
-        genderVerified: false,
-        verificationSubmittedAt: now,
-        verificationPrivacyConsentAt: now,
-        verificationPrivacyVersion: "2026-07-08",
-      },
-      { merge: true }
-    );
+    try {
+      await userRef.set(
+        {
+          verificationPhotoPath: auth.uid,
+          verificationStatus: "pending",
+          genderVerified: false,
+          verificationSubmittedAt: now,
+          verificationPrivacyConsentAt: now,
+          verificationPrivacyVersion: "2026-07-08",
+        },
+        { merge: true }
+      );
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Profil güncellenemedi.";
+      return uploadErrorResponse("STORAGE_FAILED", message, 500);
+    }
 
     return NextResponse.json({ success: true, uid: auth.uid });
   } catch (err) {

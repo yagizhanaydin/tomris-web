@@ -8,13 +8,19 @@ function assertJpegHeader(buffer: Buffer): void {
   }
 }
 
-/** Firestore için sıkıştır — Vercel/canlı ortamda büyük webcam fotoğrafları */
+/** Firestore için sıkıştır — yalnızca local/VPS; Vercel'de sharp kullanılmaz */
 export async function prepareVerificationPhoto(buffer: Buffer): Promise<Buffer> {
   assertJpegHeader(buffer);
 
-  // Kamera zaten JPEG sıkıştırıyor — küçük dosyada sharp atla (Vercel'de sharp sık sorun çıkarır)
   if (buffer.length <= FIRESTORE_PHOTO_MAX_BYTES) {
     return buffer;
+  }
+
+  // Vercel serverless: sharp native modülü sık çöker — client sıkıştırmaya güven
+  if (process.env.VERCEL === "1") {
+    throw new Error(
+      `Fotoğraf çok büyük (${Math.round(buffer.length / 1024)}KB, max ${Math.round(FIRESTORE_PHOTO_MAX_BYTES / 1024)}KB). Tekrar çekin.`
+    );
   }
 
   try {

@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/context/LanguageProvider";
+import { canvasToVerificationJpeg } from "@/lib/verification/compress-client-photo";
 import type { Gender } from "@/types/user";
 
 interface GenderVerificationProps {
@@ -71,12 +72,12 @@ export function GenderVerification({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [phase, countdown]);
 
-  const capturePhoto = () => {
+  const capturePhoto = async () => {
     const video = videoRef.current;
     const canvas = canvasRef.current;
     if (!video || !canvas) return;
 
-    const maxDim = 960;
+    const maxDim = 640;
     let w = video.videoWidth;
     let h = video.videoHeight;
     if (w > maxDim || h > maxDim) {
@@ -91,16 +92,14 @@ export function GenderVerification({
     if (!ctx) return;
 
     ctx.drawImage(video, 0, 0, w, h);
-    canvas.toBlob(
-      (blob) => {
-        if (!blob) return;
-        stopCamera();
-        setPreviewUrl(URL.createObjectURL(blob));
-        setPhase("captured");
-      },
-      "image/jpeg",
-      0.75
-    );
+    try {
+      const blob = await canvasToVerificationJpeg(canvas);
+      stopCamera();
+      setPreviewUrl(URL.createObjectURL(blob));
+      setPhase("captured");
+    } catch {
+      setError(t.verification.camera.errorCamera);
+    }
   };
 
   const handleStartCountdown = () => {
@@ -117,16 +116,15 @@ export function GenderVerification({
     await startCamera();
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    canvas.toBlob(
-      (blob) => {
-        if (blob) onCapture(blob);
-      },
-      "image/jpeg",
-      0.75
-    );
+    try {
+      const blob = await canvasToVerificationJpeg(canvas);
+      onCapture(blob);
+    } catch {
+      setError(t.verification.camera.errorCamera);
+    }
   };
 
   return (
