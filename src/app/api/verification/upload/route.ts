@@ -7,6 +7,8 @@ import { saveVerificationPhoto, getVerificationPhotoBackend } from "@/lib/verifi
 import { prepareVerificationPhoto } from "@/lib/verification/compress-verification-photo";
 import { checkRateLimit, getClientIp, rateLimitResponse } from "@/lib/security/rate-limit";
 
+export const runtime = "nodejs";
+
 const MAX_SIZE = 5 * 1024 * 1024;
 
 export async function POST(request: NextRequest) {
@@ -17,7 +19,10 @@ export async function POST(request: NextRequest) {
 
     if (!isAdminConfigured()) {
       return NextResponse.json(
-        { error: "Sunucu yapılandırması eksik (FIREBASE_SERVICE_ACCOUNT_JSON)." },
+        {
+          error:
+            "Sunucu yapılandırması eksik veya geçersiz. Vercel → FIREBASE_SERVICE_ACCOUNT_JSON (Firebase service account JSON, tek satır).",
+        },
         { status: 500 }
       );
     }

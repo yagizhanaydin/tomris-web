@@ -15,6 +15,7 @@ const withSerwist = withSerwistInit({
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  serverExternalPackages: ["sharp", "firebase-admin"],
   async headers() {
     return [
       {
