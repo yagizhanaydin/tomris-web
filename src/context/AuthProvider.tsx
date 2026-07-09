@@ -66,13 +66,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (!user) return;
 
-    const unsub = onSnapshot(doc(getFirebaseDb(), "users", user.uid), (snap) => {
-      if (snap.exists()) {
-        setProfile(snap.data() as UserProfile);
-      } else {
-        setProfile(null);
+    const unsub = onSnapshot(
+      doc(getFirebaseDb(), "users", user.uid),
+      (snap) => {
+        if (snap.exists()) {
+          setProfile(snap.data() as UserProfile);
+        } else {
+          setProfile(null);
+        }
+      },
+      () => {
+        // Rules / ağ hatası — sessiz; getDoc yedek kalır
       }
-    });
+    );
 
     return unsub;
   }, [user]);

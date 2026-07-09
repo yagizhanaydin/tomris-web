@@ -116,9 +116,8 @@ export function getVerificationUploadErrorDisplay(
   const technical =
     detail &&
     detail !== code &&
-    !detail.startsWith("SERVER_") &&
-    detail.length > 3 &&
-    detail.length < 400
+    detail.length > 2 &&
+    detail.length < 500
       ? detail
       : undefined;
 

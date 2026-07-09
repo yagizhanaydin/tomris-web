@@ -8,48 +8,54 @@ function assertJpegHeader(buffer: Buffer): void {
   }
 }
 
-/** Firestore için sıkıştır — Vercel/canlı ortamda webcam fotoğrafları */
+/** Firestore için sıkıştır — Vercel/canlı ortamda büyük webcam fotoğrafları */
 export async function prepareVerificationPhoto(buffer: Buffer): Promise<Buffer> {
   assertJpegHeader(buffer);
 
-  let sharp: (input: Buffer) => import("sharp").Sharp;
+  // Kamera zaten JPEG sıkıştırıyor — küçük dosyada sharp atla (Vercel'de sharp sık sorun çıkarır)
+  if (buffer.length <= FIRESTORE_PHOTO_MAX_BYTES) {
+    return buffer;
+  }
+
   try {
-    sharp = (await import("sharp")).default;
+    const sharp = (await import("sharp")).default;
+    let quality = 80;
+    let width = 960;
+    let output = buffer;
+
+    for (let attempt = 0; attempt < 10; attempt++) {
+      output = await sharp(buffer)
+        .rotate()
+        .resize({ width, height: width, fit: "inside", withoutEnlargement: true })
+        .jpeg({ quality })
+        .toBuffer();
+
+      if (output.length <= FIRESTORE_PHOTO_MAX_BYTES) {
+        return output;
+      }
+
+      if (quality > 45) {
+        quality -= 7;
+      } else if (width > 480) {
+        width = Math.round(width * 0.75);
+        quality = 72;
+      } else {
+        break;
+      }
+    }
+
+    if (output.length > FIRESTORE_PHOTO_MAX_BYTES) {
+      throw new Error(
+        `Fotoğraf çok büyük (max ${Math.round(FIRESTORE_PHOTO_MAX_BYTES / 1024)}KB). Lütfen daha yakından tekrar çekin.`
+      );
+    }
+
+    return output;
   } catch (err) {
+    if (buffer.length <= FIRESTORE_PHOTO_MAX_BYTES) {
+      return buffer;
+    }
     const detail = err instanceof Error ? err.message : "sharp modülü yüklenemedi";
     throw new Error(`Fotoğraf sıkıştırılamadı (sharp): ${detail}`);
   }
-
-  let quality = 80;
-  let width = 960;
-  let output = buffer;
-
-  for (let attempt = 0; attempt < 10; attempt++) {
-    output = await sharp(buffer)
-      .rotate()
-      .resize({ width, height: width, fit: "inside", withoutEnlargement: true })
-      .jpeg({ quality })
-      .toBuffer();
-
-    if (output.length <= FIRESTORE_PHOTO_MAX_BYTES) {
-      return output;
-    }
-
-    if (quality > 45) {
-      quality -= 7;
-    } else if (width > 480) {
-      width = Math.round(width * 0.75);
-      quality = 72;
-    } else {
-      break;
-    }
-  }
-
-  if (output.length > FIRESTORE_PHOTO_MAX_BYTES) {
-    throw new Error(
-      `Fotoğraf çok büyük (max ${Math.round(FIRESTORE_PHOTO_MAX_BYTES / 1024)}KB). Lütfen daha yakından tekrar çekin.`
-    );
-  }
-
-  return output;
 }

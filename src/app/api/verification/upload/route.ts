@@ -82,18 +82,34 @@ export async function POST(request: NextRequest) {
       return uploadErrorResponse("FILE_TOO_LARGE", "Fotoğraf çok büyük (max 5MB).", 400);
     }
 
-    if (!file.type.startsWith("image/")) {
+    const rawBuffer = Buffer.from(await file.arrayBuffer());
+    if (rawBuffer.length < 4) {
+      return uploadErrorResponse("INVALID_FILE", "Fotoğraf boş veya bozuk.", 400);
+    }
+
+    const mime = file.type || "";
+    if (mime && !mime.startsWith("image/")) {
       return uploadErrorResponse("INVALID_FILE", "Geçersiz dosya türü.", 400);
     }
 
-    const rawBuffer = Buffer.from(await file.arrayBuffer());
     const backend = getVerificationPhotoBackend();
-    const buffer =
-      backend === "firestore" || backend === "firebase"
-        ? await prepareVerificationPhoto(rawBuffer)
-        : rawBuffer;
+    let buffer: Buffer;
+    try {
+      buffer =
+        backend === "firestore" || backend === "firebase"
+          ? await prepareVerificationPhoto(rawBuffer)
+          : rawBuffer;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Fotoğraf işlenemedi.";
+      return uploadErrorResponse("PROCESS_FAILED", message, 500);
+    }
 
-    await saveVerificationPhoto(auth.uid, buffer);
+    try {
+      await saveVerificationPhoto(auth.uid, buffer);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Fotoğraf kaydedilemedi.";
+      return uploadErrorResponse("STORAGE_FAILED", message, 500);
+    }
 
     const now = new Date().toISOString();
     await userRef.set(

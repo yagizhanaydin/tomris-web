@@ -55,8 +55,19 @@ export default function VerificationPage() {
 
     try {
       await submitVerificationPhoto(photoBlob);
-      await refreshProfile();
-      setSubmitted(true);
+      try {
+        await refreshProfile();
+        setSubmitted(true);
+      } catch (err: unknown) {
+        const detail = err instanceof Error ? err.message : undefined;
+        setError(
+          getVerificationUploadErrorDisplay(
+            "GENERIC",
+            t.verification.uploadErrors,
+            detail ?? "Profil yenilenemedi; sayfayı yenileyin."
+          )
+        );
+      }
     } catch (err: unknown) {
       if (err instanceof VerificationUploadError) {
         setError(
@@ -67,7 +78,14 @@ export default function VerificationPage() {
           )
         );
       } else {
-        setError(t.verification.uploadErrors.generic);
+        const detail = err instanceof Error ? err.message : undefined;
+        setError(
+          getVerificationUploadErrorDisplay(
+            "GENERIC",
+            t.verification.uploadErrors,
+            detail
+          )
+        );
       }
     } finally {
       setSubmitting(false);
